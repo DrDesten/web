@@ -3,21 +3,27 @@ var tw_speed_header = 0.15;
 var tw_speed_p = 0.04;
 
 
-// TYPEWRITER ANIMATION /////////////////////////////////////////////////////////////////////////
+// HEADER ANIMATION (typewriter + arrow) /////////////////////////////////////////////////////////////////////////
 
 var typewriter_elements = document.getElementsByClassName("typewriter")
+var typewriterAnimationLength = 0
 for (let i = 0; i < typewriter_elements.length; i++) {
   let ele = typewriter_elements[i]
   let char_length = ele.innerHTML.length
   if (ele.tagName == "H1") {
     ele.style.setProperty("--tw-anim-before", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
     ele.style.setProperty("--tw-anim-after", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
+    typewriterAnimationLength = Math.max(typewriterAnimationLength, tw_speed_header * char_length);
   } else {
     ele.style.setProperty("--tw-anim-before", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
     ele.style.setProperty("--tw-anim-after", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
   }
 }
 
+var header_bottom = document.getElementsByClassName("fillscreen-bottom")[0]
+if (header_bottom != undefined) {
+  header_bottom.style.animation = `fadeInDown 2s ease ${typewriterAnimationLength+(tw_delay*2)}s backwards`
+}
 
 
 // NAVIGATION BAR /////////////////////////////////////////////////////////////////////////

@@ -3,8 +3,8 @@
 
 :root {
   --bg-c: white;
-  --bg-c2a: #2f4858;
-  --bg-c2b: #442a75;
+  --bg-c2a: #2f4958;
+  --bg-c2b: #3d2d5a;
   --bg-c2: linear-gradient(165deg, var(--bg-c2a) 0%, var(--bg-c2b) 100%);
 
   --text-dark: black;
@@ -136,7 +136,7 @@ header.fillscreen {
   height: 100vh;
   position: relative;
 }
-header.fillscreen > * {
+header.fillscreen > .fillscreen-center {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -149,12 +149,29 @@ header.fillscreen > * {
 }
 
 .header-subtitle {
-  animation: fadeIn 2s ease 7s backwards;
+  animation: fadeIn 2s ease 6s backwards;
+}
+
+.fillscreen-bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+.fillscreen-bottom > img {
+  display: inline;
+  width: 3rem;
+  height: auto;
+  margin: 1rem;
 }
 
 @keyframes fadeIn {
   from {opacity: 0;}
   to {opacity: 1;}
+}
+@keyframes fadeInDown {
+  from {opacity: 0; transform: translateY(-1em);}
+  to   {opacity: 1; transform: translateY(0em);}
 }
 
 /* TYPEWRITER ANIMATION ///////////////////////////////////////////////////////////////////////////// */

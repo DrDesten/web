@@ -7,7 +7,7 @@ if (window.scrollY >= window.innerHeight * 0.75) {
   hasScrolled = true;
 }
 window.addEventListener("scroll", (e)=>{
-  if (window.scrollY >= window.innerHeight * 0.75) {
+  if (window.scrollY >= window.innerHeight * 0.5) {
     hasScrolled = true;
   }
 })

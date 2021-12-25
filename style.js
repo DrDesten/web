@@ -1,4 +1,4 @@
-var tw_delay = 1.75;
+var tw_delay = 1;
 var tw_speed_header = 0.15;
 var tw_speed_p = 0.04;
 

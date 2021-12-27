@@ -1,3 +1,3 @@
-function html_code(string, style = "font-family: 'Ubuntu Mono', monospace;") {
+function html_code(string, style = "") {
     return `<pre style="${style}">${string}</pre>`
 }

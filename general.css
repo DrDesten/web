@@ -21,6 +21,8 @@
   --text-shadow: 0 0 1em rgba(0,0,0,0.15);
   --text-shadow-l: 0 0 0.4em rgba(0,0,0,0.1);
   --text-shadow-d: 0 0 0.4em rgba(0, 0, 0, 0.75);
+
+  --border-rad: 0.15rem;
 }
 
 body {
@@ -61,6 +63,34 @@ h3 {
   font-size: 2rem; /* Backup */
   font-size: clamp(1.5rem, 6vw, 2rem);
   font-weight: normal;
+}
+
+input {
+  font-size: inherit;
+  font-family: inherit;
+
+  border: none;
+  border-radius: var(--border-rad);
+  padding: 0.15em;
+  margin: 0.1em;
+}
+input[type="button"] {
+  padding: 0.2em 0.5em;
+  margin: 0.2em;
+
+  transition: background-color 0.2s;
+}
+input[type="button"]:hover,
+input[type="button"]:focus {
+  padding: 0.2em 0.5em;
+  margin: 0.2em;
+
+  background-color: var(--text-light-a);
+}
+
+pre {
+  font-family: 'Ubuntu Mono', monospace;
+  font-size: inherit;
 }
 
 .icon {
@@ -194,7 +224,7 @@ header.fillscreen > .fillscreen-center {
 .typewriter::after {
   width: 0.125em;
   background-color: black;
-  border-radius: 0.02em;
+  border-radius: var(--border-rad);
   animation: var(--tw-anim-after), blink 600ms ease-in-out infinite alternate;
 }
 
@@ -217,7 +247,7 @@ section.paragraph {
   padding: clamp(0.5rem, 5vw, 1.5rem) clamp(0.5rem, 6vw, 2.5rem);
   margin: 2rem 0px;
 
-  border-radius: 0.2rem;
+  border-radius: var(--border-rad);
 }
 
 /* Color Alternation for paragraph sections */

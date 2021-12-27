@@ -185,7 +185,7 @@ header.fillscreen > .fillscreen-center {
   top: 0;
   bottom: 0;
   right: 0;
-  left: 0;
+  left: 100%;
 }
 .typewriter::before {
   background-color: var(--bg-c);
@@ -199,7 +199,8 @@ header.fillscreen > .fillscreen-center {
 }
 
 @keyframes typewriter-animation {
-  to { left: 100%; }
+  from { left: 0%; }
+  to   { left: 100%; }
 }
 @keyframes blink {
   to {opacity: 0;}

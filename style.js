@@ -11,12 +11,12 @@ for (let i = 0; i < typewriter_elements.length; i++) {
   let ele = typewriter_elements[i]
   let char_length = ele.innerHTML.length
   if (ele.tagName == "H1") {
-    ele.style.setProperty("--tw-anim-before", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
-    ele.style.setProperty("--tw-anim-after", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
+    ele.style.setProperty("--tw-anim-before", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s backwards`)
+    ele.style.setProperty("--tw-anim-after", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s backwards`)
     typewriterAnimationLength = Math.max(typewriterAnimationLength, tw_speed_header * char_length);
   } else {
-    ele.style.setProperty("--tw-anim-before", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
-    ele.style.setProperty("--tw-anim-after", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s forwards`)
+    ele.style.setProperty("--tw-anim-before", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s backwards`)
+    ele.style.setProperty("--tw-anim-after", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s backwards`)
   }
 }
 

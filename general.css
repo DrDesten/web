@@ -184,7 +184,7 @@ header.fillscreen > .fillscreen-center {
 
 .fillscreen-bottom {
   position: absolute;
-  bottom: 0;
+  bottom: 10vh;
   width: 100%;
   text-align: center;
 }

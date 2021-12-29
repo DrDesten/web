@@ -47,7 +47,7 @@ function glsl_array(array, varname) {
     
     var finalstring = array_prefix;
     for (let i = 0; i < array.length; i++) {
-        finalstring += "    "
+        finalstring += "   "
         finalstring += glsl_variable_constructor(array[i])
 
         if (i != array.length - 1) {

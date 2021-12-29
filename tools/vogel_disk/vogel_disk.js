@@ -40,8 +40,6 @@ function calculateSamples(form, output_id) {
         })
     }
 
-
-
     var html = html_code(glsl_array(array, `vogel_disk_${samples}`))
     output.innerHTML = html
 }

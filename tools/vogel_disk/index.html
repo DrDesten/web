@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Gaussian Kernel Calculator</title>
+  <title>Vogel Disk Sample Calculator</title>
   <link rel="stylesheet" href="../../general.css">
 </head>
 
@@ -35,7 +35,7 @@
 
   <header class="fillscreen">
     <div class="fillscreen-center">
-      <h1 class="typewriter">Gaussian Kernels</h1>
+      <h1 class="typewriter">Vogel Disk Sampling</h1>
     </div>
     <div class="fillscreen-bottom">
       <img src="../../icons/angle down.svg" alt="Down Arrow">
@@ -47,17 +47,27 @@
 
   <section class="paragraph">
     <p class="paragraph">
-      This Calculator allows you to calculate kernel values for a 1D Gaussian Kernel. It uses the pascal triangle to determine the weights and normalizes them afterwards.
-      This can be very useful for creating a two pass Gaussian Blur for Real-Time applications. This is the reason I originally created this tool. <br>
-      To use it, enter a sample count and it will calculate the appropriate kernel weights for your gaussian blur. It is recommended to use uneven numbers so you can center your current pixel. <br>
+      This Calculator allows you to calculate samples on disk using the vogel method.<br>
+      This method allows for evenly spaced samples on a circle or on the surface of a sphere.
+      Checking <i>Center Samples</i> will make sure that the center of mass ofthe array is at [0,0]<br>
+      <br>
+      This can be very useful for creating a realistic looking Depth of Field Effect for Real-Time applications.
+      This is the reason I originally created this tool.<br>
+      <br>
+      To use it, enter a sample count and it will create an array with samples you can copy-paste directly into your
+      GLSL shader.
     </p>
     <form name="input" action="" method="GET">
-      <p><b>Sample Count</b></p>
-      <input type="number" name="sample_input" placeholder="Enter Sample Count" oninput="calculateSamples_dynamic(this.form, 'output', this.value)" onchange="calculateSamples(this.form, 'output')">
+      <label for="sample_input">Sample Count</label><br>
+      <input type="number" name="sample_input" placeholder="Enter Sample Count"
+        oninput="calculateSamples_dynamic(this.form, 'output')" onchange="calculateSamples(this.form, 'output')">
       <br>
 
-      <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')">
-  </form>
+      <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')"><br>
+      <label for="center_output">Center Samples</label>
+      <input type="checkbox" name="Center Samples" id="center_output" checked
+        onchange="calculateSamples(this.form, 'output')">
+    </form>
   </section>
   <section class="paragraph">
     <h3 class="paragraph">GLSL Code</h3>
@@ -67,7 +77,7 @@
   </section>
 
 
-  <script src="gaussian.js"></script>
+  <script src="vogel_disk.js"></script>
   <script src="../../style.js"></script>
 </body>
 

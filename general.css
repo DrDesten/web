@@ -66,26 +66,33 @@ h3 {
 }
 
 input {
+  --input-margin: 0.2em;
+  --input-padding: 0.15em;
+
+
   font-size: inherit;
   font-family: inherit;
 
   border: none;
   border-radius: var(--border-rad);
-  padding: 0.15em;
-  margin: 0.1em;
+  padding: var(--input-padding);
+  margin: var(--input-margin);
 }
 input[type="button"] {
-  padding: 0.2em 0.5em;
-  margin: 0.2em;
-
+  padding: var(--input-padding) 0.5em;
   transition: background-color 0.2s;
 }
 input[type="button"]:hover,
 input[type="button"]:focus {
-  padding: 0.2em 0.5em;
-  margin: 0.2em;
-
   background-color: var(--text-light-a);
+}
+input[type="checkbox"] {
+  width: 1em;
+  height: 1em;
+}
+
+label {
+  font-weight: bold;
 }
 
 pre {
@@ -184,7 +191,7 @@ header.fillscreen > .fillscreen-center {
 
 .fillscreen-bottom {
   position: absolute;
-  bottom: 10vh;
+  bottom: 7vh;
   width: 100%;
   text-align: center;
 }

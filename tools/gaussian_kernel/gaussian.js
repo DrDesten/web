@@ -27,14 +27,14 @@ function pascalTriangle(length) {
 
 
 function calculateSamples_dynamic(form, output_id, samples) {
-    samples = parseInt(samples)
-    if (samples < 50 && samples != NaN) {
+    if (parseInt(samples) <= 250) {
         calculateSamples(form, output_id)
     }
 }
 function calculateSamples(form, output_id) {
     var output  = document.getElementById(output_id)
     var samples = parseInt(form.sample_input.value)
+    if (isNaN(samples)) {return}
 
     var array   = pascalTriangle(samples)
     var sum     = array.reduce((prev, curr) => {return prev + curr}, 0) // Accumulate Array Sum

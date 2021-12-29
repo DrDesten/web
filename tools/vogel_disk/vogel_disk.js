@@ -31,6 +31,15 @@ function calculateSamples(form, output_id) {
         })
     }
 
+    if (form.polar_coordinates.checked) { // Convert to polar coordinates
+        array = array.map((curr)=>{
+            return [
+                Math.sqrt((curr[0]*curr[0]) + (curr[1]*curr[1])),
+                Math.atan2(curr[1], curr[0])
+            ]
+        })
+    }
+
 
 
     var html = html_code(glsl_array(array, `vogel_disk_${samples}`))

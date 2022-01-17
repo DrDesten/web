@@ -15,6 +15,9 @@ let config = {
     data: data,
     options: {
         plugins: {
+            tooltip: {
+                enabled: false
+            },
             legend: {
                 display: false,
             }

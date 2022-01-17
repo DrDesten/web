@@ -281,3 +281,13 @@ p.paragraph {
 h3.paragraph {
   margin: 0.5rem 0px;
 }
+
+
+/* CHARTS ///////////////////////////////////////////////////////////////////////////// */
+
+.chart {
+  position: relative;
+  margin: 0px auto;
+  max-height: 20rem;
+  max-width: 20rem;
+}

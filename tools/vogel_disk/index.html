@@ -11,6 +11,7 @@
 
 <body>
   <script src="../../jquery-3.6.0.min.js"></script>
+  <script src="../../chart.min.js"></script>
   <script src="../../general.js"></script>
   <script src="../../glslify.js"></script>
   <script src="../../htmlify.js"></script>
@@ -49,7 +50,7 @@
     <p class="paragraph">
       This Calculator allows you to calculate samples on disk using the vogel method.<br>
       This method allows for evenly spaced samples on a circle.
-      Checking <i>Center Samples</i> will make sure that the center of mass ofthe array is at [0,0]<br>
+      Checking <i>Center Samples</i> will make sure that the center of mass of the array is at [0,0]<br>
       <br>
       This can be very useful for creating a realistic looking Depth of Field Effect for Real-Time applications.
       This is the reason I originally created this tool.<br>
@@ -68,6 +69,11 @@
       <label for="polar_coordinates">Polar Coordinates</label>
       <input type="checkbox" name="olar Coordinates" id="polar_coordinates" onchange="calculateSamples(this.form, 'output')">
     </form>
+  </section>
+  <section class="paragraph">
+    <div class="chart">
+      <canvas id="preview_chart" width="200" height="200"></canvas>
+    </div>
   </section>
   <section class="paragraph">
     <h3 class="paragraph">GLSL Code</h3>

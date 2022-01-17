@@ -1,5 +1,48 @@
 const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
+const ctx = document.getElementById("preview_chart")
+
+let data = {
+    datasets: [{
+        label: 'Sample Preview',
+        data: [{x:0,y:0}],
+        backgroundColor: 'rgb(255, 99, 132)'
+    }],
+};
+
+let config = {
+    type: 'scatter',
+    data: data,
+    options: {
+        plugins: {
+            legend: {
+                display: false,
+            }
+        },
+        scales: {
+            x: {
+                type: 'linear',
+                position: 'bottom',
+                min: -1.05,
+                max: 1.05
+            },
+            y: {
+                type: 'linear',
+                min: -1.05,
+                max: 1.05
+            }
+        },
+        elements: {
+            point: {
+                radius: 7.5,
+            }
+        }
+    }
+};
+
+const chart = new Chart(ctx, config)
+
+
 function calculateSamples(form, output_id) {
     var output  = document.getElementById(output_id)
     var samples = parseInt(form.sample_input.value)
@@ -42,6 +85,9 @@ function calculateSamples(form, output_id) {
 
     var html = html_code(glsl_array(array, `vogel_disk_${samples}`))
     output.innerHTML = html
+
+    chart.data.datasets[0].data = array.map(val => { return {x: val[0], y: val[1]} });
+    chart.update();
 }
 
 function calculateSamples_dynamic(form, output_id) {
@@ -49,3 +95,7 @@ function calculateSamples_dynamic(form, output_id) {
         calculateSamples(form, output_id)
     }
 }
+
+
+
+

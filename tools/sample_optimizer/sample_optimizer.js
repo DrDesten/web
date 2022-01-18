@@ -105,13 +105,11 @@ function judgeProgressiveness2D(sample_arr) {
 
 
 
-let arrayToOptimize = [];
 function submitText(textarea) {
-    input = document.getElementById(textarea).value
-    arrayToOptimize = glsl_parse_array(input)
+    let input = document.getElementById(textarea).value
+    let arrayToOptimize = glsl_parse_array(input)
 
-    //console.log(arrayToOptimize)
-    //console.log(input)
+    console.log(arrayToOptimize)
     chart.data.datasets[0].data = convert2DtoChart(arrayToOptimize)
     chart.update()
 
@@ -119,12 +117,11 @@ function submitText(textarea) {
 }
 
 function runOptimizer(array, steps = 10) {
+    let optimizedArray  = _.cloneDeep(array)
 
     //console.log(array)
-    let progressiveness = judgeProgressiveness2D(array)
-    //console.log(array)
-    let optimizedArray  = _.cloneDeep(array)
-    //console.log(array)
+    let progressiveness = judgeProgressiveness2D(optimizedArray)
+    console.log(array)
     let tmp = [0,0]
 
     console.log(`Progressiveness: ${progressiveness}`)

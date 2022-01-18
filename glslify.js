@@ -95,20 +95,18 @@ function glsl_parse_array(string = "") {
 
     let values = [...string.matchAll(value2)]
 
-    let parsedArray = []
+    let test = []
     for (let i = 0; i < values.length; i++) {
-
-        let x = parseFloat(values[i][1])
-        let y = parseFloat(values[i][2])
-
-        //console.log(x,y)
-
-        parsedArray.push([1,2])
-        console.log(parsedArray)
-
+        let tmp = [
+            values[i][1],
+            values[i][2]
+        ]
+        test.push((tmp))
     }
 
-    console.log(parsedArray)
-    return parsedArray
+    test = test.map(e => e.map(e => parseFloat(e)))
+    
+    console.log(test)
+    return _.cloneDeep(test)
 }
 

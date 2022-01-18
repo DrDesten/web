@@ -49,3 +49,8 @@ for (let i = 0; i < paragraph_elements.length; i++) {
     paragraph_elements[i].classList.add("color-variation-2")
   }
 }
+
+function textareaUpdateRows(ele) {
+  let lineBreakAmount = occurrences(ele.value, "\n")
+  ele.rows = lineBreakAmount + 1;
+}

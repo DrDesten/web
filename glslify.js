@@ -60,3 +60,55 @@ function glsl_array(array, varname) {
 
     return finalstring
 }
+
+
+
+
+// GLSL Parsing /////////////////////////////////////////////////////////////////////////
+
+const testString = 
+`const vec2 vogel_disk_10[10] = vec2[](
+    vec2(0.2572579017634409, -0.04163309750617664),
+    vec2(-0.251930634467436, 0.21998316851378627),
+    vec2(0.07736396637194182, -0.5397186179385906),
+    vec2(0.39360838848238255, 0.4278674385507702),
+    vec2(-0.62691478344435, -0.15847790195666747),
+    vec2(0.6593967781001273, -0.43968127469309026),
+    vec2(-0.17564857785490662, 0.7369512865973062),
+    vec2(-0.36550608817101793, -0.8101859817811641),
+    vec2(0.8996625491276813, 0.27463289328509016),
+    vec2(-0.8672894999078633, 0.3302620869287361)
+);`
+
+
+function glsl_parse_array(string = "") {
+    string = string.trim()
+    const declaration = /(\w+ +vec2|vec2) +[\w]+\[[0-9]+\] += +/  // Finds the array declaration
+    const constructor = /vec([2-4])\[[0-9]*\]/                    // Finds the constructor (Group 1 is dimension)
+
+    //let dimension = parseInt(constructor.exec(string)[1])
+
+    string = string.replace(declaration, "")
+    string = string.replace(constructor, "")
+
+    const value2 = /vec2\(([0-9\.-]+), *([0-9\.-]+)\)/g
+
+    let values = [...string.matchAll(value2)]
+
+    let parsedArray = []
+    for (let i = 0; i < values.length; i++) {
+
+        let x = parseFloat(values[i][1])
+        let y = parseFloat(values[i][2])
+
+        //console.log(x,y)
+
+        parsedArray.push([1,2])
+        console.log(parsedArray)
+
+    }
+
+    console.log(parsedArray)
+    return parsedArray
+}
+

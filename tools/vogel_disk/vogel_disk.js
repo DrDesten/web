@@ -1,4 +1,9 @@
-const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+const goldenAngle      = Math.PI * (3 - Math.sqrt(5))
+const goldenAngleRcp   = 1.0 / goldenAngle
+const goldenAngleRcpSq = goldenAngleRcp*goldenAngleRcp
+
+
+// PREVIEW CHART //////////////////////////////////////////////////////////////////////////
 
 const ctx = document.getElementById("preview_chart")
 
@@ -46,6 +51,10 @@ let config = {
 const chart = new Chart(ctx, config)
 
 
+
+// ACTUAL CALCULATIONS //////////////////////////////////////////////////////////////////////////
+
+
 function calculateSamples(form, output_id) {
     var output  = document.getElementById(output_id)
     var samples = parseInt(form.sample_input.value)
@@ -77,6 +86,11 @@ function calculateSamples(form, output_id) {
         })
     }
 
+    chart.data.datasets[0].data = array.map(val => { return {x: val[0], y: val[1]} });
+    chart.update();
+
+    console.log(judgeProgressiveness2D(array))
+
     if (form.polar_coordinates.checked) { // Convert to polar coordinates
         array = array.map((curr)=>{
             return [
@@ -88,9 +102,6 @@ function calculateSamples(form, output_id) {
 
     var html = html_code(glsl_array(array, `vogel_disk_${samples}`))
     output.innerHTML = html
-
-    chart.data.datasets[0].data = array.map(val => { return {x: val[0], y: val[1]} });
-    chart.update();
 }
 
 function calculateSamples_dynamic(form, output_id) {

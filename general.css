@@ -65,7 +65,7 @@ h3 {
   font-weight: normal;
 }
 
-input {
+input, textarea {
   --input-margin: 0.2em;
   --input-padding: 0.15em;
 
@@ -89,6 +89,10 @@ input[type="button"]:focus {
 input[type="checkbox"] {
   width: 1em;
   height: 1em;
+}
+
+textarea {
+  width: 100%;
 }
 
 label {

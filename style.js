@@ -46,7 +46,7 @@ for (let i = 0; i < paragraph_elements.length; i++) {
   if (i % 2 == 0) {
     paragraph_elements[i].classList.add("color-variation-1")
   } else {
-    paragraph_elements[i].classList.add("color-variation-2")
+    paragraph_elements[i].classList.add("color-variation-1")
   }
 }
 

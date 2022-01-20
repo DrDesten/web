@@ -15,6 +15,8 @@ let data = {
     }],
 };
 
+
+let chartLineColor = "rgba(255,255,255,0.25)"
 let config = {
     type: 'scatter',
     data: data,
@@ -32,13 +34,27 @@ let config = {
                 type: 'linear',
                 position: 'bottom',
                 min: -1.05,
-                max: 1.05
+                max: 1.05,
+
+                grid: {
+                    color: chartLineColor,
+                    borderColor: chartLineColor,
+                    drawBorder: false,
+                },
+                display: false,
             },
             y: {
                 type: 'linear',
                 min: -1.05,
-                max: 1.05
-            }
+                max: 1.05,
+
+                grid: {
+                    color: chartLineColor,
+                    borderColor: chartLineColor,
+                    drawBorder: false,
+                },
+                display: false,
+            },
         },
         elements: {
             point: {
@@ -86,6 +102,8 @@ function calculateSamples(form, output_id) {
         })
     }
 
+    /* chart.data.datasets[0].data = array.map(val => { return {x: 0, y: 0} });
+    chart.update(); */
     chart.data.datasets[0].data = array.map(val => { return {x: val[0], y: val[1]} });
     chart.update();
 

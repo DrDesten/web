@@ -107,8 +107,6 @@ function calculateSamples(form, output_id) {
     chart.data.datasets[0].data = array.map(val => { return {x: val[0], y: val[1]} });
     chart.update();
 
-    console.log(judgeProgressiveness2D(array))
-
     if (form.polar_coordinates.checked) { // Convert to polar coordinates
         array = array.map((curr)=>{
             return [

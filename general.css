@@ -287,7 +287,6 @@ h3.paragraph {
   margin: 0.5rem 0px;
 }
 
-
 /* CHARTS ///////////////////////////////////////////////////////////////////////////// */
 
 .chart {
@@ -295,4 +294,16 @@ h3.paragraph {
   margin: 0px auto;
   max-height: 20rem;
   max-width: 20rem;
+}
+
+
+
+
+/* UTILITY CLASSES ///////////////////////////////////////////////////////////////////////////// */
+
+.nomargin {
+  margin: 0;
+}
+.lowmargin {
+  margin: 0.25em 0;
 }

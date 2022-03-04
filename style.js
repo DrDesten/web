@@ -50,7 +50,7 @@ for (let i = 0; i < paragraph_elements.length; i++) {
   }
 }
 
-function textareaUpdateRows(ele) {
+function textareaUpdateRows(ele, min_rows = 1) {
   let lineBreakAmount = occurrences(ele.value, "\n")
-  ele.rows = lineBreakAmount + 1;
+  ele.rows = Math.max(lineBreakAmount + 1, min_rows);
 }

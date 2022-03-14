@@ -1,6 +1,6 @@
 
 .piContainer {
-    width: 100%;
+    width: 100vw;
     position: relative;
 }
 
@@ -8,4 +8,6 @@
     position: absolute;
     top: 0;
     left: 50%;
+
+    white-space: nowrap;
 }

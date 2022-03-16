@@ -46,7 +46,7 @@ function searchPi(text = "") {
     PiHTML.style.transition = "transform 0.0s"
     PiHTML.style.transform = `translateX(${lastPositionRelativeTranslation}%)`
     PiHTML.style.transition = "transform 0.2s"
-    const styleTimeout = setTimeout(() => PiHTML.style.transform = `translateX(${translation}%)`, 10)
+    const styleTimeout = setTimeout(() => PiHTML.style.transform = `translateX(${translation}%)`, 25)
 
     cl(lastPositionRelativeTranslation)
     cl(translation)

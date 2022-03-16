@@ -9,7 +9,7 @@
 .pi-fillscreen-center {
     position: absolute;
     top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -37.5%);
 }
 
 .pi-container {
@@ -29,6 +29,8 @@
     white-space: nowrap;
     width: max-content;
 
+    margin: 0;
+
     transform: translateX(0);
     transition: transform 0.2s;
 
@@ -38,6 +40,19 @@
 }
 
 
+
+#pi-search-display {
+    text-align: center;
+    margin: 0;
+
+    opacity: 0.5;
+
+    font-size: 7rem;
+    /* font-family: 'Courier Prime', monospace; */
+    font-family: 'Azeret Mono', monospace;
+
+    transition: color 0.5s;
+}
 
 
 

@@ -12,6 +12,7 @@ fetch(PiMioURL)
     .then(text => piString = text)
 
 
+var previousIndex = 0
 function searchPi(text = "") {
     text = text.replace(/[^0-9]/g, "")
     if (text.length == 0) { // Empty Text
@@ -36,13 +37,19 @@ function searchPi(text = "") {
 
     var charOffset  = (text.length * 0.5)
     var displayStringIndexOffset = Math.min(index - 100, 0) * 0.5 - Math.max(index + 100 - piString.length, 0) * -0.5
-    var translation = ((displayString.length * 0.5 + (charOffset + displayStringIndexOffset)) / displayString.length) * 100;
+    var translation = -((displayString.length * 0.5 + (charOffset + displayStringIndexOffset)) / displayString.length) * 100;
 
-    console.log(translation)
-    console.log(displayString.length)
-    console.log(displayStringIndexOffset)
+    var lastPositionRelative = (index - previousIndex) / displayString.length
+    var lastPositionRelativeTranslation = -Math.min(Math.max(lastPositionRelative * 100 - translation, -75), 75)
 
     PiHTML.innerHTML = displayString
-    PiHTML.style.transform = "translateX(-75%)"
-    const styleTimeout = setTimeout(() => PiHTML.style.transform = `translateX(-${translation}%)`, 100)
+    PiHTML.style.transition = "transform 0.0s"
+    PiHTML.style.transform = `translateX(${lastPositionRelativeTranslation}%)`
+    PiHTML.style.transition = "transform 0.2s"
+    const styleTimeout = setTimeout(() => PiHTML.style.transform = `translateX(${translation}%)`, 10)
+
+    cl(lastPositionRelativeTranslation)
+    cl(translation)
+
+    previousIndex = index
 }

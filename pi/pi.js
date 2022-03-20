@@ -18,8 +18,10 @@ function searchPi(text = "") {
     text = text.replace(/[^0-9]/g, "")
     if (text.length == 0) { // Empty Text
         piSearchOut.innerHTML = "Search"
+        piSearchOut.style.color = "inherit"
         piSearchOut.style.opacity = "0.5"
         piIndexOut.innerHTML = "#???"
+        piIndexOut.style.color = "rgb(0, 206, 86)"
         return
     } else {
         piSearchOut.innerHTML = text

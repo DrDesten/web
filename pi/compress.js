@@ -31,5 +31,30 @@ class uint32 {
 function compressNumString(str = "") {
     str.replace(/[^0-9]/g, "")
     cl(str)
+
     compressedString = ""
+    while (str.length > 0) {
+        chunk = str.slice(0,9)
+        str   = str.slice(9)
+ 
+        chunkBytes = new uint32(parseFloat(chunk)).splitBytes()
+        chars      = String.fromCharCode(...chunkBytes)
+        compressedString += chars
+    }
+
+    return compressedString
+}
+
+function uncompressNumString(str = "") {
+    uncompressedString = ""
+
+    while (str.length > 0) {
+        chunk = str.slice(0,4)
+        str   = str.slice(4)
+
+        chunkBytes = [...chunk].map(char => char.charCodeAt(0))
+        uncompressedString += String(new uint32(chunkBytes).toNum())
+    }
+
+    return uncompressedString
 }

@@ -53,7 +53,18 @@
 
     transition: color 0.5s;
 }
+#pi-index-display {
+    text-align: center;
+    color:rgb(0, 206, 86);
+    margin: 0;
 
+    opacity: 0.6;
+
+    font-size: 3rem;
+    /* font-family: 'Courier Prime', monospace; */
+    font-family: 'Azeret Mono', monospace;
+    transition: color 0.5s;
+}
 
 
 #pi-search {

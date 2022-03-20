@@ -4,6 +4,7 @@ var piString = "3.14159265358979323846264338327950288419716939937510582097494459
 
 var PiHTML = document.getElementById("pi")
 var piSearchOut = document.getElementById("pi-search-display")
+var piIndexOut = document.getElementById("pi-index-display")
 
 PiHTML.innerHTML = piString
 
@@ -18,6 +19,7 @@ function searchPi(text = "") {
     if (text.length == 0) { // Empty Text
         piSearchOut.innerHTML = "Search"
         piSearchOut.style.opacity = "0.5"
+        piIndexOut.innerHTML = "#???"
         return
     } else {
         piSearchOut.innerHTML = text
@@ -27,9 +29,13 @@ function searchPi(text = "") {
     var match = piString.match(text)
     if (match == null) { // No match
         piSearchOut.style.color = "red"
+        piIndexOut.innerHTML = "No Match"
+        piIndexOut.style.color = "red"
         return
     } else {
         piSearchOut.style.color = "inherit"
+        piIndexOut.innerHTML = `#${Math.max(0, match.index - 1)}`
+        piIndexOut.style.color = "rgb(0, 206, 86)"
     }
 
     var index = match.index

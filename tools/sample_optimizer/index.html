@@ -53,7 +53,7 @@
     <form name="input" action="" method="GET">
 
       <textarea type="text" id="sample_input" rows="10" placeholder="Enter Sample Array Here (Only GLSL arrays accepted)" oninput="textareaUpdateRows(this)"></textarea>
-      <input type="button" value="Submit" onclick="submitText('sample_input')">
+      <input type="button" value="Submit" onclick="optimizeArray(this.form.sample_input.value)">
  
     </form>
   </section>

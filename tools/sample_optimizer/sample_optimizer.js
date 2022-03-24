@@ -205,7 +205,11 @@ function improveProgressiveness2D(arr = [[]], steps = 100) {
 
 
 function optimizeArray(str = "", steps = 100) {
+    console.log(str)
     let values = glsl_parse_vec2_array(str)
     improveProgressiveness2D(values, steps)
+
+    let out = document.getElementById("output")
+    out.innerHTML = html_code(glsl_array(values, "progressive"))
     console.log(values)
 }

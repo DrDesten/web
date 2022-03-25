@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Vogel Disk Sample Calculator</title>
+  <title>Sample Optimizer - Progressify Arrays</title>
   <link rel="stylesheet" href="../../general.css">
 </head>
 
@@ -51,18 +51,22 @@
     <p class="paragraph">
     </p>
     <form name="input" action="" method="GET">
-
-      <textarea type="text" id="sample_input" rows="10" placeholder="Enter Sample Array Here (Only GLSL arrays accepted)" oninput="textareaUpdateRows(this)"></textarea>
-      <input type="button" value="Submit" onclick="optimizeArray(this.form.sample_input.value)">
+      <label for="steps_input">Monte-Carlo Steps</label><br>
+      <input type="number" name="steps_input" placeholder="Enter Step Count">
+      <br>
+      <textarea type="text" id="array_input" rows="10" placeholder="Enter Sample Array Here (Only GLSL arrays accepted)" oninput="textareaUpdateRows(this)"></textarea>
+      <input type="button" value="Submit" onclick="document.getElementById('progress').style.width = '5%'; const a = setTimeout(()=>optimizeArray(this.form.array_input.value, this.form.steps_input.value), 150)">
  
     </form>
   </section>
-  <section class="paragraph">
+  <!-- <section class="paragraph">
     <div class="chart">
       <canvas id="preview_chart" width="200" height="200"></canvas>
     </div>
-  </section>
+  </section> -->
+  <section class="paragraph"><div class="loading" id="progress"></div></section>
   <section class="paragraph">
+    <h3 class="paragraph" id="output_progressiveness">Progressiveness:</h3>
     <h3 class="paragraph">GLSL Code</h3>
     <p class="paragraph" id="output">
       The code will show here

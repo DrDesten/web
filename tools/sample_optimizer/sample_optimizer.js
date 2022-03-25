@@ -157,12 +157,15 @@ function improveProgressiveness1D(arr = [], steps = 1000) {
 
 }
 
-function improveProgressiveness2D(arr = [[]], steps = 100) {
+function improveProgressiveness2D(arr = [[]], steps = 100, loadingBarId = undefined) {
 
-    let progressiveness
+    let loadingBar
+    if (loadingBarId != undefined) loadingBar = document.getElementById(loadingBarId)
+
+    let progressiveness = judgeProgressiveness2D(arr)
     for (let i = 0; i < steps; i++) {
 
-        progressiveness = judgeProgressiveness2D(arr)
+        //progressiveness = judgeProgressiveness2D(arr)
 
         let pos1 = randInt(0, arr.length)
         let pos2 = randInt(0, arr.length)
@@ -183,11 +186,20 @@ function improveProgressiveness2D(arr = [[]], steps = 100) {
             arr[pos2] = tmp
         }
 
+        /* if (loadingBarId != undefined && i%10000 == 0) {
+            let loadingStatus = i / steps
+            loadingBar.style.width = `0%`
+            loadingBar.style.width = `${loadingStatus * 100}%`
+            //console.log(loadingStatus * 100)
+            //console.log(`${loadingStatus * 100}%`)
+        } */
+
     }
 
-    console.log(progressiveness)
+    if (loadingBarId != undefined) loadingBar.style.width = "100%"
 
-    return arr
+    return progressiveness
+    //return arr //Array is modified in-place since js works with pointers
 
 }
 
@@ -205,11 +217,13 @@ function improveProgressiveness2D(arr = [[]], steps = 100) {
 
 
 function optimizeArray(str = "", steps = 100) {
-    console.log(str)
-    let values = glsl_parse_vec2_array(str)
-    improveProgressiveness2D(values, steps)
+    let varname = str.match(/vec[2-4]\s+(\w+)\[[0-9]*\]/i)[1] // Extract variable name
+    varname     = varname.replace(/_progressive\b/i, "")
+    let values  = glsl_parse_vec2_array(str)
 
-    let out = document.getElementById("output")
-    out.innerHTML = html_code(glsl_array(values, "progressive"))
-    console.log(values)
+    let progressiveness = improveProgressiveness2D(values, steps, "progress")
+    document.getElementById("output_progressiveness").innerHTML = `Progressiveness: ${progressiveness}`
+
+    document.getElementById("output").innerHTML = html_code(glsl_array(values, varname + "_progressive"))
+    //console.log(values)
 }

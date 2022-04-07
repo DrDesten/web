@@ -233,9 +233,9 @@ function improveProgressiveness2D(arr = [[]], steps = 100, loadingBarId = undefi
 
 
 function optimizeArray(str = "", steps = 100) {
-    let varname = str.match(/vec[2-4]\s+(\w+)\[[0-9]*\]/i)[1] // Extract variable name
+    let varname = str.match(/(vec|float)[2-4](\[[0-9]*\])?\s+(\w+)(\[[0-9]*\])?/i)[3] // Extract variable name
     varname     = varname.replace(/_progressive\b/i, "")
-    let values  = glsl_parse_vec2_array(str)
+    let values  = multilang_parse_vec2_array(str)
 
     let progressiveness = improveProgressiveness2D(values, steps, "progress")
     document.getElementById("output_progressiveness").innerHTML = `Progressiveness: ${progressiveness}`

@@ -83,7 +83,7 @@
       Why doesn't the algorithm just check every possible combination? <br>
       The amount of permutations for a sequence of length n is n! (n factorial). For an array of length 16 there would already be 20.922.789.888.000 combinations, and no computer can calculate that in a reasonable amount of time. <br>
 
-      The complexity of the progressiveness evaluation is O(1/6n³+1/2n²-2/3n) ≈ 0(1/6x³), so it increases cubically.
+      The complexity of the progressiveness evaluation is O(n³), so it increases cubically.
       An array of length 64 will take roughly 64 times longer to compute than an array of length 16, despite it only being 4 times the size.
     </p>
   </section>

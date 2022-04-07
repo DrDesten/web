@@ -94,16 +94,16 @@
       <label for="steps_input">Monte-Carlo Steps</label><br>
       <input type="number" name="steps_input" placeholder="Enter Step Count">
       <br>
-      <textarea type="text" id="array_input" rows="10" placeholder="Enter Sample Array Here (Only GLSL arrays accepted)" oninput="textareaUpdateRows(this)"></textarea>
+      <textarea type="text" id="array_input" rows="10" placeholder="Enter Sample Array Here (Only GLSL arrays accepted)" oninput="textareaUpdateRows(this, 1, 30)"></textarea>
       <input type="button" value="Submit" onclick="document.getElementById('progress').style.width = '5%'; const a = setTimeout(()=>optimizeArray(this.form.array_input.value, this.form.steps_input.value), 150)">
  
     </form>
   </section>
-  <!-- <section class="paragraph">
+  <section class="paragraph">
     <div class="chart">
       <canvas id="preview_chart" width="200" height="200"></canvas>
     </div>
-  </section> -->
+  </section>
   <section class="paragraph"><div class="loading" id="progress"></div></section>
   <section class="paragraph">
     <h3 class="paragraph" id="output_progressiveness">Progressiveness:</h3>

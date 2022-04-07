@@ -15,7 +15,6 @@ let data = {
     datasets: [{
         label: 'Sample Preview',
         data: [{x:0,y:0}],
-        backgroundColor: 'rgb(255, 99, 132)'
     }],
 };
 
@@ -47,12 +46,22 @@ let config = {
         elements: {
             point: {
                 radius: 7.5,
+                borderWidth: 0,
+                backgroundColor: function(context) {
+                    let pos = context.dataIndex / (context.dataset.data.length - 1);
+                    return `rgb(${pos * 255}, ${pos * 255}, ${pos * 255})`
+                },
             }
         }
     }
 };
 
 const chart = new Chart(ctx, config)
+
+function updateChart(valueArray = []) {
+    chart.data.datasets[0].data = valueArray.map(val => { return {x: val[0], y: val[1]} });
+    chart.update();
+}
 
 
 
@@ -82,7 +91,7 @@ function judgeProgressiveness1D(arr = []) {
     }
 
     let progressiveness = calcVariance(averages, calcAverage(averages)) + calcVariance(variances, calcAverage(variances))
-    progressiveness     = 1 / (progressiveness + 1);
+    progressiveness     = 1 / (progressiveness * 25 + 1);
     return progressiveness
 }
 
@@ -112,7 +121,7 @@ function judgeProgressiveness2D(arr = [[]]) {
     //console.log(averages, variances)
 
     let progressiveness = calcVariance2D(averages, calcAverage2D(averages)).reduce((sum, curr) => sum+curr, 0) + calcVariance(variances, calcAverage(variances))
-    progressiveness     = 1 / (progressiveness + 1);
+    progressiveness     = 1 / (progressiveness * 25 + 1);
     return progressiveness
 }
 
@@ -203,6 +212,7 @@ function improveProgressiveness2D(arr = [[]], steps = 100, loadingBarId = undefi
     }
 
     if (loadingBarId != undefined) loadingBar.style.width = "100%"
+    updateChart(arr);
 
     return progressiveness
     //return arr //Array is modified in-place since js works with pointers

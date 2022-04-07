@@ -81,8 +81,13 @@ const testString =
 );`
 
 
-function glsl_parse_vec2_array(str = "") {
+function glsl_parse_vec2_array(str = "") { // Get the values out of a glsl array
     const vec2Values = /vec2\(([0-9\.-]+), *([0-9\.-]+)\)/g // Regex to extract values
+    let values = [...str.matchAll(vec2Values)].map(e => [parseFloat(e[1]),parseFloat(e[2])]) // Extracts all values, converts them to float and then puts them in a 2d array
+    return values
+}
+function multilang_parse_vec2_array(str = "") {  // Get the values out of a glsl/hlsl array
+    const vec2Values = /(vec2|float2)\(([0-9\.-]+), *([0-9\.-]+)\)/g // Regex to extract values
     let values = [...str.matchAll(vec2Values)].map(e => [parseFloat(e[1]),parseFloat(e[2])]) // Extracts all values, converts them to float and then puts them in a 2d array
     return values
 }

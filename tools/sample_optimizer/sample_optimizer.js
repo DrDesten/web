@@ -91,7 +91,7 @@ function judgeProgressiveness1D(arr = []) {
     }
 
     let progressiveness = calcVariance(averages, calcAverage(averages)) + calcVariance(variances, calcAverage(variances))
-    progressiveness     = 1 / (progressiveness * 25 + 1);
+    progressiveness     = 1 / (progressiveness * 5 + 1);
     return progressiveness
 }
 
@@ -121,7 +121,7 @@ function judgeProgressiveness2D(arr = [[]]) {
     //console.log(averages, variances)
 
     let progressiveness = calcVariance2D(averages, calcAverage2D(averages)).reduce((sum, curr) => sum+curr, 0) + calcVariance(variances, calcAverage(variances))
-    progressiveness     = 1 / (progressiveness * 25 + 1);
+    progressiveness     = 1 / (progressiveness * 5 + 1);
     return progressiveness
 }
 

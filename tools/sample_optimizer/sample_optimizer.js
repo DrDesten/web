@@ -61,6 +61,9 @@ const chart = new Chart(ctx, config)
 function calcAverage(arr) { return arr.reduce((sum, curr) => sum + curr, 0) / arr.length }
 function calcVariance(arr, average) { return arr.reduce((sum, curr) => sum + ((curr - average)*(curr - average)), 0) / arr.length }
 
+function calcVarianceSqrtWeight(arr, average) { return arr.reduce((sum, curr, i) => sum + (Math.sqrt(i+1)*(curr - average)*(curr - average)), 0) / arr.length }
+// The respective scaling factor wouldn't actually be 1/arr.length but arr.length**1.5/1.5 - 1/1.5, but it doesn't matter in this context
+
 function judgeProgressiveness1D(arr = []) {
 
     let averages = [], variances = []
@@ -85,6 +88,9 @@ function judgeProgressiveness1D(arr = []) {
 
 function calcAverage2D(arr) { average = arr.reduce((sum, curr) => [sum[0]+curr[0],sum[1]+curr[1]], [0,0]); return [average[0]/arr.length, average[1]/arr.length] }
 function calcVariance2D(arr, average) { variance = arr.reduce((sum, curr) => [sum[0]+((curr[0]-average[0])*(curr[0]-average[0])), sum[1]+((curr[1]-average[1])*(curr[1]-average[1]))], [0,0]); return [variance[0]/arr.length, variance[1]/arr.length] }
+
+function calcVariance2DSqrtWeight(arr, average) { variance = arr.reduce((sum, curr, i) => [sum[0]+(Math.sqrt(i+1)*(curr[0]-average[0])*(curr[0]-average[0])), sum[1]+(Math.sqrt(i+1)*(curr[1]-average[1])*(curr[1]-average[1]))], [0,0]); return [variance[0]/arr.length, variance[1]/arr.length] }
+// The respective scaling factor wouldn't actually be 1/arr.length but arr.length**1.5/1.5 - 1/1.5, but it doesn't matter in this context
 
 function judgeProgressiveness2D(arr = [[]]) {
 

@@ -237,6 +237,14 @@ function optimizeArray(str = "", steps = 100) {
     varname     = varname.replace(/_progressive\b/i, "")
     let values  = multilang_parse_vec2_array(str)
 
+    let maxSampleDistance = values.reduce((prev, curr) => Math.max(prev, Math.abs(curr[0]), Math.abs(curr[1])), 0)
+    maxSampleDistance     = Math.max(maxSampleDistance * 1.1, 0.1);
+    chart.options.scales.x.min = -maxSampleDistance
+    chart.options.scales.x.max =  maxSampleDistance
+    chart.options.scales.y.min = -maxSampleDistance
+    chart.options.scales.y.max =  maxSampleDistance
+    chart.update()
+
     let progressiveness = improveProgressiveness2D(values, steps, "progress")
     document.getElementById("output_progressiveness").innerHTML = `Progressiveness: ${progressiveness}`
 

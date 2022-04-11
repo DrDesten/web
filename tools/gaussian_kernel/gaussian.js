@@ -32,15 +32,20 @@ function calculateSamples_dynamic(form, output_id, samples) {
     }
 }
 function calculateSamples(form, output_id) {
-    var output  = document.getElementById(output_id)
-    var samples = parseInt(form.sample_input.value)
+    let   output  = document.getElementById(output_id)
+    const samples = parseInt(form.sample_input.value)
     if (isNaN(samples)) {return}
 
-    var array   = pascalTriangle(samples)
-    var sum     = array.reduce((prev, curr) => {return prev + curr}, 0) // Accumulate Array Sum
+    let array   = pascalTriangle(samples)
+    let sum     = array.reduce((prev, curr) => {return prev + curr}, 0) // Accumulate Array Sum
 
     array = array.map((curr) => {return curr / sum}) // Normalize Array
 
-    var html = html_code(glsl_array(array, `gaussian_${samples}`))
-    output.innerHTML = html;
+    let html = glsl_array(array, `gaussian_${samples}`)
+
+    if (form.auto_copy.checked) {
+        navigator.clipboard.writeText(html);
+    }
+
+    output.innerHTML = html_code(html);
 }

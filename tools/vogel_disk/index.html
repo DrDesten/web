@@ -65,10 +65,12 @@
       <br>
 
       <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')"><br>
-      <label for="center_output">Center Samples</label>
+      <label for="center_output" title="Centers samples around (0,0)">Center Samples</label>
       <input type="checkbox" name="Center Samples" id="center_output" checked onchange="calculateSamples(this.form, 'output')">
-      <label for="polar_coordinates">Polar Coordinates</label>
-      <input type="checkbox" name="olar Coordinates" id="polar_coordinates" onchange="calculateSamples(this.form, 'output')">
+      <label for="polar_coordinates" title="Outputs (r,θ) polar coordinates instead of (x,y) coordinates">Polar Coordinates</label>
+      <input type="checkbox" name="Polar Coordinates" id="polar_coordinates" onchange="calculateSamples(this.form, 'output')">
+      <label for="auto_copy" title="Automatically copies the generated GLSL code into your clipboard">Auto Copy Code</label>
+      <input type="checkbox" name="Auto Copy" id="auto_copy">
     </form>
   </section>
   <section class="paragraph">

@@ -72,17 +72,17 @@ const chart = new Chart(ctx, config)
 
 
 function calculateSamples(form, output_id) {
-    var output  = document.getElementById(output_id)
-    var samples = parseInt(form.sample_input.value)
+    let   output  = document.getElementById(output_id)
+    const samples = parseInt(form.sample_input.value)
 
-    var array = new Array(samples)
+    let array = new Array(samples)
 
-    var invSqrtSamples = 1 / Math.sqrt(samples);
+    let invSqrtSamples = 1 / Math.sqrt(samples);
     for (let i = 0; i < samples; i++) {
-        var radius = Math.sqrt(i + 0.5) * invSqrtSamples
-        var theta  = i * goldenAngle
+        let radius = Math.sqrt(i + 0.5) * invSqrtSamples
+        let theta  = i * goldenAngle
 
-        var coords = [
+        let coords = [
             radius * Math.cos(theta),
             radius * Math.sin(theta)
         ]
@@ -116,8 +116,13 @@ function calculateSamples(form, output_id) {
         })
     }
 
-    var html = html_code(glsl_array(array, `vogel_disk_${samples}`))
-    output.innerHTML = html
+    let html = glsl_array(array, `vogel_disk_${samples}`)
+
+    if (form.auto_copy.checked) {
+        navigator.clipboard.writeText(html);
+    }
+
+    output.innerHTML = html_code(html)
 }
 
 function calculateSamples_dynamic(form, output_id) {

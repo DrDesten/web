@@ -3,9 +3,10 @@
 
 :root {
   --bg-c: white;
-  --bg-c2a: #2f4958;
-  --bg-c2b: #3d2d5a;
+  --bg-c2a: rgb(47, 73, 88);
+  --bg-c2b: rgb(61, 45, 90);
   --bg-c2: linear-gradient(165deg, var(--bg-c2a) 0%, var(--bg-c2b) 100%);
+  --gb-c2-trans: linear-gradient(165deg, rgba(47, 73, 88, 0.5) 0%, rgba(61, 45, 90, 0.6) 100%);
 
   --text-dark: black;
   --text-dark2: var(--bg-c2b);
@@ -14,12 +15,12 @@
   --text-dark-a: var(--bg-c2b);
   --text-light-a: #f8d977;
 
-  --ele-shadow: 0 0 3rem rgba(0,0,0,0.15);
-  --ele-shadow-l: 0 0 2rem rgba(0,0,0,0.1);
+  --ele-shadow: 0 0 3rem rgba(0, 0, 0, 0.15);
+  --ele-shadow-l: 0 0 2rem rgba(0, 0, 0, 0.1);
   --ele-shadow-d: 0 0 2rem rgba(0, 0, 0, 0.5);
 
-  --text-shadow: 0 0 1em rgba(0,0,0,0.15);
-  --text-shadow-l: 0 0 0.4em rgba(0,0,0,0.1);
+  --text-shadow: 0 0 1em rgba(0, 0, 0, 0.15);
+  --text-shadow-l: 0 0 0.4em rgba(0, 0, 0, 0.1);
   --text-shadow-d: 0 0 0.4em rgba(0, 0, 0, 0.75);
 
   --border-rad: 0.15rem;
@@ -29,7 +30,8 @@ body {
   font-family: "Rubik", sans-serif;
   color: var(--text-dark);
 
-  padding: 0px 2rem; /* Backup */
+  padding: 0px 2rem;
+  /* Backup */
   padding: 0px clamp(0.3rem, 5vw, 5rem);
   margin: 0px;
 
@@ -41,12 +43,15 @@ a {
   text-decoration: inherit;
   color: inherit;
 }
-a:hover, a:focus {
+
+a:hover,
+a:focus {
   font-weight: bold;
 }
 
 h1 {
-  font-size: 9vw; /* Backup */
+  font-size: 9vw;
+  /* Backup */
   font-size: min(9vw, 6.5rem);
   font-weight: bold;
   width: fit-content;
@@ -54,19 +59,22 @@ h1 {
 }
 
 h2 {
-  font-size: 1.5rem; /* Backup */
+  font-size: 1.5rem;
+  /* Backup */
   font-size: clamp(1rem, 5vw, 1.5rem);
   font-weight: normal;
   color: var(--text-dark2);
 }
 
 h3 {
-  font-size: 2rem; /* Backup */
+  font-size: 2rem;
+  /* Backup */
   font-size: clamp(1.5rem, 6vw, 2rem);
   font-weight: normal;
 }
 
-input, textarea {
+input,
+textarea {
   --input-margin: 0.2em;
   --input-padding: 0.15em;
 
@@ -79,14 +87,17 @@ input, textarea {
   padding: var(--input-padding);
   margin: var(--input-margin);
 }
+
 input[type="button"] {
   padding: var(--input-padding) 0.5em;
   transition: background-color 0.2s;
 }
+
 input[type="button"]:hover,
 input[type="button"]:focus {
   background-color: var(--text-light-a);
 }
+
 input[type="checkbox"] {
   width: 1em;
   height: 1em;
@@ -112,7 +123,8 @@ pre {
 
   margin: 1rem;
 
-  width: 3rem; /* Backup */
+  width: 3rem;
+  /* Backup */
   width: min(10vh, 10vw, 4rem);
   height: auto;
 
@@ -120,7 +132,10 @@ pre {
 
   transition: box-shadow 0.2s ease-in-out;
 }
-.icon:hover, a:focus > .icon { /* Icon hover + Link focus with icon as child */
+
+.icon:hover,
+a:focus>.icon {
+  /* Icon hover + Link focus with icon as child */
   box-shadow: var(--ele-shadow-d), inset var(--ele-shadow-d);
 }
 
@@ -130,15 +145,15 @@ pre {
 table.nav {
   z-index: 1;
   position: fixed;
-  top:0;
-  right:0;
+  top: 0;
+  right: 0;
 
   width: 200%;
   padding: 0.5rem 50%;
-  transform:translateX(25%);
+  transform: translateX(25%);
 
   background-color: white;
-  
+
   transition: box-shadow 1s;
 }
 
@@ -157,6 +172,7 @@ a.nav {
 
   transition: background-color 0.2s ease-in-out;
 }
+
 a.nav:hover {
   background-color: rgb(245, 245, 245);
 }
@@ -178,7 +194,8 @@ header.fillscreen {
   height: 90vh;
   position: relative;
 }
-header.fillscreen > .fillscreen-center {
+
+header.fillscreen>.fillscreen-center {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -200,7 +217,8 @@ header.fillscreen > .fillscreen-center {
   width: 100%;
   text-align: center;
 }
-.fillscreen-bottom > img {
+
+.fillscreen-bottom>img {
   display: inline;
   width: 3rem;
   height: auto;
@@ -208,12 +226,25 @@ header.fillscreen > .fillscreen-center {
 }
 
 @keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
+
 @keyframes fadeInDown {
-  from {opacity: 0; transform: translateY(-1em);}
-  to   {opacity: 1; transform: translateY(0em);}
+  from {
+    opacity: 0;
+    transform: translateY(-1em);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0em);
+  }
 }
 
 /* TYPEWRITER ANIMATION ///////////////////////////////////////////////////////////////////////////// */
@@ -221,7 +252,9 @@ header.fillscreen > .fillscreen-center {
 .typewriter {
   position: relative;
 }
-.typewriter::before, .typewriter::after {
+
+.typewriter::before,
+.typewriter::after {
   content: "";
   position: absolute;
   top: 0;
@@ -229,10 +262,12 @@ header.fillscreen > .fillscreen-center {
   right: 0;
   left: 100%;
 }
+
 .typewriter::before {
   background-color: var(--bg-c);
   animation: var(--tw-anim-before);
 }
+
 .typewriter::after {
   width: 0.125em;
   background-color: black;
@@ -241,16 +276,25 @@ header.fillscreen > .fillscreen-center {
 }
 
 @keyframes typewriter-animation {
-  from { left: 0%; }
-  to   { left: 100%; }
+  from {
+    left: 0%;
+  }
+
+  to {
+    left: 100%;
+  }
 }
+
 @keyframes blink {
-  to {opacity: 0;}
+  to {
+    opacity: 0;
+  }
 }
 
 /* PARAGRAPHS / TEXT SECTIONS ///////////////////////////////////////////////////////////////////////////// */
 
-#main-content { /* Prevents jumping to #main-content resulting in the section being hidden by the navbar */
+#main-content {
+  /* Prevents jumping to #main-content resulting in the section being hidden by the navbar */
   transform: translateY(-4.5rem);
 }
 
@@ -267,14 +311,17 @@ section.color-variation-1 {
   background: var(--bg-c2);
   color: var(--text-light);
 }
+
 section.color-variation-1 a {
   color: var(--text-light-a);
 }
+
 section.color-variation-2 {
   background: var(--bg-c);
   color: var(--text-dark);
   box-shadow: var(--ele-shadow-l);
 }
+
 section.color-variation-2 a {
   color: var(--text-dark-a);
 }
@@ -313,6 +360,20 @@ h3.paragraph {
 .nomargin {
   margin: 0;
 }
+
 .lowmargin {
   margin: 0.25em 0;
+}
+
+
+#drdesten-shader {
+  background-image: var(--gb-c2-trans), url("./projects/drdesten-shader-bg.jpg");
+  background-position: center;
+  background-size: cover;
+}
+
+#stracc-shader {
+  background-image: var(--gb-c2-trans), url("./projects/stracc-bg.jpg");
+  background-position: center;
+  background-size: cover;
 }

@@ -31,15 +31,15 @@ function arrToString( arr = [], brackets = "[]", separator = ", " ) {
 
 function calculateSequence( form, out_id = "" ) {
     const n = parseInt( form.sequence_length.value )
-    const start = parseInt( form.sequence_start.value )
-    const end = parseInt( form.sequence_end.value )
+    const start = parseFloat( form.sequence_start.value )
+    const end = parseFloat( form.sequence_end.value )
     const round = parseInt( form.precision.value )
     const lin = parseFloat( form.sequence_lin.value )
 
     let sequence = generateSequence( n, start, end, lin )
     sequence = sequence.map( x => parseFloat( x.toFixed( round ) ).toFixed( round ) )
 
-    let output = arrToString( sequence )
+    let output = arrToString( sequence , "[]", " ")
 
     if ( form.auto_copy.checked ) {
         navigator.clipboard.writeText( output )

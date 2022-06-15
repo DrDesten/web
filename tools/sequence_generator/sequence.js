@@ -16,9 +16,9 @@ function generateSequence( count = 1, start = 0, end = 1, linearity = 0 ) {
 
     let seq = []
     for ( let i = 0; i < count; i++ ) {
-        let val = i
+        let val = transform(i / (count - 1)) * (count - 1)
         val *= Math.abs( end - start ) / ( count - 1 )
-        val = transform( val )
+        //val = transform( val )
         val += Math.min( end, start )
         seq.push( val )
     }

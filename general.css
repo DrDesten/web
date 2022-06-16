@@ -371,6 +371,14 @@ h3.paragraph {
   transition: width 0.1s ease-in-out, background-color 1s ease-in-out;
 }
 
+/* TABLE ///////////////////////////////////////////////////////////////////////////// */
+
+table td {
+  text-align: left;
+  vertical-align: top;
+}
+
+
 /* UTILITY CLASSES ///////////////////////////////////////////////////////////////////////////// */
 
 .nomargin {

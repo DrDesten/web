@@ -48,7 +48,28 @@
 
   <section class="paragraph">
     <p class="paragraph">
-      This Tool allows you to generate nonlinear (and linear) number sequences
+      This Tool allows you to generate nonlinear (and linear) number sequences. <br>
+    <table>
+      <tr>
+        <td><b>Options</b></td>
+      </tr>
+      <tr>
+        <td>Sequence Length:</td>
+        <td>Amount of numbers in a sequence</td>
+      </tr>
+      <tr>
+        <td>Start / End:</td>
+        <td>Sequence Start and End (inclusive)</td>
+      </tr>
+      <tr>
+        <td>Linearity:</td>
+        <td>Skews the numbers no either emphasize lower or higher numbers. Positive values emphasize lower numbers, negative values emphasize higher numbers. 0 is linear.</td>
+      </tr>
+      <tr>
+        <td>Human Rounding:</td>
+        <td>Adds a digit and rounds so that it's either 5 or 0, looks nicer.</td>
+      </tr>
+    </table>
     </p>
     <form name="input" action="" method="GET">
       <input type="number" min="0" value="11" step="1" name="sequence_length" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">

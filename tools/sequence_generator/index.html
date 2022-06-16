@@ -59,8 +59,10 @@
       <label for="sequence_start" title="Sequence Start">Start</label><br>
       <input type="number" value="1" step="any" name="sequence_end" placeholder="End" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
       <label for="sequence_end" title="Sequence End">End</label><br>
-      <input type="number" min="0" max="14" value="2" step="1"  name="precision" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+      <input type="number" min="0" max="14" value="2" step="1" name="precision" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
       <label for="precision" title="Decimal Places">Decimal Places</label><br>
+      <input type="checkbox" checked="true" name="round_human" oninput="calculateSequence(this.form, 'output')">
+      <label for="round_human" title="Rounds to 5 or 0 at the end of numbers">Human Rouding</label><br>
       <br>
 
       <input type="button" value="Calculate" onclick="calculateSequence(this.form, 'output')">

@@ -6,7 +6,7 @@
   --bg-c2a: rgb(47, 73, 88);
   --bg-c2b: rgb(61, 45, 90);
   --bg-c2: linear-gradient(165deg, var(--bg-c2a) 0%, var(--bg-c2b) 100%);
-  --gb-c2-trans: linear-gradient(165deg, rgba(47, 73, 88, 0.5) 0%, rgba(61, 45, 90, 0.6) 100%);
+  --gb-c2-trans: linear-gradient(215deg, rgba(47, 73, 88, 0.55) 0%, rgba(62, 49, 97, 0.7) 100%);
 
   --text-dark: black;
   --text-dark2: var(--bg-c2b);
@@ -387,17 +387,4 @@ table td {
 
 .lowmargin {
   margin: 0.25em 0;
-}
-
-
-#drdesten-shader {
-  background-image: var(--gb-c2-trans), url("./projects/drdesten-shader-bg.jpg");
-  background-position: center;
-  background-size: cover;
-}
-
-#stracc-shader {
-  background-image: var(--gb-c2-trans), url("./projects/stracc-bg.jpg");
-  background-position: center;
-  background-size: cover;
 }

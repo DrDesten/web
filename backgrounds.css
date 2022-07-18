@@ -1,0 +1,17 @@
+#drdesten-shader {
+    background-image: var(--gb-c2-trans), url("./projects/drdesten-shader-bg.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+#stracc-shader {
+    background-image: var(--gb-c2-trans), url("./projects/stracc-bg.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+#asi-glsl {
+    background-image: var(--gb-c2-trans), url("./projects/asi-bg.jpg");
+    background-position: center;
+    background-size: cover;
+}

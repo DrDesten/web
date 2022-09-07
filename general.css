@@ -320,6 +320,7 @@ section.paragraph {
   margin: 2rem 0px;
 
   border-radius: var(--border-rad);
+  transition: opacity 0.2s ease-in-out 0.05s
 }
 
 /* Color Alternation for paragraph sections */

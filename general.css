@@ -24,6 +24,8 @@
   --text-shadow-d: 0 0 0.4em rgba(0, 0, 0, 0.75);
 
   --border-rad: 0.15rem;
+
+  --snap-ease: cubic-bezier(.25,0,0,1);
 }
 
 body {
@@ -320,7 +322,7 @@ section.paragraph {
   margin: 2rem 0px;
 
   border-radius: var(--border-rad);
-  transition: opacity 0.2s ease-in-out 0.05s
+  transition: opacity 0.9s var(--snap-ease)
 }
 
 /* Color Alternation for paragraph sections */

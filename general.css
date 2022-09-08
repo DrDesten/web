@@ -3,8 +3,8 @@
 
 :root {
   --bg-c: white;
-  --bg-c2a: rgb(47, 73, 88);
-  --bg-c2b: rgb(61, 45, 90);
+  --bg-c2a: hsl(202, 30%, 26%);
+  --bg-c2b: hsl(261, 33%, 26%);
   --bg-c2: linear-gradient(165deg, var(--bg-c2a) 0%, var(--bg-c2b) 100%);
   --gb-c2-trans: linear-gradient(215deg, rgba(47, 73, 88, 0.55) 0%, rgba(62, 49, 97, 0.7) 100%);
 

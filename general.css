@@ -326,6 +326,18 @@ section.paragraph {
 }
 
 /* Color Alternation for paragraph sections */
+section.paragraph {
+  --bg-random: var(--bg-c2);
+  --bg-random-trans: var(--gb-c2-trans);
+}
+section.color-variation-dark {
+  background: var(--bg-random);
+  color: var(--text-light);
+}
+section.color-variation-dark a {
+  color: var(--text-light-a);
+}
+
 section.color-variation-1 {
   background: var(--bg-c2);
   color: var(--text-light);

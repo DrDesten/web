@@ -1,3 +1,5 @@
+const isTouchDevice = Boolean( 'ontouchstart' in window || navigator.maxTouchPoints || navigator.msMaxTouchPoints )
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

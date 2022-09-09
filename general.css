@@ -338,24 +338,6 @@ section.color-variation-dark a {
   color: var(--text-light-a);
 }
 
-section.color-variation-1 {
-  background: var(--bg-c2);
-  color: var(--text-light);
-}
-
-section.color-variation-1 a {
-  color: var(--text-light-a);
-}
-
-section.color-variation-2 {
-  background: var(--bg-c);
-  color: var(--text-dark);
-  box-shadow: var(--ele-shadow-l);
-}
-
-section.color-variation-2 a {
-  color: var(--text-dark-a);
-}
 
 p.paragraph {
   font-size: 1rem;

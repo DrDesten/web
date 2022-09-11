@@ -9,7 +9,7 @@ if (!isTouchDevice) {
     for (const ele of floatingElements) {
       const factor = -ele.getAttribute("float-depth")
       const displace = {x: factor * rx, y: factor * ry}
-      ele.style.transform = `translate(${displace.x}rem, ${displace.y}rem)`
+      ele.style.transform = `translate(${displace.x.toFixed(10)}rem, ${displace.y.toFixed(10)}rem)`
     }
   }
   

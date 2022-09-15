@@ -75,14 +75,17 @@ document.querySelectorAll("textarea[type=text]").forEach(ele => {
 // Fade in paragrapth blocks
 const observer = new IntersectionObserver((entries, observer) => {
   entries.forEach(entry => {
-    if (entry.intersectionRatio > 0) entry.target.style.opacity = 1
+    if (entry.intersectionRatio > 0) {
+      entry.target.classList.remove("paragraph-hidden")
+      entry.target.classList.add("paragraph-visible")
+    }
   })
 }, { root: null, threshold: 0.0 })
 document.querySelectorAll("section.paragraph").forEach(ele => {
   let rect = ele.getBoundingClientRect()
   let height = Math.max(document.documentElement.clientHeight, window.innerHeight)
-  if (rect.top > height || rect.bottom < 0) {
-    ele.style.opacity = 0
+  if (rect.top > height || rect.bottom < 0) { // If the element is currently off-screen
+    ele.classList.add("paragraph-hidden")
     observer.observe(ele)
   }
 })

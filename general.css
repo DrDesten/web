@@ -152,7 +152,7 @@ pre {
 }
 
 .icon:hover,
-a:focus>.icon {
+a:focus > .icon {
   /* Icon hover + Link focus with icon as child */
   box-shadow: var(--ele-shadow-d), inset var(--ele-shadow-d);
 }
@@ -213,7 +213,7 @@ header.fillscreen {
   position: relative;
 }
 
-header.fillscreen>.fillscreen-center {
+header.fillscreen > .fillscreen-center {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -236,7 +236,7 @@ header.fillscreen>.fillscreen-center {
   text-align: center;
 }
 
-.fillscreen-bottom>img {
+.fillscreen-bottom > img {
   display: inline;
   width: 3rem;
   height: auto;
@@ -323,7 +323,15 @@ section.paragraph {
   margin: 2rem 0px;
 
   border-radius: var(--border-rad);
-  transition: opacity 0.9s var(--snap-ease)
+  transition: opacity 0.9s var(--snap-ease), transform 0.4s var(--snap-ease)
+}
+section.paragraph-hidden {
+  opacity: 0;
+  transform: scale(95%);
+}
+section.paragraph-visible {
+  opacity: 1;
+  transform: scale(100%);
 }
 
 /* Color Alternation for paragraph sections */

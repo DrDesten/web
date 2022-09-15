@@ -46,10 +46,10 @@ window.addEventListener("scroll", e => {
 // Add Alternating Colors to sections
 const c = [
   {h: 202, s: 35, l: 20},
-  {h: 207, s: 40, l: 20},
+  {h: 185, s: 45, l: 20},
   {h: 226, s: 30, l: 20},
-  {h: 337, s: 60, l: 20},
-  {h: 110, s: 50, l: 20},
+  {h: 334, s: 60, l: 20},
+  {h: 110, s: 50, l: 18},
 ]
 let index = Math.round(Math.random() * 2**53) % c.length
 document.querySelectorAll("section.paragraph").forEach(ele => {
@@ -58,6 +58,7 @@ document.querySelectorAll("section.paragraph").forEach(ele => {
   ele.style.setProperty("--bg-random", `linear-gradient(165deg, hsl(${color.h},${color.s}%,${color.l}%) 0%, hsl(${(color.h + 60) % 360},${color.s + 10}%,${color.l - 5}%) 100%)`)
   //ele.style.setProperty("--bg-random-trans", `linear-gradient(165deg, hsla(${color.h},${color.s}%,${color.l}%,0.55) 0%, hsl(${(color.h + 60) % 360},${color.s + 10}%,${color.l - 5}%,0.7) 100%)`)
   index = (index + 0.6180339887498948 * c.length) % c.length
+  console.log(color)
 })
 
 

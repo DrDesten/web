@@ -27,8 +27,8 @@ for ( let i = 0; i < numOfLines; i++ ) {
 
     const start = new THREE.Vector3(Math.random(), Math.random(), Math.random())
         .multiplyScalar(2).subScalar(1)
-        .normalize().multiplyScalar(1 + Math.random())
-    const end   = start.clone().multiplyScalar( 1 + 10 * Math.random() )
+        .normalize().multiplyScalar(0.5 + Math.random() * 5 )
+    const end   = start.clone().multiplyScalar( 1 + 5 * Math.random() )
 
     const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints( [ start, end ] ),
@@ -58,16 +58,17 @@ function animate( time ) {
     requestAnimationFrame( animate );
 
     time /= 1000
-    camera.position.set( Math.sin(time) * distance, 0, Math.cos(time) * distance)
+    camera.position.set( Math.sin(time) * distance, Math.sin(time) * distance * 0.25, Math.cos(time) * distance)
     camera.lookAt( 0, 0, 0 );
 
     lines.forEach( line => {
         const vertices = line.geometry.attributes.position.array
 
         let start = new THREE.Vector3().fromArray(vertices)
+        const startLength = start.length()
         let end = new THREE.Vector3().fromArray(vertices, 3)
 
-        start.add( new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).multiplyScalar(0.1) ).normalize().multiplyScalar(start.length())
+        start.add( new THREE.Vector3(Math.random() - .5, Math.random() - .5, Math.random() - .5).multiplyScalar(0.1) ).normalize().multiplyScalar(startLength)
         end = start.clone().normalize().multiplyScalar( end.length() )
 
         start.toArray(vertices)

@@ -15,7 +15,7 @@ const lines = []
         line.opacity( (length / (maxLength + minLength) + minLength ) ** .1 )
 
         if (length > 7) line.color("#fe2")
-        if (length < 2) line.color("#46f")
+        if (length < 2) line.color("#9af")
 
         const start = new SVG.vector( Math.random(), Math.random() ).mul(100)
         const end   = start.add( new SVG.vector( Math.sin(angle), Math.cos(angle) ).mul(length) )

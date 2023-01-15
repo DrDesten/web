@@ -35,6 +35,7 @@ export class Circles {
                     const stride = 0 // how many bytes to get from one set of values to the next. 0 = use type and dimension above
                     const offset = 0
                     this.gl.bindBuffer( this.gl.ARRAY_BUFFER, this.position )
+                    this.gl.enableVertexAttribArray( attributeLocation )
                     this.gl.vertexAttribPointer(
                         attributeLocation,
                         dimension,
@@ -43,7 +44,6 @@ export class Circles {
                         stride,
                         offset
                     )
-                    this.gl.enableVertexAttribArray( attributeLocation )
                 }
             }
         }

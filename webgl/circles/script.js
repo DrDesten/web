@@ -314,7 +314,9 @@ class Circle {
 
 /** @type {HTMLCanvasElement} */
 const canvas = document.querySelector( "#canvas" )
-const gl = canvas.getContext( "webgl" )
+canvas.width = canvas.clientWidth
+canvas.height = canvas.clientHeight
+const gl = canvas.getContext( "webgl2" )
 const Engine = new Circles( gl )
 //const CanvasHandler = new Circles.CanvasHandler(canvas, 0.5)
 
@@ -325,30 +327,29 @@ if ( gl === null ) {
 }
 
 
-// Set clear color to black, fully opaque
-gl.clearColor( 0.0, 0.0, 0.0, 1.0 )
-// Clear the color buffer with specified clear color
-gl.clear( gl.COLOR_BUFFER_BIT )
 
 
 const vertexShaderSource = `
 
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+  precision highp float;
+#else
+  precision mediump float;
+#endif
+
 attribute vec4 vertexPosition;
 attribute vec2 textureCoordinate;
-attribute vec2 keypoint1;
-attribute vec2 keypoint2;
-attribute vec2 keypoint3;
-attribute vec2 keypoint4;
+attribute vec2 keypoint1, keypoint2, keypoint3, keypoint4;
 attribute vec4 vertexColor;
 
 uniform mat4 modelViewMatrix, projectionMatrix;
 
-varying highp vec4 color;
-varying highp vec2 coord;
-varying highp vec2 kp1;
-varying highp vec2 kp2;
-varying highp vec2 kp3;
-varying highp vec2 kp4;
+varying vec4 color;
+varying vec2 coord;
+varying vec2 kp1;
+varying vec2 kp2;
+varying vec2 kp3;
+varying vec2 kp4;
 
 void main() {
     color = vertexColor;
@@ -360,17 +361,65 @@ void main() {
 `
 
 const fragmentShaderSource = `
-varying highp vec4 color;
-varying highp vec2 coord;
-varying highp vec2 kp1;
-varying highp vec2 kp2;
-varying highp vec2 kp3;
-varying highp vec2 kp4;
+
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+  precision highp float;
+#else
+  precision mediump float;
+#endif
+
+varying vec4 color;
+varying vec2 coord;
+varying vec2 kp1;
+varying vec2 kp2;
+varying vec2 kp3;
+varying vec2 kp4;
+
+struct CircleData {
+    vec2 kp1, kp2, kp3, kp4;    
+    vec3 fillColor;
+};
+
+struct FragData {
+    vec4 color;
+};
+
+#define SQRT_SLOPE_FACTOR .2
+float sqrtPositiveSlope( float x ) {
+    return x > 0. ? 
+        sqrt( x + SQRT_SLOPE_FACTOR ) * 2. * sqrt(SQRT_SLOPE_FACTOR) - sqrt(SQRT_SLOPE_FACTOR) * 2. * sqrt(SQRT_SLOPE_FACTOR)
+        : x;
+}
+
+#define LOG_SLOPE_FACTOR 0.1
+float logPositiveSlope( float x ) {
+    return x > 0. ?
+        log( x + LOG_SLOPE_FACTOR ) * LOG_SLOPE_FACTOR - log(LOG_SLOPE_FACTOR) * LOG_SLOPE_FACTOR
+        : x;
+}
+
+FragData RenderCircle( vec2 coord, CircleData data ) {
+    
+    float sdf = 0.0;
+    sdf += logPositiveSlope( length(coord - data.kp1) - 0.5 );
+    sdf += logPositiveSlope( length(coord - data.kp2) - 0.5 );
+    sdf += logPositiveSlope( length(coord - data.kp3) - 0.5 );
+    sdf += logPositiveSlope( length(coord - data.kp4) - 0.5 );
+       
+    float inside = float(sdf < 0.);
+    //inside = 0.5 - sdf;
+    
+    vec3 color = data.fillColor;
+    return FragData(vec4(color, inside));
+}
 
 void main() {
-    highp vec2 sum = kp1 + kp2 + kp3 + kp4;
-    gl_FragColor = vec4(color.rgb + length(sum), 1.0);
-    gl_FragColor.xy += coord;
+    FragData circle = RenderCircle( coord, CircleData(
+        kp1, kp2, kp3, kp4,
+        color.rgb
+    ));
+
+    gl_FragColor = vec4(circle.color.rgba);
 }
 `
 
@@ -390,10 +439,12 @@ vboObject.bindAttributes(gl, circleShader)
 
 {
 
-    gl.clearColor( 0.0, 0.0, 0.0, 1.0 ) // Clear to black, fully opaque
+    gl.clearColor( .5, .5, .5, 1 ) // Clear to black, fully opaque
     gl.clearDepth( 1.0 ) // Clear everything
     gl.enable( gl.DEPTH_TEST ) // Enable depth testing
     gl.depthFunc( gl.LEQUAL ) // Near things obscure far things
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // Clear the canvas before we start drawing on it.
 
@@ -406,7 +457,7 @@ vboObject.bindAttributes(gl, circleShader)
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
-    const fieldOfView = ( 45 * Math.PI ) / 180 // in radians
+    const fieldOfView = ( 15 * Math.PI ) / 180 // in radians
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight
     const zNear = 0.1
     const zFar = 100.0
@@ -425,7 +476,7 @@ vboObject.bindAttributes(gl, circleShader)
     mat4.translate(
         modelViewMatrix, // destination matrix
         modelViewMatrix, // matrix to translate
-        [-0.0, 0.0, -6.0]
+        [-0.0, 0.0, -10.0]
     ) // amount to translate
 
 

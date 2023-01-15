@@ -176,7 +176,7 @@ class VBO {
         const attributeLocations = shader.getAttributes()
 
         for (const attribute in attributeLocations) {
-            console.log(attribute)
+            //console.log(attribute)
             const info = this.bufferMapping.attributes[attribute]
             gl.enableVertexAttribArray(attributeLocations[attribute])
             gl.vertexAttribPointer(

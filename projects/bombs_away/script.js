@@ -136,8 +136,9 @@ function update( millis ) {
     // Game Logic
     {
         missile.pos = new vec2( 10, 10 )
-        target.pos.rotate(0.1)
-
+        
+        
+        
     }
 
     // Move Camera

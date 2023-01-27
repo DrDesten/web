@@ -5,7 +5,7 @@ class vec2 {
         else
             this.x = x.x, this.y = x.y ?? x.x
     }
-
+    
     *[Symbol.iterator]() {
         yield this.x
         yield this.y
@@ -76,14 +76,37 @@ class vec2 {
     }
 
 
-    rotate( angle ) {
+    rotf( angle ) {
         const sin = Math.sin(angle), cos = Math.cos(angle)
-        this.x = sin * this.x + cos * this.y
-        this.y = cos * this.x - sin * this.y
+        this.x = cos * this.x - sin * this.y
+        this.y = sin * this.x + cos * this.y
         return this
     }
+    rot( angle ) {
+        const length = this.length()
+        const sin = Math.sin(angle), cos = Math.cos(angle)
+        this.x = cos * this.x - sin * this.y
+        this.y = sin * this.x + cos * this.y
+        return this.normalize().mul(length)
+    }
+
+    static rotf( vec, angle ) {
+        const sin = Math.sin(angle), cos = Math.cos(angle)
+        vec = vec.copy()
+        vec.x = cos * vec.x - sin * vec.y
+        vec.y = sin * vec.x + cos * vec.y
+        return vec
+    }
+    static rot( vec, angle ) {
+        const length = vec.length()
+        const sin = Math.sin(angle), cos = Math.cos(angle)
+        vec = vec.copy()
+        vec.x = cos * vec.x - sin * vec.y
+        vec.y = sin * vec.x + cos * vec.y
+        return vec.normalize().mul(length)
+    }
     static fromAngle( angle ) {
-        return new vec2( Math.sin( angle ), Math.cos( angle ) )
+        return new vec2( Math.cos( angle ), Math.sin( angle ) )
     }
 
 

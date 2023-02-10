@@ -5,13 +5,18 @@ class vec2 {
         else
             this.x = x.x, this.y = x.y ?? x.x
     }
-    
+
     *[Symbol.iterator]() {
         yield this.x
         yield this.y
     }
     copy() {
-        return new vec2( this.x, this.y )
+        return new vec2( ...this )
+    }
+    set( vec = 0, y ) {
+        return typeof vec === "number" ? 
+            (this.x = vec, this.y = y ?? vec, this) :
+            (this.x = vec.x, this.y = vec.y, this)
     }
 
     add( vec ) {
@@ -77,21 +82,21 @@ class vec2 {
 
 
     rotf( angle ) {
-        const sin = Math.sin(angle), cos = Math.cos(angle)
+        const sin = Math.sin( angle ), cos = Math.cos( angle )
         this.x = cos * this.x - sin * this.y
         this.y = sin * this.x + cos * this.y
         return this
     }
     rot( angle ) {
         const length = this.length()
-        const sin = Math.sin(angle), cos = Math.cos(angle)
+        const sin = Math.sin( angle ), cos = Math.cos( angle )
         this.x = cos * this.x - sin * this.y
         this.y = sin * this.x + cos * this.y
-        return this.normalize().mul(length)
+        return this.normalize().mul( length )
     }
 
     static rotf( vec, angle ) {
-        const sin = Math.sin(angle), cos = Math.cos(angle)
+        const sin = Math.sin( angle ), cos = Math.cos( angle )
         vec = vec.copy()
         vec.x = cos * vec.x - sin * vec.y
         vec.y = sin * vec.x + cos * vec.y
@@ -99,15 +104,39 @@ class vec2 {
     }
     static rot( vec, angle ) {
         const length = vec.length()
-        const sin = Math.sin(angle), cos = Math.cos(angle)
+        const sin = Math.sin( angle ), cos = Math.cos( angle )
         vec = vec.copy()
         vec.x = cos * vec.x - sin * vec.y
         vec.y = sin * vec.x + cos * vec.y
-        return vec.normalize().mul(length)
+        return vec.normalize().mul( length )
     }
     static fromAngle( angle ) {
         return new vec2( Math.cos( angle ), Math.sin( angle ) )
     }
 
+
+    lerp( vec, factor ) {
+        this.x = this.x * (1 - factor) + vec.x * factor
+        this.y = this.y * (1 - factor) + vec.y * factor
+        return this
+    }
+    static lerp( v1, v2, factor ) {
+        return new vec2( 
+            v1.x * (1 - factor) + v2.x * factor,
+            v1.y * (1 - factor) + v2.y * factor,
+        )
+    }
+
+
+    static get random() {
+        return Object.assign(
+            function () {
+                return new vec2(Math.random() * 2 - 1, Math.random() * 2 - 1)
+            }, {
+            unit() {
+                return vec2.fromAngle( Math.random() * Math.PI * 2 )
+            },
+        } )
+    }
 
 }

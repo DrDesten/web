@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3D</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container-3d" style="z-index: 1; position: fixed; top: 0; left: 0; justify-content: flex-start;">
+        <div style="margin: 3rem; transform: rotateY(10deg) rotateX(-5deg); --face-bg: white;">
+            <div style="width: max(min-content, 50vw); padding: 0.5em; font-size: 3rem;" box-3d shade-3d>
+                <a href="../">⬅️</a>
+            </div>
+        </div>  
+    </div>
+
+    <div class="container-3d" style="font-size: 3rem;">
+
+        <div style="margin: 3rem; transform: rotateY(-10deg) rotateX(-5deg); --face-bg: white;">
+            <div style="width: max(min-content, 50vw)" box-3d shade-3d>
+                <h1>😱 OMG 😱</h1>
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="margin: 3rem; transform: rotateY(5deg); --face-bg: white;">
+            <div style="width: max(min-content, 50vw); padding: 0.2rem;" box-3d shade-3d>
+                <b>3D CSS</b> powered by <b style="color: yellow">JavaScript</b><b>!</b>
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="margin: 3rem; transform: rotateY(15deg) rotateX(5deg); --face-bg: white;">
+            <div style="width: min-content; padding: 1rem" box-3d shade-3d>
+                <b style="font-size: 15rem">😍</b>
+            </div>
+        </div>
+
+        <div style="margin: 3rem; transform: rotateY(-10deg) rotateX(15deg); --face-bg: white;">
+            <div style="width: min-content; padding: 1rem;" box-3d shade-3d>
+                <b style="font-size: 5rem;">So <span style="color: limegreen">Cool</span> °v°</b>
+            </div>
+        </div>
+
+        <hr>
+
+        <div style="margin: 3rem; transform: rotateY(-5deg) rotateX(15deg); --face-bg: white;">
+            <div class="pop-3d">
+                <div style="width: min-content" box-3d shade-3d>
+                    <b style="color: cornflowerblue;">#CanvasIsForLosers</b>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

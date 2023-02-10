@@ -15,10 +15,14 @@ observer.observe( canvas )
 
 
 
-const CAMERA_MIN_SIZE = 1
-const CAMERA_MARGIN = 0.1
-const CAMERA_SMOOTH = 1
+const CAMERA_MIN_SIZE = 0.05
+const CAMERA_MARGIN = 0.5
+const CAMERA_MOVE_SMOOTH = 0.9
+const CAMERA_SCALE_SMOOTH = 0.9
 const w = { x: 0, y: 0 }
+
+const DELTA = 1./30
+const GRAVITY = new vec2(0, -9.81)
 
 /* const cameraController = {
     pos: createVector(0,0),
@@ -91,33 +95,57 @@ const camera = {
         ctx.scale( 1, canvas.width / canvas.height )
         // Set position and scale
         ctx.scale( this.scale, this.scale )
-        ctx.translate( this.pos.x, this.pos.y )
+        ctx.translate( -this.pos.x, -this.pos.y )
+    },
+    update() {
+        const mPos = missile.pos
+        const tPos = target.pos
+        this.pos.lerp( vec2.add(mPos, tPos).mul(.5), 1 - CAMERA_MOVE_SMOOTH)
+
+        const xDist = Math.abs(mPos.x - tPos.x)
+        const yDist = Math.abs(mPos.y - tPos.y)
+        const xFrame = 1
+        const yFrame = canvas.height / canvas.width
+
+        let newScale = CAMERA_MARGIN * Math.min(xFrame / xDist * 2, yFrame / yDist * 2)
+        newScale = Math.min(CAMERA_MIN_SIZE, newScale)
+        this.scale = this.scale * CAMERA_SCALE_SMOOTH + newScale * (1 - CAMERA_SCALE_SMOOTH)
     },
 }
 
 // Game Objects
 
 const missile = {
-    pos: new vec2(),
-    vel: new vec2(),
-    acc: new vec2(),
+    physics: new PhysicsObject,
+    get pos() { return this.physics.pos },
+    get vel() { return this.physics.vel },
+    get acc() { return this.physics.acc },
 
-    heading: new vec2(),
+    heading: new vec2,
     thrust: 0,
 
     draw() {
         ctx.fillStyle = "lightblue"
         ctx.fillRect( ...this.pos.copy().sub( 1 ), 2, 2 )
+    },
+    update() {
+        this.acc.add(vec2.mul(this.heading, this.thrust))
+        this.physics.update(DELTA)
     }
 }
 
 const target = {
-    pos: new vec2(-10),
-    vel: new vec2(),
+    physics: new PhysicsObject,
+    get pos() { return this.physics.pos },
+    get vel() { return this.physics.vel },
+    get acc() { return this.physics.acc },
 
     draw() {
         ctx.fillStyle = "red"
         ctx.fillRect( ...this.pos.copy().sub( 1 ), 2, 2 )
+    },
+    update() {
+        this.physics.update(DELTA)
     }
 }
 
@@ -135,24 +163,54 @@ function update( millis ) {
 
     // Game Logic
     {
-        missile.pos = new vec2( 10, 10 )
-        
-        
+
+        target.pos.set(10)
+
+        guideMissile(missile, target)
         
     }
 
+    // Gravity
+    target.acc.add(GRAVITY)
+    missile.acc.add(GRAVITY)
+
+
+    // Update Objects
+    target.update()
+    missile.update()
+    target.physics.updateCollision()
+    missile.physics.updateCollision()
+
+    // Ground Collision
+    if ( target.pos.y <= 0 ) {
+        target.pos.y = 0
+        target.vel.y = 0
+    }
+    if ( missile.pos.y <= 0 ) {
+        missile.pos.y = 0
+        missile.vel.y = 0
+    }
+
     // Move Camera
+    camera.update()
     camera.transform()
 
     // Draw Objects
     target.draw()
     missile.draw()
 
-    //crosshair(0.5)
+    // Draw Ground Plane
+    ctx.fillStyle = "gray"
+    ctx.fillRect(Number.MIN_SAFE_INTEGER * .5, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
+
+    crosshair(1)
 }
 
 
-
+function guideMissile(missile, target) {
+    missile.heading = vec2.sub(target.pos, missile.pos).normalize()
+    missile.thrust = 10
+}
 
 
 

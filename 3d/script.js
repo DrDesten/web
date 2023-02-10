@@ -39,6 +39,18 @@ for ( const element of elements3d ) {
         for ( const className of classList )
             element.wrapper.classList.add( className )
 
+    // Duplicate innerHTML to the sides
+    /* if (element.element.getAttribute("box-3d-duplicate-sides") != null) {
+        element.faces.left.innerHTML = element.element.innerHTML
+        element.faces.right.innerHTML = element.element.innerHTML
+        element.faces.back.innerHTML = element.element.innerHTML
+
+        element.faces.left.setAttribute("box-3d-face", "")
+        element.faces.right.setAttribute("box-3d-face", "")
+        element.faces.back.setAttribute("box-3d-face", "")
+    } */
+
+    // Set CSS properties
     element.faces.back.style.width = `${width}px`, element.faces.back.style.height = `${height}px`
     element.faces.left.style.width = `${width}px`, element.faces.left.style.height = `${height}px`
     element.faces.right.style.width = `${width}px`, element.faces.right.style.height = `${height}px`

@@ -31,8 +31,13 @@ for ( const element of elements3d ) {
 
     // Add the 3d element class and set up coordinate space
     element.wrapper.classList.add( "element-3d" )
-    //element.wrapper.classList.add( "rotate-3d" )
     element.wrapper.style.setProperty( "--origin", `${width / 2}px ${height / 2}px ${-width / 2}px` )
+
+    // Add user defined classes to the wrapper object
+    const classList = ( element.element.getAttribute( "wrapper-3d-class" ) || "" ).split( /\s+/g ).filter( x => x.trim() )
+    if ( classList.length )
+        for ( const className of classList )
+            element.wrapper.classList.add( className )
 
     element.faces.back.style.width = `${width}px`, element.faces.back.style.height = `${height}px`
     element.faces.left.style.width = `${width}px`, element.faces.left.style.height = `${height}px`
@@ -51,11 +56,11 @@ for ( const element of elements3d ) {
     element.faces.bottom.style.transform = `translate3d(0px,${-width / 2 + height}px,${-width / 2}px) rotate3d(1,0,0,-90deg)`
 
     const shadeFaces = element.element.hasAttribute( "shade-3d" )
-    for (const face in element.faces) {
-        if (Object.hasOwnProperty.call(element.faces, face)) {
+    for ( const face in element.faces ) {
+        if ( Object.hasOwnProperty.call( element.faces, face ) ) {
             const shade = { front: 0, back: 0.075, top: 0.05, bottom: 0.2, left: 0.1, right: 0.1 }[face]
             if ( shadeFaces ) element.faces[face].style.filter = `brightness(${1 - shade})`
-    
+
             element.faces[face].style.backgroundColor = `var(--face-bg, #ddd)`
             element.faces[face].classList.add( "face-3d" )
             element.wrapper.appendChild( element.faces[face] )
@@ -110,18 +115,16 @@ for ( const element of elements3d ) {
 ////////////////////////////////////////////////////////////////////
 
 function recalculatePerspective() {
-    const size = [window.innerWidth, window.innerHeight]
-    const center = [size[0] / 2, size[1] / 2]
+    const center = [window.innerWidth / 2, window.innerHeight / 2]
     for ( const container of containers3d ) {
         const rect = container.getBoundingClientRect()
-        const dimensions = [rect.width, rect.height]
         const position = [rect.left, rect.top]
 
         const relativeOffset = [
-            (center[0] - position[0]) / dimensions[0] * 100,
-            (center[1] - position[1]) / dimensions[1] * 100,
+            center[0] - position[0],
+            center[1] - position[1],
         ]
-        container.style.perspectiveOrigin = `${relativeOffset[0]}% ${relativeOffset[1]}%`
+        container.style.perspectiveOrigin = `${relativeOffset[0]}px ${relativeOffset[1]}px`
     }
 }
 document.addEventListener( "scroll", recalculatePerspective )

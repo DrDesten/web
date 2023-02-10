@@ -96,13 +96,15 @@ a {
     }
 }
 
-.cubeface {
-    position: absolute;
-    top: 0; left: 0;
-
-    background-color: rgba(0, 0, 0, 0.5);
-    width: 200px;
-    height: 200px;
+.spin-3d {
+    animation: anim-spin-3d 2s linear var(--anim-delay, 0s)  infinite normal both;
 }
-
+@keyframes anim-spin-3d {
+    0% {
+        transform: rotate3d(0,1,0, 0deg);
+    }
+    100% {
+        transform: rotate3d(0,1,0, 360deg);
+    }
+}
 

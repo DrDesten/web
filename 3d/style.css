@@ -55,7 +55,7 @@ a {
 }
 
 .rotate-3d {
-    animation: anim-rotate-3d 30s ease 0s infinite normal both;
+    animation: anim-rotate-3d 30s ease var(--anim-delay, 0s) infinite normal both;
 }
 @keyframes anim-rotate-3d {
     0% {
@@ -82,7 +82,7 @@ a {
 }
 
 .pop-3d {
-    animation: anim-pop-3d 0.3s ease-in-out 0s infinite alternate both;
+    animation: anim-pop-3d 0.3s ease-in-out var(--anim-delay, 0s)  infinite alternate both;
 }
 @keyframes anim-pop-3d {
     0% {

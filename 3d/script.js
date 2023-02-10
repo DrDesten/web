@@ -51,13 +51,15 @@ for ( const element of elements3d ) {
     element.faces.bottom.style.transform = `translate3d(0px,${-width / 2 + height}px,${-width / 2}px) rotate3d(1,0,0,-90deg)`
 
     const shadeFaces = element.element.hasAttribute( "shade-3d" )
-    for ( const face in element.faces ) {
-        const shade = { front: 0, back: 0.075, top: 0.05, bottom: 0.2, left: 0.1, right: 0.1 }[face]
-        if ( shadeFaces ) element.faces[face].style.filter = `brightness(${1 - shade})`
-
-        element.faces[face].style.backgroundColor = `var(--face-bg, #ddd)`
-        element.faces[face].classList.add( "face-3d" )
-        element.wrapper.appendChild( element.faces[face] )
+    for (const face in element.faces) {
+        if (Object.hasOwnProperty.call(element.faces, face)) {
+            const shade = { front: 0, back: 0.075, top: 0.05, bottom: 0.2, left: 0.1, right: 0.1 }[face]
+            if ( shadeFaces ) element.faces[face].style.filter = `brightness(${1 - shade})`
+    
+            element.faces[face].style.backgroundColor = `var(--face-bg, #ddd)`
+            element.faces[face].classList.add( "face-3d" )
+            element.wrapper.appendChild( element.faces[face] )
+        }
     }
 
 }
@@ -104,24 +106,24 @@ for ( const element of elements3d ) {
 }
 
 
-// Update perspective on Scroll ////////////////////////////////////
+// Update perspective on Scroll and Resize /////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-function recalculatePerspective( event ) {
-    const scroll = [window.scrollX, window.scrollY]
+function recalculatePerspective() {
     const size = [window.innerWidth, window.innerHeight]
-    const center = [size[0] / 2 + scroll[0], size[1] / 2 + scroll[1]]
+    const center = [size[0] / 2, size[1] / 2]
     for ( const container of containers3d ) {
         const rect = container.getBoundingClientRect()
         const dimensions = [rect.width, rect.height]
         const position = [rect.left, rect.top]
 
         const relativeOffset = [
-            (center[0] - position[0]) / dimensions[0] * 50,
-            (center[1] - position[1]) / dimensions[1] * 50,
+            (center[0] - position[0]) / dimensions[0] * 100,
+            (center[1] - position[1]) / dimensions[1] * 100,
         ]
         container.style.perspectiveOrigin = `${relativeOffset[0]}% ${relativeOffset[1]}%`
     }
 }
 document.addEventListener( "scroll", recalculatePerspective )
-document.addEventListener( "resize", recalculatePerspective )
+window.addEventListener( "resize", recalculatePerspective )
+recalculatePerspective() // Set up Perspective initially

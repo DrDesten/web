@@ -5,8 +5,11 @@ body {
 }
 
 div {
-    margin: 0.1rem;
     width: max-content;
+}
+div[box-3d] {
+    padding: 1rem;
+    max-width: 80vw;
 }
 
 h1 {

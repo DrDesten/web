@@ -1,19 +1,28 @@
-function generateSequence( count = 1, start = 0, end = 1, linearity = 0 ) {
-    let transformFact = x => 1 / ( 1 - x ) - 1
-    let transform
-    if ( linearity == 0 ) transform = x => x
-    if ( linearity > 0 ) transform = x => {
-        let d = 1 / transformFact( linearity )
-        let i = 0.5 + Math.sqrt( 0.25 + d )
-        return d / ( i - x ) - ( i - 1 )
+function generateTransform( linearity = 0 ) {
+    function transformFactor( x ) {
+        return 1 / ( 1 - x ) - 1
     }
-    if ( linearity < 0 ) transform = x => {
-        let d = 1 / transformFact( -linearity )
-        let o = ( 0.5 + Math.sqrt( 0.25 + d ) ) - 1
-        return 1 - ( d / ( x + o ) ) + o
-    }
-    //console.log( transform.toString(), linearity )
 
+    if ( linearity == 0 )
+        return function ( x = 0 ) {
+            return x
+        }
+    if ( linearity > 0 )
+        return function ( x = 0 ) {
+            let d = 1 / transformFactor( linearity )
+            let i = 0.5 + Math.sqrt( 0.25 + d )
+            return d / ( i - x ) - ( i - 1 )
+        }
+    if ( linearity < 0 )
+        return function ( x = 0 ) {
+            let d = 1 / transformFactor( -linearity )
+            let o = ( 0.5 + Math.sqrt( 0.25 + d ) ) - 1
+            return 1 - ( d / ( x + o ) ) + o
+        }
+}
+
+function generateSequence( count = 1, start = 0, end = 1, linearity = 0 ) {
+    const transform = generateTransform( linearity )
     let seq = []
     for ( let i = 0; i < count; i++ ) {
         let val = transform( i / ( count - 1 ) ) * ( count - 1 )

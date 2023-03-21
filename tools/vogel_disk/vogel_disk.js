@@ -1,23 +1,23 @@
-const goldenAngle      = Math.PI * (3 - Math.sqrt(5))
-const goldenAngleRcp   = 1.0 / goldenAngle
-const goldenAngleRcpSq = goldenAngleRcp*goldenAngleRcp
+const goldenAngle = Math.PI * ( 3 - Math.sqrt( 5 ) )
+const goldenAngleRcp = 1.0 / goldenAngle
+const goldenAngleRcpSq = goldenAngleRcp * goldenAngleRcp
 
 
 // PREVIEW CHART //////////////////////////////////////////////////////////////////////////
 
-const ctx = document.getElementById("preview_chart")
+const ctx = document.getElementById( "preview_chart" )
 
-let data = {
+const data = {
     datasets: [{
         label: 'Sample Preview',
-        data: [{x:0,y:0}],
+        data: [{ x: 0, y: 0 }],
         backgroundColor: 'rgb(255, 99, 132)'
     }],
-};
+}
 
 
-let chartLineColor = "rgba(255,255,255,0.25)"
-let config = {
+const chartLineColor = "rgba(255,255,255,0.25)"
+const config = {
     type: 'scatter',
     data: data,
     options: {
@@ -62,72 +62,72 @@ let config = {
             }
         }
     }
-};
+}
 
-const chart = new Chart(ctx, config)
+const chart = new Chart( ctx, config )
 
 
 
 // ACTUAL CALCULATIONS //////////////////////////////////////////////////////////////////////////
 
 
-function calculateSamples(form, output_id) {
-    let   output  = document.getElementById(output_id)
-    const samples = parseInt(form.sample_input.value)
+function calculateSamples( form, output_id ) {
+    const output = document.getElementById( output_id )
+    const samples = ~~( form.sample_input.value )
 
-    let array = new Array(samples)
+    let array = new Array( samples )
 
-    let invSqrtSamples = 1 / Math.sqrt(samples);
-    for (let i = 0; i < samples; i++) {
-        let radius = Math.sqrt(i + 0.5) * invSqrtSamples
-        let theta  = i * goldenAngle
+    const invSqrtSamples = 1 / Math.sqrt( samples )
+    for ( let i = 0; i < samples; i++ ) {
+        const radius = Math.sqrt( i + 0.5 ) * invSqrtSamples
+        const theta = i * goldenAngle
 
-        let coords = [
-            radius * Math.cos(theta),
-            radius * Math.sin(theta)
+        const coords = [
+            radius * Math.cos( theta ),
+            radius * Math.sin( theta )
         ]
 
         array[i] = coords
     }
 
-    if  (form.center_output.checked) { // Center the array
+    if ( form.center_output.checked ) { // Center the array
         // Calculate center of mass
-        let arraySum = array.reduce((prev, curr)=>{
-            return [prev[0]+curr[0], prev[1]+curr[1]]
-        }, [0,0])
-        arraySum = [arraySum[0] / array.length, arraySum[1] / array.length];
+        let arraySum = array.reduce( ( prev, curr ) => {
+            return [prev[0] + curr[0], prev[1] + curr[1]]
+        }, [0, 0] )
+        arraySum = [arraySum[0] / array.length, arraySum[1] / array.length]
 
-        array = array.map((curr)=>{
-            return [curr[0] - arraySum[0], curr[1] - arraySum[1]]
-        })
+        array = array.map( curr =>
+            [curr[0] - arraySum[0], curr[1] - arraySum[1]]
+        )
     }
 
     /* chart.data.datasets[0].data = array.map(val => { return {x: 0, y: 0} });
     chart.update(); */
-    chart.data.datasets[0].data = array.map(val => { return {x: val[0], y: val[1]} });
-    chart.update();
+    chart.data.datasets[0].data = array.map( val => { return { x: val[0], y: val[1] } } )
+    chart.update()
 
-    if (form.polar_coordinates.checked) { // Convert to polar coordinates
-        array = array.map((curr)=>{
+    if ( form.polar_coordinates.checked ) { // Convert to polar coordinates
+        array = array.map( curr => {
             return [
-                Math.sqrt((curr[0]*curr[0]) + (curr[1]*curr[1])),
-                Math.atan2(curr[1], curr[0])
+                Math.sqrt( ( curr[0] * curr[0] ) + ( curr[1] * curr[1] ) ),
+                Math.atan2( curr[1], curr[0] )
             ]
-        })
+        } )
     }
 
-    let html = glsl_array(array, `vogel_disk_${samples}`)
+    let html = glsl_array( array, `vogel_disk_${samples}` )
 
-    if (form.auto_copy.checked) {
-        navigator.clipboard.writeText(html);
+    if ( form.auto_copy.checked ) {
+        navigator.clipboard.writeText( html )
     }
 
-    output.innerHTML = html_code(html)
+    output.innerHTML = html_code( html )
 }
 
-function calculateSamples_dynamic(form, output_id) {
-    if (parseInt(form.sample_input.value) <= 1000) {
-        calculateSamples(form, output_id)
+function calculateSamples_dynamic( form, output_id ) {
+    if ( ~~( form.sample_input.value ) <= 1000 ) {
+        calculateSamples( form, output_id )
     }
 }
 

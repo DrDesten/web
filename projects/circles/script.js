@@ -56,11 +56,18 @@ physicsWorker.onmessage = function ( e ) {
     }
 }
 
-for (let i = 0; i < 2; i++) {
-    const c = new Circle(vec2.random(10).abs(), 1, 1)
+for (let i = 0; i < 10; i++) {
+    const c = new Circle(vec2.random(100), 0.5, 1)
     c.vel = vec2.random(10)
     physicsWorker.postMessage( Message( M.pushCircle, c ) )
 }
+
+
+/* const c1 = new Circle(new vec2(1, 6), 1, 1)
+c1.vel.add(new vec2(10,0))
+const c2 = new Circle(new vec2(6, 6), 1, 1)
+physicsWorker.postMessage( Message( M.pushCircle, c1 ) )
+physicsWorker.postMessage( Message( M.pushCircle, c2 ) ) */
 
 // Window Resize
 function resize() {
@@ -80,16 +87,21 @@ function render( millis ) {
 
     draw.fill("white")
 
+    if ( !isFinite(renderData[0]) )
+        physicsWorker.postMessage( Message( M.pause ) )
 
     for ( let i = 0; i < ~~( renderData.length / 3 ); i++ ) {
+        const index = i * 3
         const pos = new vec2(
-            renderData[i * 3],
-            renderData[i * 3 + 1],
+            renderData[index],
+            renderData[index + 1],
         ).mul(WORLDSCALE)
-        const radius = renderData[i * 3 + 2] * WORLDSCALE
+        const radius = renderData[index + 2] * WORLDSCALE
 
-        draw.circle(pos, radius, `rgba(${i * 255},0,0,0.5)`)
+        draw.circle(pos, radius, `rgba(${(index * 255) / (renderData.length - 3)},0,0,0.5)`)
     }
+
+    //console.log(renderData[0], renderData[1], renderData[2])
 }
 
 

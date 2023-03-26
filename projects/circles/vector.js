@@ -99,6 +99,11 @@ class vec2 {
     }
 
 
+    rot90() {
+        this.x = this.y
+        this.y = this.x
+        return this
+    }
     rotf( angle ) {
         const sin = Math.sin( angle ), cos = Math.cos( angle )
         this.x = cos * this.x - sin * this.y
@@ -171,4 +176,15 @@ class vec2 {
         } )
     }
 
+
+    static isNaN( vec ) {
+        return isNaN(vec.x) || isNaN(vec.y)
+    }
+    static isFinite( vec ) {
+        return isFinite(vec.x) && isFinite(vec.y)
+    }
+
+    toString() {
+        return `{ ${this.x}, ${this.y}] }`
+    }
 }

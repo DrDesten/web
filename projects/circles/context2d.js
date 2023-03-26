@@ -13,7 +13,7 @@ class Canvas2dDrawWrapper {
 
     fill( color ) {
         if (color) this.ctx.fillStyle = color
-        this.ctx.fillRect(-Number.MAX_SAFE_INTEGER / 2, -Number.MAX_SAFE_INTEGER / 2, Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
+        this.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight)
     }
 
     circle( pos, radius, color ) {

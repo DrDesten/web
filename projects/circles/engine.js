@@ -76,14 +76,30 @@ function update( millis ) {
             const overlap = vec2.dist(circle.pos, other.pos) - (circle.radius + other.radius)
             if ( overlap >= 0 )
                 continue
+            if ( isNaN(overlap) ) {
+                console.error(circle, other)
+                throw new Error("Physics Worker: Engine Error: Encountered NaN")
+            }
             
             // Points from circle to other
             const diff = other.pos.copy().sub(circle.pos)
-            const normal = vec2.normalize(diff)
+            let normal = vec2.normalize(diff)
 
-            // Reflect velocities along normal
-            circle.vel = circle.vel.sub( normal.copy().mul( 2 * vec2.dot(circle.vel, normal )) )
-            other.vel = other.vel.sub( normal.copy().mul( 2 * vec2.dot(other.vel, normal )) )
+            if ( vec2.isNaN(normal) ) {
+                normal = vec2.add(circle.vel, other.vel).mul(0.5).rot90().normalize()
+                if ( vec2.isNaN(normal) )
+                    normal = vec2.random.unit()
+                //console.warn("NaN-Normal Handled")
+            }
+
+
+            // Reflect velocities along normal and transfer them (100% elastic at this point)
+            const transferCircle = vec2.dot(other.vel, normal)
+            const transferOther = vec2.dot(circle.vel, normal)
+            circle.vel.add(vec2.mul(normal, transferCircle))
+            other.vel.add(vec2.mul(normal, transferOther))
+            circle.vel.sub(vec2.mul(normal, transferOther))
+            other.vel.sub(vec2.mul(normal, transferCircle))
 
             // Move out of the way
             const ratio = circle.radius / (circle.radius + other.radius)

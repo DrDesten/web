@@ -76,11 +76,26 @@ class vec2 {
             return new vec2( v1.x / v2.x, v1.y / v2.y )
     }
 
+
     length() {
         return Math.sqrt( this.x * this.x + this.y * this.y )
     }
+    lengthSq() {
+        return this.x * this.x + this.y * this.y
+    }
+
     normalize() {
         return this.mul( 1 / this.length() )
+    }
+    static normalize( vec ) {
+        return vec2.mul( vec, 1 / vec.length() )
+    }
+
+    static dist( v1, v2 ) {
+        return vec2.sub(v1, v2).length()
+    }
+    static distSq( v1, v2 ) {
+        return vec2.sub(v1, v2).lengthSq()
     }
 
 
@@ -131,10 +146,24 @@ class vec2 {
     }
 
 
+    abs() {
+        return this.x = Math.abs(this.x), this.y = Math.abs(this.y), this
+    }
+    static abs( vec ) {
+        return new vec2( Math.abs(vec.x), Math.abs(vec.y) )
+    }
+
+    dot( vec ) {
+        return this.x * vec.x + this.y * vec.y
+    }
+    static dot( v1, v2 ) {
+        return v1.x * v2.x + v1.y * v2.y
+    }
+
     static get random() {
         return Object.assign(
-            function () {
-                return new vec2(Math.random() * 2 - 1, Math.random() * 2 - 1)
+            function ( multiplier = 1 ) {
+                return new vec2((Math.random() * 2 - 1) * multiplier, (Math.random() * 2 - 1) * multiplier)
             }, {
             unit() {
                 return vec2.fromAngle( Math.random() * Math.PI * 2 )

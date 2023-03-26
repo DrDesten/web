@@ -6,6 +6,12 @@ let TIMESCALE = 1.0
 let GRAVITY = new vec2
 
 let STATE = false
+let BOUNDRIES = {
+    top: Infinity,
+    bottom: 0,
+    left: -Infinity,
+    right: Infinity,
+}
 
 const gameObjects = []
 
@@ -25,6 +31,10 @@ onmessage = function ( e ) {
     switch ( type ) {
         case M.pushCircle:
             gameObjects.push( Circle.fromObject( data ) )
+            break
+
+        case M.setBoundries:
+            BOUNDRIES = data
             break
 
         case M.setTickrate:
@@ -54,14 +64,54 @@ onmessage = function ( e ) {
     }
 }
 
-function render( millis ) {
+function update( millis ) {
 
     for ( let i = 0; i < gameObjects.length; i++ ) {
         const circle = gameObjects[i]
 
+        for ( let o = i + 1; o < gameObjects.length; o++ ) {
+            const other = gameObjects[o]
+
+            // Check for collision
+            const overlap = vec2.dist(circle.pos, other.pos) - (circle.radius + other.radius)
+            if ( overlap >= 0 )
+                continue
+            
+            // Points from circle to other
+            const diff = other.pos.copy().sub(circle.pos)
+            const normal = vec2.normalize(diff)
+
+            // Reflect velocities along normal
+            circle.vel = circle.vel.sub( normal.copy().mul( 2 * vec2.dot(circle.vel, normal )) )
+            other.vel = other.vel.sub( normal.copy().mul( 2 * vec2.dot(other.vel, normal )) )
+
+            // Move out of the way
+            const ratio = circle.radius / (circle.radius + other.radius)
+            circle.pos.add(normal.copy().mul(ratio * overlap))
+            other.pos.add(normal.copy().mul((1-ratio) * -overlap))
+        }
+
         circle.acc.add( GRAVITY )
         circle.vel.add( circle.acc.copy().mul( TIMESCALE * TICKRATE / 1000 ) )
         circle.pos.add( circle.vel.copy().mul( TIMESCALE * TICKRATE / 1000 ) )
+
+        if (circle.pos.y > BOUNDRIES.top - circle.radius) {
+            circle.pos.y = BOUNDRIES.top - circle.radius
+            circle.vel.y = -Math.abs(circle.vel.y) * circle.bounce
+        }
+        if (circle.pos.y < BOUNDRIES.bottom + circle.radius) {
+            circle.pos.y = BOUNDRIES.bottom + circle.radius
+            circle.vel.y = +Math.abs(circle.vel.y) * circle.bounce
+        }
+
+        if (circle.pos.x < BOUNDRIES.left + circle.radius) {
+            circle.pos.x = BOUNDRIES.left + circle.radius
+            circle.vel.x = +Math.abs(circle.vel.x) * circle.bounce
+        }
+        if (circle.pos.x > BOUNDRIES.right - circle.radius) {
+            circle.pos.x = BOUNDRIES.right - circle.radius
+            circle.vel.x = -Math.abs(circle.vel.x) * circle.bounce
+        }
 
         circle.acc.reset()
     }
@@ -102,7 +152,7 @@ function __tick( timeout ) {
     setTimeout( function () {
         // Measure execution time of update()
         const callTime = performance.now()
-        render( callTime )
+        update( callTime )
         const execTime = performance.now()
 
         // Calculate remaining time in the tick
@@ -121,7 +171,7 @@ function __tick_logger( timeout ) {
     setTimeout( function ( dispatchTime ) {
 
         const callTime = performance.now()
-        render( callTime )
+        update( callTime )
 
         const tickLength = dispatchTime - lastDisp
         const execLength = lastExec - lastCall

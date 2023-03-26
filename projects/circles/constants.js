@@ -2,6 +2,8 @@ const M = Object.freeze({
     pushCircle: "pushCircle",
     renderData: "renderData",
 
+    setBoundries: "setBoundries",
+
     setTickrate: "setTickrate",
     setTimescale: "setTimescale",
     setGravity: "setGravity",

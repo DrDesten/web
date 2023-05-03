@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+    --bg-c: white;
+    --bg-c2a: hsl(202, 30%, 26%);
+    --bg-c2b: hsl(261, 33%, 26%);
+    --bg-c2: linear-gradient(165deg, var(--bg-c2a) 0%, var(--bg-c2b) 100%);
+    --gb-c2-trans: linear-gradient(215deg, rgba(47, 73, 88, 0.55) 0%, rgba(62, 49, 97, 0.7) 100%);
+
+    --text-dark: black;
+    --text-dark2: var(--bg-c2b);
+    --text-light: white;
+
+    --text-dark-a: var(--bg-c2b);
+    --text-light-a: #f8d977;
+
+    --ele-shadow: 0 0 3rem rgba(0, 0, 0, 0.15);
+    --ele-shadow-l: 0 0 2rem rgba(0, 0, 0, 0.1);
+    --ele-shadow-d: 0 0 2rem rgba(0, 0, 0, 0.5);
+
+    --text-shadow: 0 0 1em rgba(0, 0, 0, 0.15);
+    --text-shadow-l: 0 0 0.4em rgba(0, 0, 0, 0.1);
+    --text-shadow-d: 0 0 0.4em rgba(0, 0, 0, 0.75);
+
+    --border-rad: 0.15rem;
+
+    --snap-ease: cubic-bezier(.25, 0, 0, 1);
+}
+
+body {
+    font-family: "Rubik", sans-serif;
+    color: var(--text-dark);
+
+    padding: 0px 2rem;
+    /* Backup */
+    padding: 0px clamp(0.3rem, 5vw, 5rem);
+    margin: 0px;
+
+    overflow-x: hidden;
+}
+
+
+a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+a:hover,
+a:focus {
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 9vw;
+    /* Backup */
+    font-size: min(9vw, 6.5rem);
+    font-weight: bold;
+    width: fit-content;
+    margin: 0.25em 0;
+}
+
+h2 {
+    font-size: 1.5rem;
+    /* Backup */
+    font-size: clamp(1rem, 5vw, 1.5rem);
+    font-weight: normal;
+    color: var(--text-dark2);
+}
+
+h3 {
+    font-size: 2rem;
+    /* Backup */
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    font-weight: normal;
+}
+
+form {
+    --input-margin: 0.2em;
+    --input-padding: 0.15em;
+    --input-bg: var(--bg-c);
+}
+
+input,
+textarea {
+    font-size: inherit;
+    font-family: inherit;
+
+    appearance: none;
+    outline: none;
+    border: none;
+    border-radius: var(--border-rad);
+
+    padding: var(--input-padding);
+    margin: var(--input-margin);
+
+    background-color: var(--input-bg);
+}
+
+input[type="button"] {
+    padding: var(--input-padding) 0.5em;
+    transition: background-color 0.2s;
+}
+
+input[type="button"]:hover,
+input[type="button"]:focus {
+    background-color: var(--text-light-a);
+}
+
+input[type="checkbox"] {
+    width: 1em;
+    height: 1em;
+}
+
+input[type="range"] {
+    appearance: none;
+    outline: none;
+    height: 0.1em;
+}
+
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"]::-moz-range-thumb {
+    appearance: none;
+    outline: none;
+    border: none;
+    width: 0.75em;
+    height: 0.75em;
+    background-color: rgb(168, 190, 199);
+}
+
+select {
+    font-size: inherit;
+    font-family: inherit;
+
+    outline: none;
+    border: none;
+    border-radius: var(--border-rad);
+
+    padding: var(--input-padding);
+    margin: var(--input-margin);
+
+    background-color: var(--input-bg);
+}
+
+textarea {
+    width: 100%;
+}
+
+label {
+    font-weight: bold;
+}
+
+pre {
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: inherit;
+}

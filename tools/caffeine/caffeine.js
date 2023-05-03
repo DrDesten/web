@@ -4,3 +4,12 @@ class Entry {
         this.time = time
     }
 }
+
+const Entries = []
+
+const Config = {
+    substance: "caffeine",
+    halflife: 6 * 3600,
+    metabolites: [],
+}
+

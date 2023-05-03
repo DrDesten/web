@@ -16,11 +16,12 @@ let BOUNDRIES = {
 const gameObjects = []
 
 function serialize( arr ) {
-    const typedArray = new Float32Array( arr.length * 3 )
+    const typedArray = new Float64Array( arr.length * renderDataObjectSize )
     for ( let i = 0; i < arr.length; i++ ) {
-        typedArray[i * 3] = arr[i].pos.x
-        typedArray[i * 3 + 1] = arr[i].pos.y
-        typedArray[i * 3 + 2] = arr[i].radius
+        typedArray[i * renderDataObjectSize] = arr[i].id
+        typedArray[i * renderDataObjectSize + 1] = arr[i].pos.x
+        typedArray[i * renderDataObjectSize + 2] = arr[i].pos.y
+        typedArray[i * renderDataObjectSize + 3] = arr[i].radius
     }
     return typedArray
 }
@@ -68,6 +69,7 @@ function update( millis ) {
 
     for ( let i = 0; i < gameObjects.length; i++ ) {
         const circle = gameObjects[i]
+        circle.lastPos = circle.pos.copy()
 
         for ( let o = i + 1; o < gameObjects.length; o++ ) {
             const other = gameObjects[o]
@@ -180,6 +182,7 @@ function __tick( timeout ) {
 }
 
 // Tick dispatcher ( with timing benchmarks )
+let lastDispatch = 0
 let lastCall = NaN
 let lastExec = NaN
 let lastDisp = NaN

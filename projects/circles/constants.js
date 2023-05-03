@@ -1,3 +1,5 @@
+const renderDataObjectSize = 4
+
 const M = Object.freeze({
     pushCircle: "pushCircle",
     renderData: "renderData",

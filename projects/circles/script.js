@@ -1,8 +1,9 @@
-function resize() {}
-function render() {}
+function resize() { }
+function render() { }
 
 
 const WORLDSCALE = 100
+const TICKRATE_SMOOTHING = .75
 const BOUNDRIES = {}
 
 // Initialize Canvas
@@ -33,11 +34,17 @@ updateBoundries()
 // Set up Worker
 const physicsWorker = new Worker( "./engine.js" )
 let renderData = null
+let lastRenderData = null
+
+let renderDataTime = 0
+let lastRenderDataTime = -1
+
+let tickLengthSmooth = 1
 
 physicsWorker.postMessage( Message( M.setGravity, new vec2( 0, -9.81 ) ) )
 
-physicsWorker.postMessage( Message( M.setTickrate, 1000 / 60 ) )
-physicsWorker.postMessage( Message( M.setTimescale, 1 ) )
+physicsWorker.postMessage( Message( M.setTickrate, 1000 / 2 ) )
+physicsWorker.postMessage( Message( M.setTimescale, .1 ) )
 
 physicsWorker.postMessage( Message( M.setBoundries, BOUNDRIES ) )
 physicsWorker.postMessage( Message( M.start ) )
@@ -48,7 +55,15 @@ physicsWorker.onmessage = function ( e ) {
 
     switch ( type ) {
         case M.renderData:
+            lastRenderData = renderData ?? data
             renderData = data
+
+            lastRenderDataTime = renderDataTime
+            renderDataTime = performance.now()
+
+            tickLengthSmooth = tickLengthSmooth * TICKRATE_SMOOTHING + ( renderDataTime - lastRenderDataTime ) * ( 1 - TICKRATE_SMOOTHING )
+            
+            //console.log( tickLengthSmooth )
             break
 
         default:
@@ -56,9 +71,9 @@ physicsWorker.onmessage = function ( e ) {
     }
 }
 
-for (let i = 0; i < 10; i++) {
-    const c = new Circle(vec2.random(100), 0.5, 1)
-    c.vel = vec2.random(10)
+for ( let i = 0; i < 500; i++ ) {
+    const c = new Circle( vec2.random( 10 ).abs(), 0.15, 1 )
+    c.vel = vec2.random( 3 )
     physicsWorker.postMessage( Message( M.pushCircle, c ) )
 }
 
@@ -72,8 +87,8 @@ physicsWorker.postMessage( Message( M.pushCircle, c2 ) ) */
 // Window Resize
 function resize() {
     ctx.resetTransform()
-    ctx.scale(1, -1)
-    ctx.translate(0, -canvas.height)
+    ctx.scale( 1, -1 )
+    ctx.translate( 0, -canvas.height )
 
     updateBoundries()
     physicsWorker.postMessage( Message( M.setBoundries, BOUNDRIES ) )
@@ -83,22 +98,20 @@ function resize() {
 // Render Function
 function render( millis ) {
     if ( !renderData ) return
-    if ( renderData.length % 3 != 0 ) console.warn( "Weird renderData Array:", renderData )
+    if ( renderData.length % renderDataObjectSize !== 0 ) console.warn( "Weird renderData Array:", renderData )
 
-    draw.fill("white")
+    draw.fill( "white" )
 
-    if ( !isFinite(renderData[0]) )
+    if ( !isFinite( renderData[0] ) )
         physicsWorker.postMessage( Message( M.pause ) )
 
-    for ( let i = 0; i < ~~( renderData.length / 3 ); i++ ) {
-        const index = i * 3
-        const pos = new vec2(
-            renderData[index],
-            renderData[index + 1],
-        ).mul(WORLDSCALE)
-        const radius = renderData[index + 2] * WORLDSCALE
+    for ( let i = 0; i < ~~( renderData.length / renderDataObjectSize ); i++ ) {
+        const index = i * renderDataObjectSize
+        const circle = Circle.fromBuffer(renderData, index)
 
-        draw.circle(pos, radius, `rgba(${(index * 255) / (renderData.length - 3)},0,0,0.5)`)
+        const fac = ( performance.now() - renderDataTime ) / tickLengthSmooth
+        const interp = vec2.lerp( circle.lastPos, circle.pos, Math.tanh( fac / 3 ) * 3 )
+        draw.circle( interp.mul( WORLDSCALE ), circle.radius, `hsla(${( index * 360 ) / ( renderData.length - renderDataObjectSize )}deg,100%,50%,0.75)` )
     }
 
     //console.log(renderData[0], renderData[1], renderData[2])

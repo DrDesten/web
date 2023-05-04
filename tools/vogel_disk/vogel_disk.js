@@ -5,7 +5,7 @@ const goldenAngleRcpSq = goldenAngleRcp * goldenAngleRcp
 
 // PREVIEW CHART //////////////////////////////////////////////////////////////////////////
 
-const ctx = document.getElementById( "preview_chart" )
+const ctx = document.getElementById( "chart" )
 
 const data = {
     datasets: [{
@@ -116,7 +116,7 @@ function calculateSamples( form, output_id ) {
         } )
     }
 
-    let html = glsl_array( array, `vogel_disk_${samples}` )
+    let html = GLSL.arrayAssign( array, `vogel_disk_${samples}` )
 
     if ( form.auto_copy.checked ) {
         navigator.clipboard.writeText( html )

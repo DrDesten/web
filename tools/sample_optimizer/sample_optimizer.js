@@ -250,6 +250,6 @@ function optimizeArray( str = "", steps = 100 ) {
         document.getElementById( "output_progressiveness" ).innerHTML = `Progressiveness: ${progressiveness}`
     }
 
-    document.getElementById( "output" ).innerHTML = html_code( glsl_array( values, varname + "_progressive" ) )
+    document.getElementById( "output" ).innerHTML = html_code( GLSL.arrayAssign( values, varname + "_progressive" ) )
     //console.log(values)
 }

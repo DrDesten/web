@@ -40,7 +40,7 @@ function calculateSamples( form, output_id ) {
 
     array = array.map( curr => curr / sum ) // Normalize Array
 
-    let html = glsl_array( array, `gaussian_${samples}` )
+    let html = GLSL.arrayAssign( array, `gaussian_${samples}` )
 
     if ( form.auto_copy.checked ) {
         navigator.clipboard.writeText( html )

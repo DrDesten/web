@@ -51,40 +51,48 @@ function copyConfig() {
     navigator.clipboard.writeText( stringifyConfig() )
 }
 function pasteEntries() {
-    const string = navigator.clipboard.readText?.() ?? ""
-
     const div = document.body.appendChild( document.createElement( "div" ) )
     div.classList.add( "top" )
     div.addEventListener( "click", e => {
         e.stopPropagation()
-        if (e.target === div) div.remove()
+        if ( e.target === div ) div.remove()
     } )
 
     const section = div.appendChild( document.createElement( "section" ) )
     section.classList.add( "paragraph", "color-variation-dark" )
-    section.innerHTML 
-        = `<h3 class="paragraph">Load Simulation Parameters</h3>`
+    section.innerHTML
+        = `<h3 class="paragraph">Load Entries</h3>`
         + `<div style="text-align: center;">Paste JSON Here</div>`
-        + `<textarea id="entry-data">${string}</textarea>`
+        + `<textarea id="entry-data"></textarea>`
         + `<button onclick="Entries = loadEntries(document.getElementById('entry-data').value)">Load</button>`
+
+    navigator.clipboard.readText?.().then( string => {
+        // Only autofill string if it's valid JSON 
+        if ( JSON.parse( string ) instanceof Array )
+            document.getElementById( "entry-data" ).value = string
+    } )
 }
 function pasteConfig() {
-    const string = navigator.clipboard.readText?.() ?? ""
-
     const div = document.body.appendChild( document.createElement( "div" ) )
     div.classList.add( "top" )
     div.addEventListener( "click", e => {
         e.stopPropagation()
-        if (e.target === div) div.remove()
+        if ( e.target === div ) div.remove()
     } )
 
     const section = div.appendChild( document.createElement( "section" ) )
     section.classList.add( "paragraph", "color-variation-dark" )
-    section.innerHTML 
+    section.innerHTML
         = `<h3 class="paragraph">Load Simulation Parameters</h3>`
         + `<div style="text-align: center;">Paste JSON Here</div>`
-        + `<textarea id="config-data">${string}</textarea>`
+        + `<textarea id="config-data"></textarea>`
         + `<button onclick="Config = loadConfig(document.getElementById('config-data').value)">Load</button>`
+
+    navigator.clipboard.readText?.().then( string => {
+        // Only autofill string if it's valid JSON 
+        if ( JSON.parse( string ) instanceof Object )
+            document.getElementById( "config-data" ).value = string
+    } )
 }
 
 // Set up globals

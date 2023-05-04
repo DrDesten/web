@@ -66,7 +66,7 @@
             <input type="button" value="Add Entry" onclick="addEntry(this.form)">
         </form>
     </section>
-    <section class="paragraph retractable" retracted>
+    <section class="paragraph retractable" retracted="false">
         <h3 class="paragraph">Simulation Parameters</h3>
         <form id="config" name="config" action="" method="GET">
             <input type="number" name="halflife" value="0" onchange="Config.update({halflife: +this.value * 60 * 60})">
@@ -75,11 +75,24 @@
             <label for="peakplasma">Peak Plasma Concentration (minutes)</label><br>
         </form>
     </section>
-    <section class="paragraph">
+    <section class="paragraph retractable" retracted="false">
         <h3 class="paragraph">Entries</h3>
         <table class="list" id="list">
             <!-- Filled in by JavaScript -->
         </table>
+    </section>
+    <section class="paragraph">
+        <h3 class="paragraph">Import / Export</h3>
+        <table style="width: auto;">
+            <tr>
+                <td><button onclick="copyEntries()">Copy Entries</button></td>
+                <td><button onclick="copyConfig()">Copy Simulation Parameters</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="pasteEntries()">Load Entries</button></td>
+                <td><button onclick="pasteConfig()">Load Simulation Parameters</button></td>
+            </tr>
+            </tablew>
     </section>
 
 

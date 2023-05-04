@@ -1,3 +1,6 @@
+
+
+
 const Absorption = {
     simpleDecay( seconds, halflife ) {
         return 2 ** ( -seconds / halflife )
@@ -22,18 +25,67 @@ const Absorption = {
 
 // Save state
 
-function save() {
-    localStorage.setItem( "entries", JSON.stringify( Entries.filter( entry => entry.grams > 0 ) ) )
-    localStorage.setItem( "config", JSON.stringify( Config ) )
+function stringifyEntries() {
+    return JSON.stringify( Entries.filter( entry => entry.grams > 0 ) )
 }
-function loadEntries() {
-    return JSON.parse( localStorage.getItem( "entries" ) ?? "[]")
-        .map( entry => new Entry( entry.grams, entry.time ) )
-}
-function loadConfig() {
-    return JSON.parse( localStorage.getItem( "config" )  ?? "{}")
+function stringifyConfig() {
+    return JSON.stringify( Config )
 }
 
+function save() {
+    localStorage.setItem( "entries", stringifyEntries() )
+    localStorage.setItem( "config", stringifyConfig() )
+}
+function loadEntries( string ) {
+    return JSON.parse( string ?? localStorage.getItem( "entries" ) ?? "[]" )
+        .map( entry => new Entry( entry.grams, entry.time ) )
+}
+function loadConfig( string ) {
+    return JSON.parse( string ?? localStorage.getItem( "config" ) ?? "{}" )
+}
+
+function copyEntries() {
+    navigator.clipboard.writeText( stringifyEntries() )
+}
+function copyConfig() {
+    navigator.clipboard.writeText( stringifyConfig() )
+}
+function pasteEntries() {
+    const string = navigator.clipboard.readText?.() ?? ""
+
+    const div = document.body.appendChild( document.createElement( "div" ) )
+    div.classList.add( "top" )
+    div.addEventListener( "click", e => {
+        e.stopPropagation()
+        if (e.target === div) div.remove()
+    } )
+
+    const section = div.appendChild( document.createElement( "section" ) )
+    section.classList.add( "paragraph", "color-variation-dark" )
+    section.innerHTML 
+        = `<h3 class="paragraph">Load Simulation Parameters</h3>`
+        + `<div style="text-align: center;">Paste JSON Here</div>`
+        + `<textarea id="entry-data">${string}</textarea>`
+        + `<button onclick="Entries = loadEntries(document.getElementById('entry-data').value)">Load</button>`
+}
+function pasteConfig() {
+    const string = navigator.clipboard.readText?.() ?? ""
+
+    const div = document.body.appendChild( document.createElement( "div" ) )
+    div.classList.add( "top" )
+    div.addEventListener( "click", e => {
+        e.stopPropagation()
+        if (e.target === div) div.remove()
+    } )
+
+    const section = div.appendChild( document.createElement( "section" ) )
+    section.classList.add( "paragraph", "color-variation-dark" )
+    section.innerHTML 
+        = `<h3 class="paragraph">Load Simulation Parameters</h3>`
+        + `<div style="text-align: center;">Paste JSON Here</div>`
+        + `<textarea id="config-data">${string}</textarea>`
+        + `<button onclick="Config = loadConfig(document.getElementById('config-data').value)">Load</button>`
+}
 
 // Set up globals
 
@@ -52,9 +104,9 @@ class Entry {
 }
 
 /** @type {Entry[]} */
-const Entries = loadEntries()
+let Entries = loadEntries()
 
-const Config = {
+let Config = {
     substance: "caffeine",
     halflife: 5 * 60 * 60,
     peak: 90 * 60,
@@ -68,12 +120,12 @@ const Config = {
         save()
     }
 }
-Config.update(loadConfig())
+Config.update( loadConfig() )
 
 // Logic
 
 function updateConfigDisplay() {
-    const form = document.getElementById("config")
+    const form = document.getElementById( "config" )
     form.halflife.value = Config.halflife / ( 60 * 60 )
     form.peakplasma.value = Config.peak / 60
 }
@@ -83,11 +135,11 @@ function addEntry( form ) {
     const elapsedTime = +form.time.value
     const timeunit = +form.timeunit.value
 
-    if ( !isFinite( milligrams ) && milligrams > 0 )
+    if ( !isFinite( milligrams ) || milligrams <= 0 )
         return
-    if ( !isFinite( elapsedTime ) && elapsedTime > 0 )
+    if ( !isFinite( elapsedTime ) || elapsedTime < 0 )
         return
-    if ( !isFinite( timeunit ) && timeunit > 0 )
+    if ( !isFinite( timeunit ) || timeunit <= 0 )
         return
 
     const time = Date.now() - ( elapsedTime * timeunit * 1000 )
@@ -123,14 +175,14 @@ function updateCurrentCaffeine() {
 
 
 function dateDifference( date1, date2 ) {
-    const milliseconds = Math.floor(Math.abs( date2 - date1 ))
+    const milliseconds = Math.floor( Math.abs( date2 - date1 ) )
     const seconds = Math.floor( milliseconds / 1000 )
     const minutes = Math.floor( seconds / 60 )
     const hours = Math.floor( minutes / 60 )
     const days = Math.floor( hours / 24 )
 
     return [
-        { unit: days == 1 ? "day" : "days" , value: days },
+        { unit: days == 1 ? "day" : "days", value: days },
         { unit: hours == 1 ? "hour" : "hours", value: hours % 24 },
         { unit: minutes == 1 ? "minute" : "minutes", value: minutes % 60 },
         { unit: seconds == 1 ? "second" : "seconds", value: seconds % 60 },

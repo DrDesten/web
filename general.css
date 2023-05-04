@@ -186,7 +186,6 @@ section.paragraph {
     padding: clamp(0.5rem, 5vw, 1.5rem) clamp(0.5rem, 6vw, 2.5rem);
     margin: 2rem 0px;
 
-    border-radius: var(--border-rad);
     transition: opacity 0.9s var(--snap-ease), transform 0.4s var(--snap-ease)
 }
 
@@ -267,4 +266,27 @@ h3.paragraph {
 
 .lowmargin {
     margin: 0.25em 0;
+}
+
+
+
+.top {
+    position: fixed;
+    top: 0; left: 0;
+    bottom: 0; right: 0;
+
+    z-index: 10;
+
+    background-color: rgba(0,0,0,0.25);
+}
+.top > * {
+    position: absolute;
+    top: 50%; left: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+.top > section {
+    background-color: white;
+    box-shadow: var(--ele-shadow);
 }

@@ -1,8 +1,43 @@
-function glsl_variable_constructor(data) {
-    if (typeof(data) == "number") {
+const GLSL = {
+    type( data ) {
+        if ( typeof ( data ) == "number" ) {
+            return "float"
+        }
+        if ( data.length >= 1 && data.length <= 4 ) {
+            return data.length == 1 ? "float" : `vec${data.length}`
+        }
+        throw `glslify: Type resolution failed. Unable to resolve {${data}}`
+    },
+
+    vector( data ) {
+        if ( typeof ( data ) == "number" ) {
+            return data.toPrecision( 10 ) // Single Precision Floats have no more than 9 significant digits
+        }
+        if ( data.length >= 1 && data.length <= 4 ) {
+            return data.length == 1 ? data.toPrecision( 10 ) : `vec${data.length}(${data.join( ", " )})`
+        }
+
+        throw `glslify: Variable Conversion Failed. Variable of dimension ${data.length} not supported`
+    },
+
+    array( data ) {
+        let type = GLSL.type( data[0] )
+        let result = `${type}[](\n${data.map( vec => "\t" + GLSL.vector( vec ) ).join( ",\n" )}\n)`
+        return result
+    },
+
+    arrayAssign( data, varname ) {
+        let type = GLSL.type( data[0] )
+        return `const ${type} ${varname}[${data.length}] = ${GLSL.array( data )};`
+    },
+}
+
+
+function glsl_variable_constructor( data ) {
+    if ( typeof ( data ) == "number" ) {
         return `${data}`
     } else {
-        switch (data.length) {
+        switch ( data.length ) {
             case 1:
                 return `${data[0]}`
             case 2:
@@ -11,7 +46,7 @@ function glsl_variable_constructor(data) {
                 return `vec3(${data[0]}, ${data[1]}, ${data[2]})`
             case 4:
                 return `vec4(${data[0]}, ${data[1]}, ${data[2]}, ${data[3]})`
-        
+
             default:
                 throw `glslify: Variable Conversion Failed. Variable of dimension ${data.length} not supported`
         }
@@ -19,12 +54,12 @@ function glsl_variable_constructor(data) {
 }
 
 
-function glsl_array(array, varname) {
-    var type = "";
-    if (typeof(array[0]) == "number") {
+function glsl_array( array, varname ) {
+    var type = ""
+    if ( typeof ( array[0] ) == "number" ) {
         type = "float"
     } else {
-        switch (array[0].length) {
+        switch ( array[0].length ) {
             case 1:
                 type = "float"
                 break
@@ -37,20 +72,20 @@ function glsl_array(array, varname) {
             case 4:
                 type = "vec4"
                 break
-        
+
             default:
                 throw `glslify: Array Conversion Failed. Vector of length ${array[0].length} not supported`
         }
     }
 
     var array_prefix = `const ${type} ${varname}[${array.length}] = ${type}[](\n`
-    
-    var finalstring = array_prefix;
-    for (let i = 0; i < array.length; i++) {
-        finalstring += "   "
-        finalstring += glsl_variable_constructor(array[i])
 
-        if (i != array.length - 1) {
+    var finalstring = array_prefix
+    for ( let i = 0; i < array.length; i++ ) {
+        finalstring += "   "
+        finalstring += glsl_variable_constructor( array[i] )
+
+        if ( i != array.length - 1 ) {
             finalstring += ",\n"
         } else {
             finalstring += "\n"
@@ -66,8 +101,8 @@ function glsl_array(array, varname) {
 
 // GLSL Parsing /////////////////////////////////////////////////////////////////////////
 
-const testString = 
-`const vec2 vogel_disk_10[10] = vec2[](
+const testString =
+    `const vec2 vogel_disk_10[10] = vec2[](
     vec2(0.2572579017634409, -0.04163309750617664),
     vec2(-0.251930634467436, 0.21998316851378627),
     vec2(0.07736396637194182, -0.5397186179385906),
@@ -81,13 +116,13 @@ const testString =
 );`
 
 
-function glsl_parse_vec2_array(str = "") { // Get the values out of a glsl array
+function glsl_parse_vec2_array( str = "" ) { // Get the values out of a glsl array
     const vec2Values = /vec2\(([0-9\.-]+), *([0-9\.-]+)\)/g // Regex to extract values
-    let values = [...str.matchAll(vec2Values)].map(e => [parseFloat(e[1]),parseFloat(e[2])]) // Extracts all values, converts them to float and then puts them in a 2d array
+    let values = [...str.matchAll( vec2Values )].map( e => [parseFloat( e[1] ), parseFloat( e[2] )] ) // Extracts all values, converts them to float and then puts them in a 2d array
     return values
 }
-function multilang_parse_vec2_array(str = "") {  // Get the values out of a glsl/hlsl array
+function multilang_parse_vec2_array( str = "" ) {  // Get the values out of a glsl/hlsl array
     const vec2Values = /(vec2|float2)\(([0-9\.-]+), *([0-9\.-]+)\)/g // Regex to extract values
-    let values = [...str.matchAll(vec2Values)].map(e => [parseFloat(e[2]),parseFloat(e[3])]) // Extracts all values, converts them to float and then puts them in a 2d array
+    let values = [...str.matchAll( vec2Values )].map( e => [parseFloat( e[2] ), parseFloat( e[3] )] ) // Extracts all values, converts them to float and then puts them in a 2d array
     return values
 }

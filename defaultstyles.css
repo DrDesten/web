@@ -26,6 +26,12 @@
     --border-rad: 0.15rem;
 
     --snap-ease: cubic-bezier(.25, 0, 0, 1);
+
+
+    /* Forms & Buttons */
+    --input-margin: 0.2em;
+    --input-padding: 0.15em;
+    --input-bg: var(--bg-c);
 }
 
 body {
@@ -75,12 +81,7 @@ h3 {
     font-weight: normal;
 }
 
-form {
-    --input-margin: 0.2em;
-    --input-padding: 0.15em;
-    --input-bg: var(--bg-c);
-}
-
+button,
 input,
 textarea {
     font-size: inherit;
@@ -97,11 +98,14 @@ textarea {
     background-color: var(--input-bg);
 }
 
+button,
 input[type="button"] {
     padding: var(--input-padding) 0.5em;
     transition: background-color 0.2s;
 }
 
+button:hover,
+button:focus,
 input[type="button"]:hover,
 input[type="button"]:focus {
     background-color: var(--text-light-a);
@@ -153,4 +157,15 @@ label {
 pre {
     font-family: 'Ubuntu Mono', monospace;
     font-size: inherit;
+}
+
+table {
+    width: 100%;
+}
+table tr {
+    width: 100%;
+}
+table tr > td {
+    vertical-align: middle;
+    text-align: left;
 }

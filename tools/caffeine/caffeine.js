@@ -36,8 +36,7 @@ function loadConfig() {
 }
 
 
-
-// Logic
+// Set up globals
 
 class Entry {
     constructor( grams = 0, time = Date.now() / 1000 ) {
@@ -58,9 +57,26 @@ const Entries = loadEntries()
 
 const Config = {
     substance: "caffeine",
-    peak: 90 * 60,
     halflife: 5 * 60 * 60,
+    peak: 90 * 60,
     metabolites: [],
+
+    update( params = {} ) {
+        for ( const key in params ) {
+            if ( key in Config )
+                Config[key] = params[key]
+        }
+        save()
+    }
+}
+Config.update(loadConfig())
+
+// Logic
+
+function updateConfigDisplay() {
+    const form = document.getElementById("config")
+    form.halflife.value = Config.halflife / ( 60 * 60 )
+    form.peakplasma.value = Config.peak / 60
 }
 
 function addEntry( form ) {
@@ -152,7 +168,7 @@ function generateEntryList() {
     }
 }
 
-
+updateConfigDisplay()
 updateCurrentCaffeine()
 generateEntryList()
 

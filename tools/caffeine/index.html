@@ -70,9 +70,9 @@
         <h3 class="paragraph">Simulation Parameters</h3>
         <form id="config" name="config" action="" method="GET">
             <input type="number" name="halflife" value="5" onchange="Config.update({halflife: +this.value * 60 * 60})">
-            <label for="halflife">Caffeine Half-Life (hours)</label><br>
+            <label for="halflife">Half-Life (hours)</label><br>
             <input type="number" name="peakplasma" value="45" onchange="Config.update({peak: +this.value * 60})">
-            <label for="halflife">Caffeine Peak Plasma Concentration (minutes)</label><br>
+            <label for="peakplasma">Peak Plasma Concentration (minutes)</label><br>
         </form>
     </section>
     <section class="paragraph">

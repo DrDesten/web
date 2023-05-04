@@ -1,14 +1,14 @@
-var tw_delay = 1
-var tw_speed_header = 0.15
-var tw_speed_p = 0.04
+const tw_delay = 1
+const tw_speed_header = 0.15
+const tw_speed_p = 0.04
 
 
 
 
 // HEADER ANIMATION (typewriter + arrow) /////////////////////////////////////////////////////////////////////////
 
-var typewriter_elements = document.getElementsByClassName( "typewriter" )
-var typewriterAnimationLength = 0
+let typewriter_elements = document.getElementsByClassName( "typewriter" )
+let typewriterAnimationLength = 0
 for ( let i = 0; i < typewriter_elements.length; i++ ) {
     let ele = typewriter_elements[i]
     let char_length = ele.innerHTML.length
@@ -22,7 +22,7 @@ for ( let i = 0; i < typewriter_elements.length; i++ ) {
     }
 }
 
-var header_bottom = document.getElementsByClassName( "fillscreen-bottom" )[0]
+let header_bottom = document.getElementsByClassName( "fillscreen-bottom" )[0]
 if ( header_bottom != undefined ) {
     header_bottom.style.animation = `fadeInDown 2s ease ${typewriterAnimationLength + ( tw_delay * 2 )}s backwards`
 }
@@ -32,7 +32,7 @@ if ( header_bottom != undefined ) {
 
 // Adds shadow to navbar when scrolled past some amount
 window.addEventListener( "scroll", e => {
-    let nav = document.querySelectorAll( "table.nav" )[0]
+    let nav = document.querySelector( "table.nav" )
     if ( window.scrollY >= window.innerHeight * 0.2 ) {
         nav.classList.add( "nav-shadow" )
     } else {
@@ -95,11 +95,11 @@ document.querySelectorAll( "section.paragraph" ).forEach( ele => {
 // RETRACTABLE PARAGRAPHS
 
 document.querySelectorAll( "section.retractable" ).forEach( ele => {
-    ele.setAttribute( "retracted", ele.getAttribute( "retracted" ) == "true" ? "true" : "false" )
-    ele.addEventListener( "click", e => {
-        ele.setAttribute( "retracted", ele.getAttribute( "retracted" ) == "true" ? "false" : "true" )
-    } )
-    ele.firstChild?.addEventListener( "click", e => {
-        ele.setAttribute( "retracted", ele.getAttribute( "retracted" ) == "true" ? "false" : "true" )
+    ele.setAttribute( "retracted", ele.getAttribute( "retracted" ) === "true" ? "true" : "false" )
+    /* ele.addEventListener( "click", e => {
+        ele.setAttribute( "retracted", ele.getAttribute( "retracted" ) === "true" ? "false" : "true" )
+    } ) */
+    ele.firstElementChild?.addEventListener( "click", e => {
+        ele.setAttribute( "retracted", ele.getAttribute( "retracted" ) === "true" ? "false" : "true" )
     } )
 } )

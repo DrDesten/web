@@ -27,12 +27,11 @@ function save() {
     localStorage.setItem( "config", JSON.stringify( Config ) )
 }
 function loadEntries() {
-    return JSON.parse( localStorage.getItem( "entries" ) )
+    return JSON.parse( localStorage.getItem( "entries" ) ?? "[]")
         .map( entry => new Entry( entry.grams, entry.time ) )
-        || []
 }
 function loadConfig() {
-    return JSON.parse( localStorage.getItem( "config" ) ) || {}
+    return JSON.parse( localStorage.getItem( "config" )  ?? "{}")
 }
 
 

@@ -204,8 +204,7 @@ section.retractable > *:not(:first-child) {
     /* transition: opacity 0.5s var(--snap-ease), height 0.5s var(--snap-ease); */
 }
 section.retractable[retracted="true"] > *:not(:first-child) {
-    height: 0px;
-    opacity: 0;
+    display: none;
 }
 section.retractable[retracted="false"] > *:first-child::after {
     content: " -";

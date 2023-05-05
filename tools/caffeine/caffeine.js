@@ -86,7 +86,7 @@ function pasteConfig() {
         = `<h3 class="paragraph">Load Simulation Parameters</h3>`
         + `<div style="text-align: center;">Paste JSON Here</div>`
         + `<textarea id="config-data"></textarea>`
-        + `<button onclick="Config = loadConfig(document.getElementById('config-data').value)">Load</button>`
+        + `<button onclick="Config.update(loadConfig(document.getElementById('config-data').value)); ">Load</button>`
 
     navigator.clipboard.readText?.().then( string => {
         // Only autofill string if it's valid JSON 
@@ -125,6 +125,7 @@ let Config = {
             if ( key in Config )
                 Config[key] = params[key]
         }
+        updateConfigDisplay()
         save()
     }
 }
@@ -200,7 +201,7 @@ function dateDifference( date1, date2 ) {
 
 function generateEntryList() {
     const table = document.getElementById( "list" )
-    table.innerHTML = ""
+    table.innerHTML = `<tr><th>Intake</th><th>Time</th><th>Remaining</th><th></th></tr`
     for ( let i = Entries.length - 1; i >= 0; i-- ) {
         const entry = Entries[i]
 
@@ -216,7 +217,8 @@ function generateEntryList() {
         row.appendChild( cell )
 
         cell = document.createElement( "td" )
-        cell.innerHTML = Math.round( Absorption.peakDecay( Date.now() / 1000 - entry.time, Config.peak, Config.halflife ) * entry.milligrams ) + " mg of caffeine left"
+        const caffeineLevel = Math.round( Absorption.peakDecay( Date.now() / 1000 - entry.time, Config.peak, Config.halflife ) * entry.milligrams )
+        cell.innerHTML = caffeineLevel == 0 ? "nothing" : caffeineLevel + " mg"
         row.appendChild( cell )
 
         cell = document.createElement( "td" )

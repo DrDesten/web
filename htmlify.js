@@ -1,3 +1,3 @@
-function html_code(string, style = "") {
+function html_code( string, style = "" ) {
     return `<pre style="${style}">${string}</pre>`
 }

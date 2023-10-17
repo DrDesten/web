@@ -322,6 +322,7 @@ section.paragraph {
     border-radius: var(--border-rad);
 }
 
+
 /* Color Alternation for paragraph sections */
 section.color-variation-1 {
     background: var(--bg-c2);
@@ -387,4 +388,31 @@ table td {
 
 .lowmargin {
     margin: 0.25em 0;
+}
+
+
+
+.top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    z-index: 10;
+
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.top>* {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+.top>section {
+    background-color: white;
+    box-shadow: var(--ele-shadow);
 }

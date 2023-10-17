@@ -2,76 +2,80 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>DrDesten's Gaussian Kernel Calculator</title>
-  <link rel="icon" type="image/png" href="../../icons/icon_main.png">
-  <link rel="stylesheet" href="../../general.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DrDesten's Gaussian Kernel Calculator</title>
+    <link rel="icon" type="image/png" href="../../icons/icon_main.png">
+<link rel="stylesheet" href="../../defaultstyles.css">
+<link rel="stylesheet" href="../../general.css">
+    <noscript>
+        <link rel="stylesheet" href="../../noscript.css">
+    </noscript>
 </head>
 
 <body>
-  <script src="../../jquery-3.6.0.min.js"></script>
-  <script src="../../general.js"></script>
-  <script src="../../glslify.js"></script>
-  <script src="../../htmlify.js"></script>
+    <script src="../../jquery-3.6.0.min.js"></script>
+    <script src="../../general.js"></script>
+    <script src="../../glslify.js"></script>
+    <script src="../../htmlify.js"></script>
 
-  <nav>
-    <table class="nav">
-      <tr class="nav">
-        <th class="nav">
-          <a class="nav" href="../..">Home</a>
-        </th>
-        <th class="nav">
-          <a class="nav" href="../../projects/">Projects</a>
-        </th>
-        <th class="nav">
-          <a class="nav" href="..">Tools</a>
-        </th>
-      </tr>
-    </table>
-  </nav>
+    <nav>
+        <table class="nav">
+            <tr class="nav">
+                <th class="nav">
+                    <a class="nav" href="../..">Home</a>
+                </th>
+                <th class="nav">
+                    <a class="nav" href="../../projects/">Projects</a>
+                </th>
+                <th class="nav">
+                    <a class="nav" href="..">Tools</a>
+                </th>
+            </tr>
+        </table>
+    </nav>
 
-  <div id="nav-padding"></div>
+    <div id="nav-padding"></div>
 
-  <header class="fillscreen">
-    <div class="fillscreen-center">
-      <h1 class="typewriter">Gaussian Kernels</h1>
-    </div>
-    <div class="fillscreen-bottom">
-      <img src="../../icons/angle down.svg" alt="Down Arrow">
-    </div>
-  </header>
-
-
-  <div id="main-content"></div> <!-- Creating Div as Section marker -->
-
-  <section class="paragraph">
-    <p class="paragraph">
-      This Calculator allows you to calculate kernel values for a 1D Gaussian Kernel. It uses the pascal triangle to determine the weights and normalizes them afterwards.
-      This can be very useful for creating a two pass Gaussian Blur for Real-Time applications. This is the reason I originally created this tool. <br>
-      To use it, enter a sample count and it will calculate the appropriate kernel weights for your gaussian blur. It is recommended to use uneven numbers so you can center your current pixel. <br>
-    </p>
-    <form name="input" action="" method="GET">
-      <p><b>Sample Count</b></p>
-      <input type="number" name="sample_input" placeholder="Enter Sample Count" oninput="calculateSamples_dynamic(this.form, 'output', this.value)" onchange="calculateSamples(this.form, 'output')">
-      <br>
-
-      <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')">
-      <label for="auto_copy" title="Automatically copies the generated GLSL code into your clipboard">Auto Copy Code</label>
-      <input type="checkbox" name="Auto Copy" id="auto_copy">
-  </form>
-  </section>
-  <section class="paragraph">
-    <h3 class="paragraph">GLSL Code</h3>
-    <p class="paragraph" id="output">
-      The code will show here
-    </p>
-  </section>
+    <header class="fillscreen">
+        <div class="fillscreen-center">
+            <h1 class="typewriter">Gaussian Kernels</h1>
+        </div>
+        <div class="fillscreen-bottom">
+            <img src="../../icons/angle down.svg" alt="Down Arrow">
+        </div>
+    </header>
 
 
-  <script src="gaussian.js"></script>
-  <script src="../../style.js"></script>
+    <div id="main-content"></div> <!-- Creating Div as Section marker -->
+
+    <section class="paragraph">
+        <p class="paragraph">
+            This Calculator allows you to calculate kernel values for a 1D Gaussian Kernel. It uses the pascal triangle to determine the weights and normalizes them afterwards.
+            This can be very useful for creating a two pass Gaussian Blur for Real-Time applications. This is the reason I originally created this tool. <br>
+            To use it, enter a sample count and it will calculate the appropriate kernel weights for your gaussian blur. It is recommended to use uneven numbers so you can center your current pixel. <br>
+        </p>
+        <form name="input" action="" method="GET">
+            <p><b>Sample Count</b></p>
+            <input type="number" name="sample_input" placeholder="Enter Sample Count" oninput="calculateSamples_dynamic(this.form, 'output', this.value)" onchange="calculateSamples(this.form, 'output')">
+            <br>
+
+            <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')">
+            <label for="auto_copy" title="Automatically copies the generated GLSL code into your clipboard">Auto Copy Code</label>
+            <input type="checkbox" name="Auto Copy" id="auto_copy">
+        </form>
+    </section>
+    <section class="paragraph">
+        <h3 class="paragraph">GLSL Code</h3>
+        <p class="paragraph" id="output">
+            The code will show here
+        </p>
+    </section>
+
+
+    <script src="gaussian.js"></script>
+    <script src="../../style.js"></script>
 </body>
 
 </html>

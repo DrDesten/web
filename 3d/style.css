@@ -1,0 +1,110 @@
+body {
+    font-family: sans-serif;
+    font-size: 1rem;
+    background-color: #eee;
+}
+
+div {
+    width: max-content;
+}
+div[box-3d] {
+    padding: 1rem;
+    max-width: 80vw;
+}
+
+h1 {
+    text-align: center;
+    font-size: 7rem;
+    margin: 0.5em
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+
+.container-3d {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-between;
+
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    perspective: 150rem;
+}
+.container-3d * {
+    transform-style: preserve-3d;
+}
+.container-3d hr {
+    opacity: 0;
+    width: 100%;
+    margin: 0;
+}
+
+.element-3d {
+    transform-style: preserve-3d;
+    transform-origin: var(--origin, 0 0 0);
+}
+
+.face-3d {
+    position: absolute;
+    top: 0; left: 0;
+    text-align: center;
+}
+
+.rotate-3d {
+    animation: anim-rotate-3d 30s ease var(--anim-delay, 0s) infinite normal both;
+}
+@keyframes anim-rotate-3d {
+    0% {
+        transform: rotateX(0) rotateY(0) rotateZ(0);
+    }
+    17% {
+        transform: rotateX(90deg) rotateY(0) rotateZ(0);
+    }
+    33% {
+        transform: rotateX(270deg) rotateY(0) rotateZ(0);
+    }
+    50% {
+        transform: rotateX(360deg) rotateY(90deg) rotateZ(0);
+    }
+    67% {
+        transform: rotateX(360deg) rotateY(180deg) rotateZ(0);
+    }
+    83% {
+        transform: rotateX(360deg) rotateY(270deg) rotateZ(0);
+    }
+    100% {
+        transform: rotateX(360deg) rotateY(360deg) rotateZ(0);
+    }
+}
+
+.pop-3d {
+    animation: anim-pop-3d 0.3s ease-in-out var(--anim-delay, 0s)  infinite alternate both;
+}
+@keyframes anim-pop-3d {
+    0% {
+        transform: translate3d(0,0,-3em);
+    }
+    100% {
+        transform: translate3d(0,0,3em);
+    }
+}
+
+.spin-3d {
+    animation: anim-spin-3d 2s linear var(--anim-delay, 0s)  infinite normal both;
+}
+@keyframes anim-spin-3d {
+    0% {
+        transform: rotate3d(0,1,0, 0deg);
+    }
+    100% {
+        transform: rotate3d(0,1,0, 360deg);
+    }
+}
+

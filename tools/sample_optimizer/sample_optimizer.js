@@ -11,14 +11,14 @@ function convert2DtoChart( arr ) {
 
 const ctx = document.getElementById( "preview_chart" )
 
-let data = {
+const data = {
     datasets: [{
         label: 'Sample Preview',
         data: [{ x: 0, y: 0 }],
     }],
 }
 
-let config = {
+const config = {
     type: 'scatter',
     data: data,
     options: {
@@ -250,6 +250,6 @@ function optimizeArray( str = "", steps = 100 ) {
         document.getElementById( "output_progressiveness" ).innerHTML = `Progressiveness: ${progressiveness}`
     }
 
-    document.getElementById( "output" ).innerHTML = html_code( glsl_array( values, varname + "_progressive" ) )
+    document.getElementById( "output" ).innerHTML = html_code( GLSL.arrayAssign( values, varname + "_progressive" ) )
     //console.log(values)
 }

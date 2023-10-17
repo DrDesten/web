@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DrDesten's Probability Calculator</title>
+  <link rel="icon" type="image/png" href="../../icons/icon_main.png">
+<link rel="stylesheet" href="../../defaultstyles.css">
+<link rel="stylesheet" href="../../general.css">
+	<noscript><link rel="stylesheet" href="../../noscript.css"></noscript>
+</head>
+
+<body>
+  <script src="../../jquery-3.6.0.min.js"></script>
+  <script src="../../general.js"></script>
+  <script src="../../glslify.js"></script>
+  <script src="../../htmlify.js"></script>
+
+  <nav>
+    <table class="nav">
+      <tr class="nav">
+        <th class="nav">
+          <a class="nav" href="../..">Home</a>
+        </th>
+        <th class="nav">
+          <a class="nav" href="../../projects/">Projects</a>
+        </th>
+        <th class="nav">
+          <a class="nav" href="..">Tools</a>
+        </th>
+      </tr>
+    </table>
+  </nav>
+
+  <div id="nav-padding"></div>
+
+  <header class="fillscreen">
+    <div class="fillscreen-center">
+      <h1 class="typewriter">Distribution</h1>
+    </div>
+    <div class="fillscreen-bottom">
+      <img src="../../icons/angle down.svg" alt="Down Arrow">
+    </div>
+  </header>
+
+
+  <div id="main-content"></div> <!-- Creating Div as Section marker -->
+
+  <section class="paragraph">
+    <h3 class="paragraph">Analysis</h3>
+    <p class="paragraph">
+      Enter a array of values and let the calculator do some stuff for you
+    </p>
+    <form name="input" action="" method="GET">
+
+      <!-- This is ugly as fuck, I know -->
+      <textarea type="text" id="sample_input" rows="4" placeholder="Enter Array Here. 
+ Supported Syntax:
+ {} or [] or () as enclosing brackets, ore none at all
+ , or ; or whitepace as value separators
+ You must use '.' as the decimal point" oninput="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')"></textarea>
+      <input type="button" value="Calculate" onclick="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')">
+
+    </form>
+    <br>
+    <p class="paragraph lowmargin"><b>Mean</b></p>
+    <p class="paragraph lowmargin" id="mean_out"></p>
+    <p class="paragraph lowmargin"><b>Median</b></p>
+    <p class="paragraph lowmargin" id="median_out"></p>
+    <p class="paragraph lowmargin"><b>Variance</b></p>
+    <p class="paragraph lowmargin" id="variance_out"></p>
+    <p class="paragraph lowmargin"><b>Standard Deviation</b></p>
+    <p class="paragraph lowmargin" id="standard_deviation_out"></p>
+  </section>
+
+
+  <script src="distribution.js"></script>
+  <script src="../../style.js"></script>
+</body>
+
+</html>

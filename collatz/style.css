@@ -1,0 +1,11 @@
+#canvas {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: min(100%, 80vh);
+    aspect-ratio: 1 / 1;
+
+    box-shadow: 0 0 3em 0 rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+}

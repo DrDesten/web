@@ -1,3 +1,99 @@
+function convertToGLSL( object, varname ) {
+    // Type deduction
+    function type( object ) {
+        // Primitive Dispatch
+        if ( typeof object === "boolean" )
+            return "bool"
+        if ( typeof object === "number" )
+            return "float"
+        if ( typeof object === "bigint" )
+            return "float"
+        if ( typeof object !== "object" )
+            throw `glslify: Type deduction failed. Unsupported primitive.`
+
+        // Vectors
+        if ( ( object.length === 4 || object.length === undefined ) &&
+            typeof object[0] === "number" && typeof object[1] === "number" && typeof object[2] === "number" && typeof object[3] === "number" )
+            return "vec4"
+        if ( ( object.length === 3 || object.length === undefined ) &&
+            typeof object[0] === "number" && typeof object[1] === "number" && typeof object[2] === "number" )
+            return "vec3"
+        if ( ( object.length === 2 || object.length === undefined ) &&
+            typeof object[0] === "number" && typeof object[1] === "number" )
+            return "vec2"
+
+        // Primitive Arrays
+        if ( object instanceof Float32Array || object instanceof Float64Array )
+            return "float[]"
+        if ( object instanceof Uint8Array || object instanceof Uint16Array || object instanceof Uint32Array )
+            return "uint[]"
+        if ( object instanceof Int8Array || object instanceof Int16Array || object instanceof Int32Array )
+            return "uint[]"
+
+        // Complex Arrays
+        if ( object instanceof Array ) {
+            const isuniform = object.every( x => typeof x === typeof object[0] )
+            if ( !isuniform )
+                throw `glslify: Type deduction failed. Array has mixed types.`
+            return type( object[0] ) + "[]"
+        }
+
+        throw `glslify: Type deduction failed.`
+    }
+
+    // Variable Assignment
+    function assign( type, value, { array = false } = {} ) {
+        return `const ${type} ${varname}${array ? "[]" : ""} = ${value};`
+    }
+
+    // Conversion Functions
+    function bool( boolean ) {
+        return assign( "bool", boolean )
+    }
+    function float( number ) {
+        return assign( "float", number )
+    }
+    function floatarray( array ) {
+        return assign( "float", `float[](\n${[...array].map( x => `\t${x}` ).join( ",\n" )}\n)`, { array: true } )
+    }
+    function uintarray( array ) {
+        return assign( "uint", `uint[](\n${[...array].map( x => `\t${x}` ).join( ",\n" )}\n)`, { array: true } )
+    }
+    function intarray( array ) {
+        return assign( "int", `int[](\n${[...array].map( x => `\t${x}` ).join( ",\n" )}\n)`, { array: true } )
+    }
+    function array( array ) {
+        // Verify type uniformity
+        const isuniform = array.every( x => typeof x === typeof array[0] )
+        if ( !isuniform )
+            throw `glslify: Conversion Failed. Array has mixed types`
+
+        return GLSL.arrayAssign( array, varname )
+    }
+
+    // Primitive Dispatch
+    if ( typeof object === "boolean" )
+        return bool( object )
+    if ( typeof object === "number" )
+        return float( object )
+    if ( typeof object === "bigint" )
+        return float( Number( object ) )
+    if ( typeof object !== "object" )
+        throw `glslify: Conversion Failed.`
+
+    // Array Dispatch
+    if ( object instanceof Float32Array || object instanceof Float64Array )
+        return floatarray( object )
+    if ( object instanceof Uint8Array || object instanceof Uint16Array || object instanceof Uint32Array )
+        return uintarray( object )
+    if ( object instanceof Int8Array || object instanceof Int16Array || object instanceof Int32Array )
+        return intarray( object )
+    if ( object instanceof Array )
+        return array( object )
+
+    throw `glslify: Conversion Failed.`
+}
+
 const GLSL = {
     type( data ) {
         if ( typeof ( data ) == "number" ) {

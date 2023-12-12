@@ -47,22 +47,22 @@ function convertToGLSL( object, varname ) {
     }
 
     // Conversion Functions
-    function bool( boolean ) {
+    function bool( /** @type {boolean} */ boolean ) {
         return assign( "bool", boolean )
     }
-    function float( number ) {
+    function float( /** @type {number} */ number ) {
         return assign( "float", number )
     }
-    function floatarray( array ) {
+    function floatarray( /** @type {Float32Array|Float64Array} */ array ) {
         return assign( "float", `float[](\n${[...array].map( x => `\t${x}` ).join( ",\n" )}\n)`, { array: true } )
     }
-    function uintarray( array ) {
+    function uintarray( /** @type {Uint8Array|Uint16Array|Uint32Array} */ array ) {
         return assign( "uint", `uint[](\n${[...array].map( x => `\t${x}` ).join( ",\n" )}\n)`, { array: true } )
     }
-    function intarray( array ) {
+    function intarray( /** @type {Int8Array|Int16Array|Int32Array} */ array ) {
         return assign( "int", `int[](\n${[...array].map( x => `\t${x}` ).join( ",\n" )}\n)`, { array: true } )
     }
-    function array( array ) {
+    function array( /** @type {any[]} */ array ) {
         // Verify type uniformity
         const isuniform = array.every( x => typeof x === typeof array[0] )
         if ( !isuniform )

@@ -54,7 +54,7 @@ const c = [
 let index = Math.round( Math.random() * 2 ** 53 ) % c.length
 document.querySelectorAll( "section.paragraph" ).forEach( ele => {
     const color = c[~~index]
-    ele.classList.add( "color-variation-dark" )
+    ele.classList.add( "color-variation-1" )
     ele.style.setProperty( "--bg-random", `linear-gradient(165deg, hsl(${color.h},${color.s}%,${color.l}%) 0%, hsl(${( color.h + 60 ) % 360},${color.s + 10}%,${color.l - 5}%) 100%)` )
     //ele.style.setProperty("--bg-random-trans", `linear-gradient(165deg, hsla(${color.h},${color.s}%,${color.l}%,0.55) 0%, hsl(${(color.h + 60) % 360},${color.s + 10}%,${color.l - 5}%,0.7) 100%)`)
     index = ( index + 0.6180339887498948 * c.length ) % c.length

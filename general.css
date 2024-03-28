@@ -326,6 +326,7 @@ section.paragraph {
 /* Color Alternation for paragraph sections */
 section.color-variation-1 {
     background: var(--bg-c2);
+    background: var(--bg-random);
     color: var(--text-light);
 }
 
@@ -335,6 +336,7 @@ section.color-variation-1 a {
 
 section.color-variation-2 {
     background: var(--bg-c);
+    background: var(--bg-random);
     color: var(--text-dark);
     box-shadow: var(--ele-shadow-l);
 }

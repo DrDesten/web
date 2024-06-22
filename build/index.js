@@ -81,7 +81,3 @@ for ( const htmlFile of htmlDocuments ) {
     const built = parsed.join("\n")
     write( htmlFile.path, built )
 }
-
-console.log(scripts)
-console.log(styles)
-console.log(images)

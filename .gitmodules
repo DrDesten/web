@@ -1,3 +1,6 @@
 [submodule "svg"]
 	path = svg
 	url = https://github.com/DrDesten/svg.git
+[submodule "xml"]
+	path = xml
+	url = https://github.com/DrDesten/xml.git

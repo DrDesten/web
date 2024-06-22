@@ -36,7 +36,7 @@ for ( const htmlFile of htmlFileContents ) {
     const tags = {
         script: html.findChildren( node => node.name === "script" && node.attributes.src ),
         style: html.findChildren( node => node.name === "link" && node.attributes.rel === "stylesheet" ),
-        image: html.findChildren( node => node.name === "img" ),
+        image: html.findChildren( node => node.name === "link" && node.attributes.rel === "icon" || node.name === "img" ),
     }
 
     for ( const { attributes } of tags.script ) {
@@ -51,10 +51,11 @@ for ( const htmlFile of htmlFileContents ) {
             attributes.href = relative
         }
     }
-    for ( const { attributes } of tags.image ) {
-        if ( images.has( attributes.href ) ) {
-            const relative = path.relative( path.dirname( htmlFile.path ), images.get( attributes.href ) )
-            attributes.href = relative
+    for ( const { name, attributes } of tags.image ) {
+        const attr = name === "img" ? "src" : "href"
+        if ( images.has( attributes[attr] ) ) {
+            const relative = path.relative( path.dirname( htmlFile.path ), images.get( attributes[attr] ) )
+            attributes[attr] = relative
         }
     }
     

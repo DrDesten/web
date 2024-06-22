@@ -1,11 +1,14 @@
 {
     "customizations": {
-      "codespaces": {
-        "repositories": {
-          "DrDesten/svg": { "permissions": "write-all" },
-          "DrDesten/xml": { "permissions": "write-all" }
+        "codespaces": {
+            "repositories": {
+                "DrDesten/svg": {
+                    "permissions": "write-all"
+                },
+                "DrDesten/xml": {
+                    "permissions": "write-all"
+                }
+            }
         }
-      }
     }
-  }
-  
+}

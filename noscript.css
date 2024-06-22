@@ -1,8 +1,0 @@
-/* noscript.css
-** applies when javascript is blocked
-*/
-
-section.paragraph {
-  background: var(--bg-c2);
-  color: var(--text-light);
-}

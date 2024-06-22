@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DrDesten's Sample Optimizer - Progressify Arrays</title>
+    <link rel="icon" type="image/png" href="../../icons/icon_main.png">
+    <link rel="stylesheet" href="../../defaultstyles.css">
+    <link rel="stylesheet" href="../../general.css">
+    <noscript>
+        <link rel="stylesheet" href="../../noscript.css">
+    </noscript>
+</head>
+
+<body>
+    <script src="../../jquery-3.6.0.min.js"></script>
+    <script src="../../lodash.min.js"></script>
+    <script src="../../chart.min.js"></script>
+    <script src="../../general.js"></script>
+    <script src="../../glslify.js"></script>
+    <script src="../../htmlify.js"></script>
+
+    <nav>
+        <table class="nav">
+            <tr class="nav">
+                <th class="nav">
+                    <a class="nav" href="../..">Home</a>
+                </th>
+                <th class="nav">
+                    <a class="nav" href="../../projects/">Projects</a>
+                </th>
+                <th class="nav">
+                    <a class="nav" href="..">Tools</a>
+                </th>
+            </tr>
+        </table>
+    </nav>
+
+    <div id="nav-padding"></div>
+
+    <header class="fillscreen">
+        <div class="fillscreen-center">
+            <h1 class="typewriter">Sample Optimizer</h1>
+        </div>
+        <div class="fillscreen-bottom">
+            <img src="../../icons/angle down.svg" alt="Down Arrow">
+        </div>
+    </header>
+
+
+    <div id="main-content"></div> <!-- Creating Div as Section marker -->
+
+    <section class="paragraph">
+        <h3 class="paragraph">
+            What makes an array progressive?
+        </h3>
+        <p class="paragraph">
+            A sample array is progressive when the distribution of samples stays the same no matter where you start to sample and for how long you do so. Let's say you have a progressive array of 64 samples. You can expect the distribution of samples 2-9 to be roughly the same as samples 5-48.
+        </p>
+        <h3 class="paragraph">
+            What's this good for?
+        </h3>
+        <p class="paragraph">
+            A progressive sample array can have many advantages, but the reason I programmed this in the first place is the following:<br>
+            Progressive sample arrays are very useful when it comes to dithering, i.e. distributing sample locations spatially. When doing this one has the option to shift positions or the magnitude of the offsets.
+            The first option introduces unwanted blur due to shifting positions, and shifting of individual sample positions would be performance intensive. The second option will still retain the same offset directions, thus creating a visible pattern, especially with lower sample counts. <br><br>
+
+            This is where progressive arrays come into play: Instead of shifting the positions or scaling the offsets, you simply shift the starting sample position in the array.
+            This allows for effective dithering with little performance impacts and no visible artifacts.<br>
+            This however requires the array to be progressive, since if it weren't the shift in starting positions would cause changes in sample distribution, thus creating significant artifacts (and also defeating the purpose of the dither). <br><br>
+
+            So, with this tool you can convert any 2d sample array into a progressive one and enjoy the benefits! This tool does not change the contents of the array, it simply shifts around the elements to maximize the progressiveness of the array.
+        </p>
+        <h3 class="paragraph">
+            How does it work?
+        </h3>
+        <p class="paragraph">
+            The algorithm I created is based on evaluating how progressive a given array is.
+            The function evaluates this by checking every possible sequence you could slice the array into, and calculating the variance aswell as the average.
+            Then it calculates the variance of the averages and the variance of the variances of all slices. This tells the algorithm how similar the slices are in distribution.
+            The higher the similarity, the higher the progressiveness of the given array. <br><br>
+
+            Using this information, it fires up a Monte-Carlo Simulation. Every iteration (step) two random array elements are swapped and the progressiveness is evaluated.
+            If the progressiveness has increased, we keep this order, if not we revert and try again in the next step. <br><br>
+
+            Why doesn't the algorithm just check every possible combination? <br>
+            The amount of permutations for a sequence of length n is n! (n factorial). For an array of length 16 there would already be 20.922.789.888.000 combinations, and no computer can calculate that in a reasonable amount of time. <br>
+
+            The complexity of the progressiveness evaluation is O(n³), so it increases cubically.
+            An array of length 64 will take roughly 64 times longer to compute than an array of length 16, despite it only being 4 times the size.
+        </p>
+    </section>
+    <section class="paragraph">
+        <p class="paragraph">
+        </p>
+        <form name="input" action="" method="GET">
+            <label for="steps_input">Monte-Carlo Steps</label><br>
+            <input type="number" name="steps_input" placeholder="Enter Step Count">
+            <br>
+            <textarea type="text" id="array_input" rows="5" maxrows="30" placeholder="Enter Sample Array Here (Only GLSL/HLSL arrays accepted)"></textarea>
+            <input type="button" value="Submit" onclick="document.getElementById('progress').style.width = '5%'; const a = setTimeout(()=>optimizeArray(this.form.array_input.value, parseInt(this.form.steps_input.value)), 150)">
+
+        </form>
+    </section>
+    <section class="paragraph retractable" retracted="true">
+        <h3 class="paragraph">Chart</h3>
+        <div class="chart">
+            <canvas id="preview_chart" width="200" height="200"></canvas>
+        </div>
+    </section>
+    <section class="paragraph">
+        <div class="loading" id="progress"></div>
+    </section>
+    <section class="paragraph">
+        <h3 class="paragraph" id="output_progressiveness">Progressiveness:</h3>
+        <h3 class="paragraph">GLSL Code</h3>
+        <p class="paragraph" id="output">
+            The code will show here
+        </p>
+    </section>
+
+
+    <script src="sample_optimizer.js"></script>
+    <script src="../../style.js"></script>
+</body>
+
+</html>

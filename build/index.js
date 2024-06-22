@@ -1,16 +1,39 @@
 import path from "path"
 import url from "url"
-import { QueryPathValidators, QuerySearchFunctions, query, read } from "./file.js"
+import { QueryPathValidators, QuerySearchFunctions, copy, query, read, remove, write } from "./file.js"
+import { parseHTML } from "../xml/index.js"
 
 const FILE_PATH = url.fileURLToPath( import.meta.url )
 const FILE_DIR = path.dirname( FILE_PATH )
 const ROOT_DIR = path.join( FILE_DIR, "../" )
 
-const htmlFilePaths = query( ROOT_DIR, QuerySearchFunctions.extension.html, QueryPathValidators.nondot )
+const DST_DIR = path.join( ROOT_DIR, "dst" )
+remove( DST_DIR )
+copy()
+
+const htmlFilePaths = query( ROOT_DIR, QuerySearchFunctions.extension.html, p => !/^\.\w+|build|modules|components/.test( path.basename( p ) ) )
 const htmlFileContents = read( htmlFilePaths )
 
+const modules = new Map( 
+    query( path.join(ROOT_DIR, "modules"), QuerySearchFunctions.extension.js )
+        .map( p => [path.basename( p ), p] ) 
+)
+
 for ( const htmlFile of htmlFileContents ) {
-    const scriptSrcRegex = /(?<=<script\s+src=(["'])).*?(?=\1.*?\s*>\s*<\/script>)/g
-    const scriptSrcTags = [...htmlFile.content.matchAll( scriptSrcRegex )].map( tag => tag[0] )
-    console.log( scriptSrcTags )
+    const parsed = parseHTML( htmlFile.content )
+    const html = parsed.find( node => node.name === "html" )
+    if (!html) continue
+
+    const scripts = html.findChildren( node => node.name === "script" && node.attributes.src )
+    for ( const { attributes } of scripts ) {
+        if ( modules.has( attributes.src ) ) {
+            const relative = path.relative( htmlFile.path, modules.get( attributes.src ) )
+            attributes.src = relative
+        }
+    }
+    
+    const built = parsed.join("\n")
+    write( path.join(DST_DIR, path.relative( ROOT_DIR, htmlFile.path ) ) , built )
 }
+
+console.log(modules)

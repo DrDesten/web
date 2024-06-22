@@ -46,3 +46,16 @@ export function read( paths ) {
     }
     return files
 }
+/** @param {string} filepath @param {string} content */
+export function write( filepath, content ) {
+    fs.mkdirSync( path.dirname(filepath), { recursive: true })
+    fs.writeFileSync( filepath, content, { encoding: "utf8" } )
+}
+/** @param {string} source @param {string} destination */
+export function copy( source, destination ) {
+    fs.cpSync( source, destination, { force: true } )
+}
+/** @param {string} path */
+export function remove( path ) {
+    fs.rmSync( path, { force: true, recursive: true } )
+}

@@ -1,7 +1,7 @@
 import path from "path"
 import url from "url"
 import { QueryPathValidators, QuerySearchFunctions, copy, query, read, remove, write } from "./file.js"
-import { parseHTML } from "../xml/index.js"
+import { HTMLNode, parseHTML } from "../xml/index.js"
 
 const FILE_PATH = url.fileURLToPath( import.meta.url )
 const FILE_DIR = path.dirname( FILE_PATH )
@@ -9,8 +9,9 @@ const FILE_DIR = path.dirname( FILE_PATH )
 const ROOT_DIR = path.join( FILE_DIR, "../" )
 
 const COMPONENT_DIR = path.join( ROOT_DIR, "components" )
-const MODULE_DIR = path.join( ROOT_DIR, "modules" )
-const ICON_DIR = path.join( ROOT_DIR, "components" )
+const SCRIPT_DIR = path.join( ROOT_DIR, "scripts" )
+const STYLE_DIR = path.join( ROOT_DIR, "styles" )
+const IMAGE_DIR = path.join( ROOT_DIR, "images" )
 
 const DST_DIR = path.join( ROOT_DIR, "dst" )
 const SRC_DIR = path.join( ROOT_DIR, "src" )
@@ -18,8 +19,9 @@ remove( DST_DIR )
 copy( SRC_DIR, DST_DIR )
 
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p ), p] ) )
-const modules = new Map( query( MODULE_DIR ).map( p => [path.basename( p ), p] ) )
-const icons = new Map( query( ICON_DIR ).map( p => [path.basename( p ), p] ) )
+const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
+const styles = new Map( query( STYLE_DIR ).map( p => [path.basename( p ), p] ) )
+const images = new Map( query( IMAGE_DIR ).map( p => [path.basename( p ), p] ) )
 
 const htmlFilePaths = query( DST_DIR, QuerySearchFunctions.extension.html )
 const htmlFileContents = read( htmlFilePaths )
@@ -27,14 +29,32 @@ const htmlFileContents = read( htmlFilePaths )
 
 for ( const htmlFile of htmlFileContents ) {
     const parsed = parseHTML( htmlFile.content )
+    /** @type {HTMLNode} */
     const html = parsed.find( node => node.name === "html" )
     if (!html) continue
 
-    const scripts = html.findChildren( node => node.name === "script" && node.attributes.src )
-    for ( const { attributes } of scripts ) {
-        if ( modules.has( attributes.src ) ) {
-            const relative = path.relative( htmlFile.path, modules.get( attributes.src ) )
+    const tags = {
+        script: html.findChildren( node => node.name === "script" && node.attributes.src ),
+        style: html.findChildren( node => node.name === "link" && node.attributes.rel === "stylesheet" ),
+        image: html.findChildren( node => node.name === "img" ),
+    }
+
+    for ( const { attributes } of tags.script ) {
+        if ( scripts.has( attributes.src ) ) {
+            const relative = path.relative( path.dirname( htmlFile.path ), scripts.get( attributes.src ) )
             attributes.src = relative
+        }
+    }
+    for ( const { attributes } of tags.style ) {
+        if ( styles.has( attributes.href ) ) {
+            const relative = path.relative( path.dirname( htmlFile.path ), styles.get( attributes.href ) )
+            attributes.href = relative
+        }
+    }
+    for ( const { attributes } of tags.image ) {
+        if ( images.has( attributes.href ) ) {
+            const relative = path.relative( path.dirname( htmlFile.path ), images.get( attributes.href ) )
+            attributes.href = relative
         }
     }
     
@@ -42,4 +62,6 @@ for ( const htmlFile of htmlFileContents ) {
     write( htmlFile.path, built )
 }
 
-console.log(modules)
+console.log(scripts)
+console.log(styles)
+console.log(images)

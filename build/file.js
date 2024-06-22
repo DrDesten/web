@@ -53,7 +53,7 @@ export function write( filepath, content ) {
 }
 /** @param {string} source @param {string} destination */
 export function copy( source, destination ) {
-    fs.cpSync( source, destination, { force: true } )
+    fs.cpSync( source, destination, { recursive: true } )
 }
 /** @param {string} path */
 export function remove( path ) {

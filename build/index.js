@@ -8,8 +8,9 @@ const FILE_DIR = path.dirname( FILE_PATH )
 const ROOT_DIR = path.join( FILE_DIR, "../" )
 
 const DST_DIR = path.join( ROOT_DIR, "dst" )
+const SRC_DIR = path.join( ROOT_DIR, "src" )
 remove( DST_DIR )
-copy()
+copy( SRC_DIR, ROOT_DIR )
 
 const htmlFilePaths = query( ROOT_DIR, QuerySearchFunctions.extension.html, p => !/^\.\w+|build|modules|components/.test( path.basename( p ) ) )
 const htmlFileContents = read( htmlFilePaths )

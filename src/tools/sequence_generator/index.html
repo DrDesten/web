@@ -7,8 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>DrDesten's Number Sequence Generator</title>
     <link rel="icon" type="image/png" href="icon_main.png">
-<link rel="stylesheet" href="defaultstyles.css">
-<link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="defaultstyles.css">
+    <link rel="stylesheet" href="general.css">
     <noscript>
         <link rel="stylesheet" href="noscript.css">
     </noscript>
@@ -20,9 +20,9 @@
     <script src="glslify.js"></script>
     <script src="htmlify.js"></script>
 
-    <Navbar/>
-    
-    <Title text="Sequence Generator"/>
+    <Navbar />
+
+    <Title text="Sequence Generator" />
 
 
     <div id="main-content"></div> <!-- Creating Div as Section marker -->
@@ -44,7 +44,8 @@
             </tr>
             <tr>
                 <td>Linearity:</td>
-                <td>Skews the numbers no either emphasize lower or higher numbers. Positive values emphasize lower numbers, negative values emphasize higher numbers. 0 is linear.</td>
+                <td>Skews the numbers no either emphasize lower or higher numbers. Positive values emphasize lower
+                    numbers, negative values emphasize higher numbers. 0 is linear.</td>
             </tr>
             <tr>
                 <td>Human Rounding:</td>
@@ -53,22 +54,30 @@
         </table>
         </p>
         <form name="input" action="" method="GET">
-            <input type="number" min="0" value="11" step="1" name="sequence_length" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" min="0" value="11" step="1" name="sequence_length" placeholder="Enter Sample Count"
+                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="sequence_length" title="Amount of numbers in the sequence">Sequence Length</label><br>
-            <input type="number" min="-1" max="1" value="0" step="0.01" name="sequence_lin" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
-            <label for="sequence_lin" title="Controls how linear the sequence is. 0 is linear, >0 emphasizes lower values, <0 emphasizes higher values">Linearity</label><br>
-            <input type="number" value="0" step="any" name="sequence_start" placeholder="Start" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" min="-1" max="1" value="0" step="0.01" name="sequence_lin"
+                placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')"
+                onchange="calculateSequence(this.form, 'output')">
+            <label for="sequence_lin"
+                title="Controls how linear the sequence is. 0 is linear, >0 emphasizes lower values, <0 emphasizes higher values">Linearity</label><br>
+            <input type="number" value="0" step="any" name="sequence_start" placeholder="Start"
+                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="sequence_start" title="Sequence Start">Start</label><br>
-            <input type="number" value="1" step="any" name="sequence_end" placeholder="End" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" value="1" step="any" name="sequence_end" placeholder="End"
+                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="sequence_end" title="Sequence End">End</label><br>
-            <input type="number" min="0" max="14" value="2" step="1" name="precision" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" min="0" max="14" value="2" step="1" name="precision"
+                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="precision" title="Decimal Places">Decimal Places</label><br>
             <input type="checkbox" checked="true" name="round_human" oninput="calculateSequence(this.form, 'output')">
             <label for="round_human" title="Rounds to 5 or 0 at the end of numbers">Human Rounding</label><br>
             <br>
 
             <input type="button" value="Calculate" onclick="calculateSequence(this.form, 'output')">
-            <label for="auto_copy" title="Automatically copies the generated sequence into your clipboard">Auto Copy</label>
+            <label for="auto_copy" title="Automatically copies the generated sequence into your clipboard">Auto
+                Copy</label>
             <input type="checkbox" name="Auto Copy" id="auto_copy">
         </form>
     </section>
@@ -81,6 +90,7 @@
 
 
     <script src="sequence.js"></script>
+    <Background />
     <script src="style.js"></script>
 </body>
 

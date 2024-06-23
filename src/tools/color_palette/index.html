@@ -20,26 +20,32 @@
     <script src="glslify.js"></script>
     <script src="htmlify.js"></script>
 
-    <Navbar/>
+    <Navbar />
 
-    <Title text="Gaussian Kernels"/>
+    <Title text="Gaussian Kernels" />
 
 
     <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
     <section class="paragraph">
         <p class="paragraph">
-            This Calculator allows you to calculate kernel values for a 1D Gaussian Kernel. It uses the pascal triangle to determine the weights and normalizes them afterwards.
-            This can be very useful for creating a two pass Gaussian Blur for Real-Time applications. This is the reason I originally created this tool. <br>
-            To use it, enter a sample count and it will calculate the appropriate kernel weights for your gaussian blur. It is recommended to use uneven numbers so you can center your current pixel. <br>
+            This Calculator allows you to calculate kernel values for a 1D Gaussian Kernel. It uses the pascal triangle
+            to determine the weights and normalizes them afterwards.
+            This can be very useful for creating a two pass Gaussian Blur for Real-Time applications. This is the reason
+            I originally created this tool. <br>
+            To use it, enter a sample count and it will calculate the appropriate kernel weights for your gaussian blur.
+            It is recommended to use uneven numbers so you can center your current pixel. <br>
         </p>
         <form name="input" action="" method="GET">
             <p><b>Sample Count</b></p>
-            <input type="number" name="sample_input" placeholder="Enter Sample Count" oninput="calculateSamples_dynamic(this.form, 'output', this.value)" onchange="calculateSamples(this.form, 'output')">
+            <input type="number" name="sample_input" placeholder="Enter Sample Count"
+                oninput="calculateSamples_dynamic(this.form, 'output', this.value)"
+                onchange="calculateSamples(this.form, 'output')">
             <br>
 
             <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')">
-            <label for="auto_copy" title="Automatically copies the generated GLSL code into your clipboard">Auto Copy Code</label>
+            <label for="auto_copy" title="Automatically copies the generated GLSL code into your clipboard">Auto Copy
+                Code</label>
             <input type="checkbox" name="Auto Copy" id="auto_copy">
         </form>
     </section>
@@ -52,6 +58,7 @@
 
 
     <script src="palette.js"></script>
+    <Background />
     <script src="style.js"></script>
 </body>
 

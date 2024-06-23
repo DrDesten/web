@@ -2,29 +2,27 @@ const tw_delay = 1
 const tw_speed_header = 0.15
 const tw_speed_p = 0.04
 
-
-
-
 // HEADER ANIMATION (typewriter + arrow) /////////////////////////////////////////////////////////////////////////
 
-let typewriter_elements = document.getElementsByClassName( "typewriter" )
+const typewriter_elements = document.getElementsByClassName( "typewriter" )
 let typewriterAnimationLength = 0
-for ( let i = 0; i < typewriter_elements.length; i++ ) {
-    let ele = typewriter_elements[i]
-    let char_length = ele.innerHTML.length
-    if ( ele.tagName == "H1" ) {
-        ele.style.setProperty( "--tw-anim-before", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s backwards` )
-        ele.style.setProperty( "--tw-anim-after", `typewriter-animation ${tw_speed_header * char_length}s steps(${char_length}) ${tw_delay}s backwards` )
-        typewriterAnimationLength = Math.max( typewriterAnimationLength, tw_speed_header * char_length )
-    } else {
-        ele.style.setProperty( "--tw-anim-before", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s backwards` )
-        ele.style.setProperty( "--tw-anim-after", `typewriter-animation ${tw_speed_p * char_length}s steps(${char_length}) ${tw_delay}s backwards` )
-    }
+for ( const ele of typewriter_elements ) {
+    const tw_speed = ele.tagName === "H1" ? tw_speed_header : tw_speed_p
+    const text = ele.innerHTML
+    ele.innerHTML = "\u200b"
+    
+    typewriterAnimationLength = Math.max( typewriterAnimationLength, tw_speed * text.length + tw_delay )
+    let index = 0
+    let interval = NaN
+    setTimeout( () => interval = setInterval(() => {
+        ele.innerHTML += text[index++]
+        if ( index === text.length ) clearInterval( interval )
+    }, tw_speed * 1000 ), tw_delay * 1000 )
 }
 
-let header_bottom = document.getElementsByClassName( "fillscreen-bottom" )[0]
+const header_bottom = document.getElementsByClassName( "fillscreen-bottom" )[0]
 if ( header_bottom != undefined ) {
-    header_bottom.style.animation = `fadeInDown 2s ease ${typewriterAnimationLength + ( tw_delay * 2 )}s backwards`
+    header_bottom.style.animation = `fadeInDown 2s ease ${typewriterAnimationLength + tw_delay}s backwards`
 }
 
 

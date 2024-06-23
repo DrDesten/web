@@ -7,9 +7,11 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>DrDesten's Probability Calculator</title>
   <link rel="icon" type="image/png" href="icon_main.png">
-<link rel="stylesheet" href="defaultstyles.css">
-<link rel="stylesheet" href="general.css">
-	<noscript><link rel="stylesheet" href="noscript.css"></noscript>
+  <link rel="stylesheet" href="defaultstyles.css">
+  <link rel="stylesheet" href="general.css">
+  <noscript>
+    <link rel="stylesheet" href="noscript.css">
+  </noscript>
 </head>
 
 <body>
@@ -18,9 +20,9 @@
   <script src="glslify.js"></script>
   <script src="htmlify.js"></script>
 
-  <Navbar/>
+  <Navbar />
 
-  <Title text="Distribution"/>
+  <Title text="Distribution" />
 
   <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
@@ -36,8 +38,10 @@
  Supported Syntax:
  {} or [] or () as enclosing brackets, ore none at all
  , or ; or whitepace as value separators
- You must use '.' as the decimal point" oninput="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')"></textarea>
-      <input type="button" value="Calculate" onclick="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')">
+ You must use '.' as the decimal point"
+        oninput="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')"></textarea>
+      <input type="button" value="Calculate"
+        onclick="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')">
 
     </form>
     <br>
@@ -53,6 +57,7 @@
 
 
   <script src="distribution.js"></script>
+  <Background />
   <script src="style.js"></script>
 </body>
 

@@ -269,36 +269,19 @@ header.fillscreen>.fillscreen-center {
     position: relative;
 }
 
-.typewriter::before,
 .typewriter::after {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 0;
     left: 100%;
-}
-
-.typewriter::before {
-    background-color: var(--bg-c);
-    animation: var(--tw-anim-before);
-}
-
-.typewriter::after {
+    
     width: 0.125em;
+
     background-color: black;
     border-radius: var(--border-rad);
-    animation: var(--tw-anim-after), blink 600ms ease-in-out infinite alternate;
-}
-
-@keyframes typewriter-animation {
-    from {
-        left: 0%;
-    }
-
-    to {
-        left: 100%;
-    }
+    
+    animation: blink 600ms ease-in-out infinite alternate;
 }
 
 @keyframes blink {

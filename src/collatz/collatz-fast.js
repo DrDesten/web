@@ -12,7 +12,7 @@ for ( const sequence of cache ) {
 
     let number = sequence[0]
 
-    while ( number != 1 ) {
+    while ( number > 1 ) {
         if ( number % 2 == 0 ) sequence.push( number /= 2 )
         else sequence.push( number = ( number * 3 + 1 ) / 2 )
     }

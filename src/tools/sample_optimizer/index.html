@@ -29,10 +29,7 @@
 
     <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
-    <section class="paragraph">
-        <h3 class="paragraph">
-            What makes an array progressive?
-        </h3>
+    <Paragraph title="What makes an array progressive?">
         <p class="paragraph">
             A sample array is progressive when the distribution of samples stays the same no matter where you start to
             sample and for how long you do so. Let's say you have a progressive array of 64 samples. You can expect the
@@ -86,37 +83,34 @@
             An array of length 64 will take roughly 64 times longer to compute than an array of length 16, despite it
             only being 4 times the size.
         </p>
-    </section>
-    <section class="paragraph">
+    </Paragraph>
+    <Paragraph>
         <p class="paragraph">
         </p>
         <form name="input" action="" method="GET">
             <label for="steps_input">Monte-Carlo Steps</label><br>
             <input type="number" name="steps_input" placeholder="Enter Step Count">
             <br>
-            <textarea type="text" id="array_input" rows="5" maxrows="30"
-                placeholder="Enter Sample Array Here (Only GLSL/HLSL arrays accepted)"></textarea>
-            <input type="button" value="Submit"
-                onclick="document.getElementById('progress').style.width = '5%'; const a = setTimeout(()=>optimizeArray(this.form.array_input.value, parseInt(this.form.steps_input.value)), 150)">
+            <textarea type="text" id="array_input" rows="5" maxrows="30" placeholder="Enter Sample Array Here (Only GLSL/HLSL arrays accepted)"></textarea>
+            <input type="button" value="Submit" onclick="document.getElementById('progress').style.width = '5%'; const a = setTimeout(()=>optimizeArray(this.form.array_input.value, parseInt(this.form.steps_input.value)), 150)">
 
         </form>
-    </section>
-    <section class="paragraph retractable" retracted="true">
-        <h3 class="paragraph">Chart</h3>
+    </Paragraph>
+    <Paragraph title="Chart" class="retractable" retracted="true">
         <div class="chart">
             <canvas id="preview_chart" width="200" height="200"></canvas>
         </div>
-    </section>
-    <section class="paragraph">
+    </Paragraph>
+    <Paragraph>
         <div class="loading" id="progress"></div>
-    </section>
-    <section class="paragraph">
+    </Paragraph>
+    <Paragraph>
         <h3 class="paragraph" id="output_progressiveness">Progressiveness:</h3>
         <h3 class="paragraph">GLSL Code</h3>
         <p class="paragraph" id="output">
             The code will show here
         </p>
-    </section>
+    </Paragraph>
 
 
     <script src="sample_optimizer.js"></script>

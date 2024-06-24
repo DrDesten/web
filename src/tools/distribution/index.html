@@ -26,8 +26,7 @@
 
   <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
-  <section class="paragraph">
-    <h3 class="paragraph">Analysis</h3>
+  <Paragraph title="Analysis">
     <p class="paragraph">
       Enter a array of values and let the calculator do some stuff for you
     </p>
@@ -38,10 +37,8 @@
  Supported Syntax:
  {} or [] or () as enclosing brackets, ore none at all
  , or ; or whitepace as value separators
- You must use '.' as the decimal point"
-        oninput="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')"></textarea>
-      <input type="button" value="Calculate"
-        onclick="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')">
+ You must use '.' as the decimal point" oninput="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')"></textarea>
+      <input type="button" value="Calculate" onclick="calculateAnalysis('sample_input', 'mean_out', 'median_out', 'variance_out', 'standard_deviation_out')">
 
     </form>
     <br>
@@ -53,7 +50,7 @@
     <p class="paragraph lowmargin" id="variance_out"></p>
     <p class="paragraph lowmargin"><b>Standard Deviation</b></p>
     <p class="paragraph lowmargin" id="standard_deviation_out"></p>
-  </section>
+  </Paragraph>
 
 
   <script src="distribution.js"></script>

@@ -31,12 +31,17 @@ const htmlDocuments = htmlFileContents.map( ( { path, content } ) => {
     return { path, content, parsed, root }
 } )
 
+
 // Resolve Components
+const meta = {
+    pages: Object.freeze( [...htmlFilePaths] )
+}
 for ( const { path: filepath, root } of htmlDocuments ) {
     const candidates = root.findChildren( node => components.has( node.name ) )
     if ( !candidates.length ) continue
 
     const globals = {
+        meta: meta,
         ROOT: DST_DIR,
         PATH: filepath,
         DIRNAME: path.dirname( filepath ),
@@ -45,7 +50,8 @@ for ( const { path: filepath, root } of htmlDocuments ) {
 
     for ( const node of candidates ) {
         const component = ( await import( url.pathToFileURL( components.get( node.name ) ) ) ).default
-        const html = component( globals, node.attributes )
+        const html = component( globals, node.attributes, node.children.join( "\n" ) )
+        //console.log( html )
         const parsed = parseHTML( html )
         const replaceIndex = node.parent.children.indexOf( node )
         node.parent.children.splice( replaceIndex, 1, ...parsed )

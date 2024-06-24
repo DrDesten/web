@@ -27,7 +27,7 @@
 
     <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
-    <section class="paragraph">
+    <Paragraph>
         <p class="paragraph">
             This Tool allows you to generate nonlinear (and linear) number sequences. <br>
         <table>
@@ -54,22 +54,15 @@
         </table>
         </p>
         <form name="input" action="" method="GET">
-            <input type="number" min="0" value="11" step="1" name="sequence_length" placeholder="Enter Sample Count"
-                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" min="0" value="11" step="1" name="sequence_length" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="sequence_length" title="Amount of numbers in the sequence">Sequence Length</label><br>
-            <input type="number" min="-1" max="1" value="0" step="0.01" name="sequence_lin"
-                placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')"
-                onchange="calculateSequence(this.form, 'output')">
-            <label for="sequence_lin"
-                title="Controls how linear the sequence is. 0 is linear, >0 emphasizes lower values, <0 emphasizes higher values">Linearity</label><br>
-            <input type="number" value="0" step="any" name="sequence_start" placeholder="Start"
-                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" min="-1" max="1" value="0" step="0.01" name="sequence_lin" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <label for="sequence_lin" title="Controls how linear the sequence is. 0 is linear, >0 emphasizes lower values, <0 emphasizes higher values">Linearity</label><br>
+            <input type="number" value="0" step="any" name="sequence_start" placeholder="Start" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="sequence_start" title="Sequence Start">Start</label><br>
-            <input type="number" value="1" step="any" name="sequence_end" placeholder="End"
-                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" value="1" step="any" name="sequence_end" placeholder="End" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="sequence_end" title="Sequence End">End</label><br>
-            <input type="number" min="0" max="14" value="2" step="1" name="precision"
-                oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <input type="number" min="0" max="14" value="2" step="1" name="precision" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
             <label for="precision" title="Decimal Places">Decimal Places</label><br>
             <input type="checkbox" checked="true" name="round_human" oninput="calculateSequence(this.form, 'output')">
             <label for="round_human" title="Rounds to 5 or 0 at the end of numbers">Human Rounding</label><br>
@@ -80,13 +73,12 @@
                 Copy</label>
             <input type="checkbox" name="Auto Copy" id="auto_copy">
         </form>
-    </section>
-    <section class="paragraph">
-        <h3 class="paragraph">Sequence</h3>
+    </Paragraph>
+    <Paragraph title="Sequence">
         <p class="paragraph" id="output">
             Sequence will show here
         </p>
-    </section>
+    </Paragraph>
 
 
     <script src="sequence.js"></script>

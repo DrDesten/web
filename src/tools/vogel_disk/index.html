@@ -27,7 +27,7 @@
 
     <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
-    <section class="paragraph">
+    <Paragraph>
         <p class="paragraph">
             This Calculator allows you to calculate samples on disk using the vogel method.<br>
             This method allows for evenly spaced samples on a circle.
@@ -42,34 +42,29 @@
         </p>
         <form name="input" action="" method="GET">
             <label for="sample_input">Sample Count</label><br>
-            <input type="number" name="sample_input" placeholder="Enter Sample Count"
-                oninput="calculateSamples_dynamic(this.form, 'output')"
-                onchange="calculateSamples(this.form, 'output')">
+            <input type="number" name="sample_input" placeholder="Enter Sample Count" oninput="calculateSamples_dynamic(this.form, 'output')" onchange="calculateSamples(this.form, 'output')">
             <br>
 
             <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')"><br>
-            <input type="checkbox" name="Center Samples" id="center_output" checked
-                onchange="calculateSamples(this.form, 'output')">
+            <input type="checkbox" name="Center Samples" id="center_output" checked onchange="calculateSamples(this.form, 'output')">
             <label for="center_output" title="Centers samples around (0,0)">Center Samples</label><br>
-            <input type="checkbox" name="Polar Coordinates" id="polar_coordinates"
-                onchange="calculateSamples(this.form, 'output')">
+            <input type="checkbox" name="Polar Coordinates" id="polar_coordinates" onchange="calculateSamples(this.form, 'output')">
             <label for="polar_coordinates" title="Outputs (r,θ) polar coordinates instead of (x,y) coordinates">Polar
                 Coordinates</label><br>
             <input type="checkbox" name="Auto Copy" id="auto_copy">
             <label for="auto_copy" title="Automatically copies the generated GLSL code into your clipboard">Auto Copy
                 Code</label>
         </form>
-    </section>
-    <section class="paragraph retractable" retracted="true">
+    </Paragraph>
+    <Paragraph class="retractable" retracted="true">
         <h3 class="paragraph">Chart</h3>
         <div><canvas id="chart" width="200" height="200"></canvas></div>
-    </section>
-    <section class="paragraph">
-        <h3 class="paragraph">GLSL Code</h3>
+    </Paragraph>
+    <Paragraph title="GLSL Code">
         <p class="paragraph" id="output">
             The code will show here
         </p>
-    </section>
+    </Paragraph>
 
 
     <script src="vogel_disk.js"></script>

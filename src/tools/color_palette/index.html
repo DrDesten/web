@@ -27,7 +27,7 @@
 
     <div id="main-content"></div> <!-- Creating Div as Section marker -->
 
-    <section class="paragraph">
+    <Paragraph>
         <p class="paragraph">
             This Calculator allows you to calculate kernel values for a 1D Gaussian Kernel. It uses the pascal triangle
             to determine the weights and normalizes them afterwards.
@@ -38,9 +38,7 @@
         </p>
         <form name="input" action="" method="GET">
             <p><b>Sample Count</b></p>
-            <input type="number" name="sample_input" placeholder="Enter Sample Count"
-                oninput="calculateSamples_dynamic(this.form, 'output', this.value)"
-                onchange="calculateSamples(this.form, 'output')">
+            <input type="number" name="sample_input" placeholder="Enter Sample Count" oninput="calculateSamples_dynamic(this.form, 'output', this.value)" onchange="calculateSamples(this.form, 'output')">
             <br>
 
             <input type="button" value="Calculate" onclick="calculateSamples(this.form, 'output')">
@@ -48,13 +46,12 @@
                 Code</label>
             <input type="checkbox" name="Auto Copy" id="auto_copy">
         </form>
-    </section>
-    <section class="paragraph">
-        <h3 class="paragraph">GLSL Code</h3>
+    </Paragraph>
+    <Paragraph title="GLSL Code">
         <p class="paragraph" id="output">
             The code will show here
         </p>
-    </section>
+    </Paragraph>
 
 
     <script src="palette.js"></script>

@@ -168,7 +168,8 @@ table.nav {
     padding: 0.5rem 50%;
     transform: translateX(25%);
 
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(0.5rem);
 
     transition: box-shadow 1s;
 }
@@ -190,7 +191,7 @@ a.nav {
 }
 
 a.nav:hover {
-    background-color: rgb(245, 245, 245);
+    background-color: rgba(245, 245, 245, 1);
 }
 
 #nav-padding {
@@ -275,12 +276,12 @@ header.fillscreen>.fillscreen-center {
     top: 0;
     bottom: 0;
     left: 100%;
-    
+
     width: 0.125em;
 
     background-color: black;
     border-radius: var(--border-rad);
-    
+
     animation: blink 600ms ease-in-out infinite alternate;
 }
 

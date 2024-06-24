@@ -25,11 +25,11 @@ const images = new Map( query( IMAGE_DIR ).map( p => [path.basename( p ), p] ) )
 
 const htmlFilePaths = query( DST_DIR, QuerySearchFunctions.extension.html )
 const htmlFileContents = read( htmlFilePaths )
-const htmlDocuments = htmlFileContents.map( ( {path, content} ) => {
-    let parsed = parseHTML(content), root = parsed.find( ({name}) => name === "html" )
-    if (!(root instanceof HTMLNode)) throw new Error( "Unable to find root html in\n---\n" + content + "\n---\nat" + path )
+const htmlDocuments = htmlFileContents.map( ( { path, content } ) => {
+    let parsed = parseHTML( content ), root = parsed.find( ( { name } ) => name === "html" )
+    if ( !( root instanceof HTMLNode ) ) throw new Error( "Unable to find root html in\n---\n" + content + "\n---\nat" + path )
     return { path, content, parsed, root }
-})
+} )
 
 // Resolve Components
 for ( const { path: filepath, root } of htmlDocuments ) {
@@ -42,9 +42,9 @@ for ( const { path: filepath, root } of htmlDocuments ) {
         DIRNAME: path.dirname( filepath ),
         FILENAME: path.basename( filepath ),
     }
-    
+
     for ( const node of candidates ) {
-        const component = ( await import( components.get( node.name ) ) ).default
+        const component = ( await import( url.pathToFileURL( components.get( node.name ) ) ) ).default
         const html = component( globals, node.attributes )
         const parsed = parseHTML( html )
         const replaceIndex = node.parent.children.indexOf( node )
@@ -77,7 +77,7 @@ for ( const htmlFile of htmlDocuments ) {
         if ( images.has( attributes[attr] ) )
             attributes[attr] = path.relative( dirname, images.get( attributes[attr] ) )
     }
-    
-    const built = parsed.join("\n")
+
+    const built = parsed.join( "\n" )
     write( htmlFile.path, built )
 }

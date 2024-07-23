@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DrDesten's Caffeine Tracker</title>
+    <link rel="icon" type="image/png" href="icon_main.png">
+    <link rel="stylesheet" href="defaultstyles.css">
+    <link rel="stylesheet" href="general.css">
+    <noscript>
+        <link rel="stylesheet" href="noscript.css">
+    </noscript>
+</head>
+
+<body>
+    <script src="general.js"></script>
+
+    <Navbar />
+
+    <Title text="Caffeine Tracker" />
+
+
+    <div id="main-content"></div> <!-- Creating Div as Section marker -->
+
+    <Paragraph>
+        <p class="paragraph" style="text-align: center;">Estimated Blood Caffeine</p>
+        <h3 class="paragraph" id="output" style="text-align: center;">0 mg</h3>
+    </Paragraph>
+    <Paragraph title="Add Caffeine">
+        <form name="input" action="" method="GET">
+            <input type="number" name="intake" value="0">
+            <b>mg</b><br>
+            <input type="number" name="time" value="0">
+            <select name="timeunit">
+                <option value="60">minutes</option>
+                <option value="3600">hours</option>
+                <option value="86400">days</option>
+            </select>
+            <b>ago</b><br>
+            <input type="button" value="Add Entry" onclick="addEntry(this.form)">
+        </form>
+    </Paragraph>
+    <Paragraph title="Simulation Parameters" class="retractable" retracted="false">
+        <form id="config" name="config" action="" method="GET">
+            <input type="number" name="halflife" value="0" onchange="Config.update({halflife: +this.value * 60 * 60})">
+            <label for="halflife">Half-Life (hours)</label><br>
+            <input type="number" name="peakplasma" value="0" onchange="Config.update({peak: +this.value * 60})">
+            <label for="peakplasma">Peak Plasma Concentration (minutes)</label><br>
+        </form>
+    </Paragraph>
+    <Paragraph title="Entries" class="retractable" retracted="false">
+        <table class="list" id="list">
+            <!-- Filled in by JavaScript -->
+        </table>
+    </Paragraph>
+    <Paragraph title="Import / Export">
+        <table style="width: auto;">
+            <tr>
+                <td><button onclick="copyEntries()">Copy Entries</button></td>
+                <td><button onclick="copyConfig()">Copy Simulation Parameters</button></td>
+            </tr>
+            <tr>
+                <td><button onclick="pasteEntries()">Load Entries</button></td>
+                <td><button onclick="pasteConfig()">Load Simulation Parameters</button></td>
+            </tr>
+        </table>
+    </Paragraph>
+
+
+    <script src="lambertw.js"></script>
+    <script src="caffeine.js"></script>
+    <Background />
+    <script src="style.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DrDesten - Collatz Conjecture</title>
+    <link rel="icon" type="image/png" href="icon_main.png">
+    <link rel="stylesheet" href="defaultstyles.css">
+    <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="style.css">
+    <noscript>
+        <link rel="stylesheet" href="noscript.css">
+    </noscript>
+</head>
+
+<body>
+    <script src="general.js"></script>
+    <script src="svg.js"></script>
+
+    <Navbar />
+
+    <Title text="Collatz Conjecture" />
+
+    <div id="main-content"></div> <!-- Creating Div as Section marker -->
+
+    <div style="width: 100%; position: relative;">
+        <div id="canvas"></div>
+    </div>
+
+    <script src="collatz-fast.js"></script>
+    <Background />
+    <script src="style.js"></script>
+</body>
+
+</html>

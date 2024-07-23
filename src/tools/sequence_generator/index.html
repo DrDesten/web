@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DrDesten's Number Sequence Generator</title>
+    <link rel="icon" type="image/png" href="icon_main.png">
+    <link rel="stylesheet" href="defaultstyles.css">
+    <link rel="stylesheet" href="general.css">
+    <noscript>
+        <link rel="stylesheet" href="noscript.css">
+    </noscript>
+</head>
+
+<body>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script src="general.js"></script>
+    <script src="glslify.js"></script>
+    <script src="htmlify.js"></script>
+
+    <Navbar />
+
+    <Title text="Sequence Generator" />
+
+
+    <div id="main-content"></div> <!-- Creating Div as Section marker -->
+
+    <Paragraph>
+        <p class="paragraph">
+            This Tool allows you to generate nonlinear (and linear) number sequences. <br>
+        <table>
+            <tr>
+                <td><b>Options</b></td>
+            </tr>
+            <tr>
+                <td>Sequence Length:</td>
+                <td>Amount of numbers in a sequence</td>
+            </tr>
+            <tr>
+                <td>Start / End:</td>
+                <td>Sequence Start and End (inclusive)</td>
+            </tr>
+            <tr>
+                <td>Linearity:</td>
+                <td>Skews the numbers no either emphasize lower or higher numbers. Positive values emphasize lower
+                    numbers, negative values emphasize higher numbers. 0 is linear.</td>
+            </tr>
+            <tr>
+                <td>Human Rounding:</td>
+                <td>Adds a digit and rounds so that it's either 5 or 0, looks nicer.</td>
+            </tr>
+        </table>
+        </p>
+        <form name="input" action="" method="GET">
+            <input type="number" min="0" value="11" step="1" name="sequence_length" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <label for="sequence_length" title="Amount of numbers in the sequence">Sequence Length</label><br>
+            <input type="number" min="-1" max="1" value="0" step="0.01" name="sequence_lin" placeholder="Enter Sample Count" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <label for="sequence_lin" title="Controls how linear the sequence is. 0 is linear, >0 emphasizes lower values, <0 emphasizes higher values">Linearity</label><br>
+            <input type="number" value="0" step="any" name="sequence_start" placeholder="Start" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <label for="sequence_start" title="Sequence Start">Start</label><br>
+            <input type="number" value="1" step="any" name="sequence_end" placeholder="End" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <label for="sequence_end" title="Sequence End">End</label><br>
+            <input type="number" min="0" max="14" value="2" step="1" name="precision" oninput="calculateSequence(this.form, 'output')" onchange="calculateSequence(this.form, 'output')">
+            <label for="precision" title="Decimal Places">Decimal Places</label><br>
+            <input type="checkbox" checked="true" name="round_human" oninput="calculateSequence(this.form, 'output')">
+            <label for="round_human" title="Rounds to 5 or 0 at the end of numbers">Human Rounding</label><br>
+            <br>
+
+            <input type="button" value="Calculate" onclick="calculateSequence(this.form, 'output')">
+            <label for="auto_copy" title="Automatically copies the generated sequence into your clipboard">Auto
+                Copy</label>
+            <input type="checkbox" name="Auto Copy" id="auto_copy">
+        </form>
+    </Paragraph>
+    <Paragraph title="Sequence">
+        <p class="paragraph" id="output">
+            Sequence will show here
+        </p>
+    </Paragraph>
+
+
+    <script src="sequence.js"></script>
+    <Background />
+    <script src="style.js"></script>
+</body>
+
+</html>

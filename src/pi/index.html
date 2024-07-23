@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Search through Pi</title>
+  <link rel="icon" type="image/png" href="pi_icon.png">
+  <link rel="stylesheet" href="defaultstyles.css">
+  <link rel="stylesheet" href="general.css">
+  <noscript>
+    <link rel="stylesheet" href="noscript.css">
+  </noscript>
+  <link rel="stylesheet" href="pi.css">
+</head>
+
+<body>
+  <script src="jquery-3.6.0.min.js"></script>
+  <script src="general.js"></script>
+  <script src="compress.js"></script>
+
+  <Navbar />
+
+  <section class="pi-fillscreen">
+    <div class="pi-fillscreen-center">
+      <p id="pi-index-display">#???</p>
+      <div class="pi-container">
+        <h1 id="pi">Baking Pie...</h1>
+      </div>
+      <p id="pi-search-display">Search</p>
+    </div>
+    <input type="text" name="Search" id="pi-search" oninput="searchPi(this.value)">
+  </section>
+
+  <Background />
+  <script src="style.js"></script>
+  <script src="pi.js"></script>
+</body>
+
+</html>

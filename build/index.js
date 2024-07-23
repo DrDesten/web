@@ -1,6 +1,6 @@
 import path from "path"
 import url from "url"
-import { QueryPathValidators, QuerySearchFunctions, copy, query, read, remove, write } from "./file.js"
+import { QueryPathValidators, QuerySearchFunctions, copy, mkdir, query, read, remove, write } from "./file.js"
 import { HTMLNode, parseHTML } from "../xml/index.js"
 
 const FILE_PATH = url.fileURLToPath( import.meta.url )
@@ -14,9 +14,18 @@ const STYLE_DIR = path.join( ROOT_DIR, "styles" )
 const IMAGE_DIR = path.join( ROOT_DIR, "images" )
 
 const DST_DIR = path.join( ROOT_DIR, "dst" )
+const DSTBIN_DIR = path.join( DST_DIR, "bin" )
+const DSTSCRIPT_DIR = path.join( DSTBIN_DIR, "scripts" )
+const DSTSTYLE_DIR = path.join( DSTBIN_DIR, "styles" )
+const DSTIMAGE_DIR = path.join( DSTBIN_DIR, "images" )
 const SRC_DIR = path.join( ROOT_DIR, "src" )
+
 remove( DST_DIR )
 copy( SRC_DIR, DST_DIR )
+copy( path.join( ROOT_DIR, "svg" ), path.join( DSTBIN_DIR, "svg" ) )
+copy( SCRIPT_DIR, DSTSCRIPT_DIR )
+copy( STYLE_DIR, DSTSTYLE_DIR )
+copy( IMAGE_DIR, DSTIMAGE_DIR )
 
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
 const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
@@ -72,16 +81,16 @@ for ( const htmlFile of htmlDocuments ) {
 
     for ( const { attributes } of tags.script ) {
         if ( scripts.has( attributes.src ) )
-            attributes.src = path.relative( dirname, scripts.get( attributes.src ) )
+            attributes.src = path.relative( dirname, path.join( DSTSCRIPT_DIR, attributes.src ) )
     }
     for ( const { attributes } of tags.style ) {
         if ( styles.has( attributes.href ) )
-            attributes.href = path.relative( dirname, styles.get( attributes.href ) )
+            attributes.href = path.relative( dirname, path.join( DSTSTYLE_DIR, attributes.href ) )
     }
     for ( const { name, attributes } of tags.image ) {
         const attr = name === "img" ? "src" : "href"
         if ( images.has( attributes[attr] ) )
-            attributes[attr] = path.relative( dirname, images.get( attributes[attr] ) )
+            attributes[attr] = path.relative( dirname, path.join( DSTIMAGE_DIR, attributes[attr] ) )
     }
 
     const built = parsed.join( "\n" )

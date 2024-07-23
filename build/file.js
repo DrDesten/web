@@ -48,8 +48,12 @@ export function read( paths ) {
 }
 /** @param {string} filepath @param {string} content */
 export function write( filepath, content ) {
-    fs.mkdirSync( path.dirname(filepath), { recursive: true })
+    fs.mkdirSync( path.dirname( filepath ), { recursive: true } )
     fs.writeFileSync( filepath, content, { encoding: "utf8" } )
+}
+/** @param {string} path */
+export function mkdir( path ) {
+    fs.mkdirSync( path, { recursive: true } )
 }
 /** @param {string} source @param {string} destination */
 export function copy( source, destination ) {

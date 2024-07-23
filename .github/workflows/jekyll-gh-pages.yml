@@ -30,7 +30,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
-      - name: Build Page with Node
+      - name: Clone Submodules
+        run: git submodule update --init --recursive
+      - name: Custom Build
         run: node build
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1

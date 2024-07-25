@@ -35,8 +35,14 @@ function hash( string ) {
     return crypto.createHash( "md5" ).update( string ).digest( "base64" )
 }
 const oldCache = exists( CACHE_PATH )
-    ? new Map( Object.entries( JSON.parse( read( CACHE_PATH ).content ) ) )
-    : new Map( read( query( DST_DIR ) ).map( f => [f.path, hash( f.content )] ) )
+    ? new Map(
+        Object.entries( JSON.parse( read( CACHE_PATH ).content ) )
+            .filter( ( [path] ) => exists( path ) )
+    )
+    : new Map(
+        read( query( DST_DIR ) )
+            .map( f => [f.path, hash( f.content )] )
+    )
 const newCache = new Map()
 
 function conditionalWrite( filepath, content ) {

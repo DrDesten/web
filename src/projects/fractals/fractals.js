@@ -16,8 +16,7 @@ function saveCamera( camera ) {
     } ) )
 }
 function loadCamera( camera ) {
-    const data = localStorage.getItem( "camera" )
-        && '{"position": [-0.7, 0], "scale": 5}'
+    const data = localStorage.getItem( "camera" ) ?? '{"position": [-0.7, 0], "scale": 5}'
     const { position, scale } = JSON.parse( data )
     camera.position.set( ...position )
     camera.scale = scale

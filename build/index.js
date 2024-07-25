@@ -18,14 +18,15 @@ const DSTBIN_DIR = path.join( DST_DIR, "bin" )
 const DSTSCRIPT_DIR = path.join( DSTBIN_DIR, "scripts" )
 const DSTSTYLE_DIR = path.join( DSTBIN_DIR, "styles" )
 const DSTIMAGE_DIR = path.join( DSTBIN_DIR, "images" )
+const DSTDEPENDENCY_DIR = path.join( DSTBIN_DIR, "dependencies" )
 const SRC_DIR = path.join( ROOT_DIR, "src" )
 
 remove( DST_DIR )
 copy( SRC_DIR, DST_DIR )
-copy( path.join( ROOT_DIR, "svg" ), path.join( DSTBIN_DIR, "svg" ) )
 copy( SCRIPT_DIR, DSTSCRIPT_DIR )
 copy( STYLE_DIR, DSTSTYLE_DIR )
 copy( IMAGE_DIR, DSTIMAGE_DIR )
+mkdir( DSTDEPENDENCY_DIR )
 
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
 const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
@@ -39,7 +40,6 @@ const htmlDocuments = htmlFileContents.map( ( { path, content } ) => {
     if ( !( root instanceof HTMLNode ) ) throw new Error( "Unable to find root html in\n---\n" + content + "\n---\nat" + path )
     return { path, content, parsed, root }
 } )
-
 
 // Resolve Components
 const meta = {
@@ -79,10 +79,15 @@ for ( const htmlFile of htmlDocuments ) {
         image: html.findChildren( node => node.name === "link" && node.attributes.rel === "icon" || node.name === "img" ),
     }
 
+    const dependencies = []
+    const resolved = new Map
     for ( const { attributes } of tags.script ) {
-        if ( scripts.has( attributes.src ) )
-            attributes.src = path.relative( dirname, path.join( DSTSCRIPT_DIR, attributes.src ) )
+        if ( scripts.has( attributes.src ) ) {
+            const filepath = path.join( DSTSCRIPT_DIR, attributes.src )
+            attributes.src = path.relative( dirname, filepath )
+        }
     }
+
     for ( const { attributes } of tags.style ) {
         if ( styles.has( attributes.href ) )
             attributes.href = path.relative( dirname, path.join( DSTSTYLE_DIR, attributes.href ) )

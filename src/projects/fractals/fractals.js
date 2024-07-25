@@ -1,6 +1,6 @@
 import { vec2 } from "../../../svg/jvec/bin/vec2.js"
 import { vec3 } from "../../../svg/jvec/bin/vec3.js"
-import { dfloat } from "./dfloat.js"
+import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
 import { Attribute } from "./gl/attributes.js"
 import { Camera, CameraControls } from "./gl/camera.js"
 import { Canvas } from "./gl/canvas.js"
@@ -10,9 +10,34 @@ import { Shader } from "./gl/shader.js"
 import { Uniform } from "./gl/uniforms.js"
 import { Mouse } from "./mouse.js"
 
+function saveCamera( camera ) {
+    localStorage.setItem( "camera", JSON.stringify( {
+        position: camera.position.toArray(),
+        scale: camera.scale,
+    } ) )
+}
+function loadCamera( camera ) {
+    const data = localStorage.getItem( "camera" )
+        && '{"position": [-0.7, 0], "scale": 5}'
+    const { position, scale } = JSON.parse( data )
+    camera.position.set( ...position )
+    camera.scale = scale
+}
+
 const mouse = new Mouse()
-const screen = new Canvas( document.getElementById( "main" ) )
+const screen = new Canvas( document.getElementById( "main" ), 1, true )
+screen.requestResize()
 const minimap = new Canvas( document.getElementById( "minimap" ) )
+
+const htmlOutputs = {
+    re: document.getElementById( "re" ),
+    im: document.getElementById( "im" ),
+    sc: document.getElementById( "sc" ),
+    it: document.getElementById( "it" ),
+}
+const htmlInputs = {
+    iterations: document.getElementById( "iterations" ),
+}
 
 const mandelbrotShader = new Shader( `
     in vec2 vertexPosition;
@@ -63,22 +88,39 @@ const mandelbrotShader = new Shader( `
 
 // Setup main canvas
 ~function () {
+    let renderStatus = false
+    function invalidate() { renderStatus = false }
+
     const gl = screen.canvas.getContext( "webgl2", {
         premultipliedAlpha: false,
         alpha: false,
     } )
+    screen.onResizeRequest = () => invalidate()
     screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
 
     const camera = new Camera( screen.canvas )
-    camera.position.set( -1.9855272554901673, 0 )
-    camera.scale = 0.000016891920124976755
+    loadCamera( camera )
+    htmlOutputs.re.innerHTML = camera.position.x
+    htmlOutputs.im.innerHTML = camera.position.y
+    htmlOutputs.sc.innerHTML = camera.scale
+
     const cameraControls = new CameraControls( camera, { zoomSensitivity: 0.001 } )
+    cameraControls.addEventListener( () => {
+        invalidate()
+        saveCamera( camera )
+        htmlOutputs.re.innerHTML = camera.position.x
+        htmlOutputs.im.innerHTML = camera.position.y
+        htmlOutputs.sc.innerHTML = camera.scale
+    } )
 
     const vertexBuffer = gl.createBuffer()
     const uniforms = [
+        new Uniform( "maxIterations", "int", 1 ),
         new Uniform( "screenSize", "float", 4 ),
         new Uniform( "screenSizeInverse", "float", 4 ),
+        new Uniform( "cameraPosition", "float", 4 ),
+        new Uniform( "cameraScale", "float", 2 ),
         new Uniform( "viewPosition", "float", 4 ),
         new Uniform( "viewScale", "float", 2 ),
     ]
@@ -93,42 +135,83 @@ const mandelbrotShader = new Shader( `
         #define TAU ${Math.PI * 2}
         #define E ${Math.E}
 
-        ${dfloat}
+        vec2 cmul(vec2 a, vec2 b) { 
+            return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x); 
+        }
 
+        uniform int maxIterations;
+        uniform vec4 screenSize;
+        uniform vec4 screenSizeInverse;
+        uniform vec4 cameraPosition;
+        uniform vec2 cameraScale;
         uniform vec4 viewPosition;
         uniform vec2 viewScale;
 
-        out vec4 fragColor;
-        void main() {
-            const float maxDistance = 5.;
-            dfloat      maxComp     = dsq(dnew(maxDistance));
+        struct Fractal {
+            vec2  z;
+            vec2  dz;
+            float iterations;
+        };
 
-            dfloat2 vp = d2new(dnew(viewPosition.x, viewPosition.y), 
-                               dnew(viewPosition.z, viewPosition.w));
-            dfloat  vs = dnew(viewScale.x, viewScale.y);
+        Fractal mandelbrot(vec2 position) {
+            const float exitDistance = 5.;
+            const float exitDistanceSq = exitDistance * exitDistance;
 
-            dfloat2 coord = d2new(gl_FragCoord.x, gl_FragCoord.y);
-            coord         = d2add(d2mul(coord, d2new(vs, vs)), vp);
+            vec2  z = vec2(0, 0);
+            vec2  c = position;
+            float iterations = -1.;
 
-            dfloat2 z = d2new(0.0, 0.0);
-            dfloat2 c = coord;
-
-            float finalIterations = -1.;
-            for (int i = 0; i < 1000; i++) {
-                z = d2new(
-                    dsub(dsq(z.x), dsq(z.y)),
-                    dmul(dnew(2.0), dmul(z.x, z.y))
-                );
-                z = d2add(z, c);
-
-                dfloat lenSq = d2lengthSq(z);
-                if (dcomp(lenSq, maxComp) >= 0.) {
-                    finalIterations = float(i);
+            for (int i = 0; i < maxIterations; i++) {
+                z = cmul(z, z) + c;
+                if (dot(z, z) > exitDistanceSq) {
+                    iterations = float(i);
                     break;
                 }
             }
 
-            if (finalIterations == -1.) {
+            return Fractal(z, vec2(0), iterations);
+        }
+
+        Fractal mandelbrotPertubation(vec2 position, vec2 positionDelta) {
+            const float exitDistance = 5.;
+            const float exitDistanceSq = exitDistance * exitDistance;
+
+            vec2  z  = vec2(0, 0);
+            vec2  dz = vec2(0, 0);
+            vec2  c  = position;
+            vec2  dc = positionDelta;
+            float iterations = -1.;
+
+            for (int i = 0; i < maxIterations; i++) {
+                dz = cmul(2. * z + dz, dz) + dc;
+                z  = cmul(z, z) + c;
+
+                if (dot(dz, dz) > exitDistanceSq) {
+                    iterations = float(i);
+                    break;
+                }
+            }
+
+            return Fractal(z, dz, iterations);
+        }
+
+        out vec4 fragColor;
+        void main() {
+            const float exitDistance = 5.;
+
+            vec2 fragCoord      = (gl_FragCoord.xy - screenSize.xy * .5) * screenSizeInverse.y * .5;
+            vec2 position       = cameraPosition.xy;
+            vec2 position_delta = fragCoord * cameraScale.x + cameraPosition.zw;
+
+            Fractal f;
+            f = mandelbrot(position + position_delta);
+
+            if (length(position_delta) < 0.003 * cameraScale.x) {
+                fragColor = vec4(1,0,0,1);
+                return;
+            }
+
+            if (f.iterations == -1.) {
                 fragColor = vec4(0,0,0,1);
                 return;
             }
@@ -136,7 +219,7 @@ const mandelbrotShader = new Shader( `
             const vec3  guideColor = vec3(.5, .4, 1);
             const float guideScale = 1. / 10.;
 
-            float smoothIter = finalIterations + 1.0 - log(log(toFloat(d2lengthSq(z)))) / log(2.0);
+            float smoothIter = f.iterations + 1.0 - log(log(length(f.z + f.dz))) / log(2.0);
             float guideIter  = smoothIter * TAU * guideScale;
 
             fragColor = vec4(cos(guideColor + smoothIter * 0.2) * .5 + .5, 1.0);
@@ -163,33 +246,45 @@ const mandelbrotShader = new Shader( `
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
+    let iterations = ~~htmlInputs.iterations.value
+    it.innerHTML = iterations
+    htmlInputs.iterations.addEventListener( "input", () => {
+        iterations = ~~htmlInputs.iterations.value
+        it.innerHTML = iterations
+        invalidate()
+    } )
+
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )
 
         const screenSize = new vec2( screen.canvas.width, screen.canvas.height )
         const screenSizeInverse = new vec2( 1 ).div( screenSize )
+        const cameraPosition = camera.position
+        const cameraScale = camera.scale
 
-        let viewScale = camera.scale * screenSizeInverse.y
-        let viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
+        const viewScale = camera.scale * screenSizeInverse.y
+        const viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
 
-        let uViewPosition = [
-            Math.fround( viewPosition.x ), viewPosition.x - Math.fround( viewPosition.x ),
-            Math.fround( viewPosition.y ), viewPosition.y - Math.fround( viewPosition.y ),
-        ]
-        let uViewScale = [
-            Math.fround( viewScale ), viewScale - Math.fround( viewScale )
-        ]
-        program.uploadUniform( "viewPosition", uViewPosition )
-        program.uploadUniform( "viewScale", uViewScale )
-
-        console.log( uViewPosition[1] )
+        const margin = 0
+        program.uploadUniform( "maxIterations", iterations )
+        program.uploadUniform( "screenSize", splitFloats( screenSize.toArray(), margin ) )
+        program.uploadUniform( "screenSizeInverse", splitFloats( screenSizeInverse.toArray(), margin ) )
+        program.uploadUniform( "cameraPosition", splitFloats( cameraPosition.toArray(), margin ) )
+        program.uploadUniform( "cameraScale", splitFloat( cameraScale, margin ) )
+        program.uploadUniform( "viewPosition", splitFloats( viewPosition.toArray(), margin ) )
+        program.uploadUniform( "viewScale", splitFloat( viewScale, margin ) )
 
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4, 4 )
     }
 
     /** @param {number} millis */
     function renderLoop( millis ) {
-        render( millis )
+        if ( !renderStatus ) {
+            screen.requestResize()
+            render( millis )
+            renderStatus = true
+            console.log( "render" )
+        }
         requestAnimationFrame( renderLoop )
     }
     renderLoop( 0 )

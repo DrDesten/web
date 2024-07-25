@@ -87,7 +87,7 @@ export class Program {
 
     // Runtime
 
-    /** @param {string} name @param {number|Iterable<number>} value @param {boolean} [transpose]  */
+    /** @param {string} name @param {number|Iterable<number>|()=>number|Iterable<number>} value @param {boolean} [transpose]  */
     uploadUniform( name, value, transpose ) {
         const boundUniform = this.boundUniforms[name]
         if ( boundUniform ) boundUniform.upload( value, transpose )

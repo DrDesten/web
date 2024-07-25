@@ -25,9 +25,10 @@ export class BoundUniform {
         this.active = uniformLocation !== null
     }
 
-    /** @param {number|Iterable<number>} value @param {boolean} [transpose] */
+    /** @param {number|Iterable<number>|()=>number|Iterable<number>} value @param {boolean} [transpose] */
     upload( value, transpose = false ) {
         if ( !this.active ) return
+        value = typeof value === "function" ? value() : value
         this.uniform.type === "mat"
             ? this.uniform.function( this.location, transpose, value )
             : this.uniform.function( this.location, value )

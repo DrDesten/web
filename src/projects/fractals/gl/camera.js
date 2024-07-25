@@ -65,29 +65,57 @@ export class CameraControls {
         this.mouse = new Mouse( this.canvas )
         this.opts = { zoomSensitivity: 0.001, ...opts }
 
+        this.listeners = new Set
+        this.lastPos = vec2.NaN
+
+        this.ungrab()
+        this.canvas.addEventListener( 'mousedown', this.grab.bind( this ) )
+        this.canvas.addEventListener( 'mouseup', this.ungrab.bind( this ) )
+        this.canvas.addEventListener( 'wheel', this.zoom.bind( this ) )
+        this.canvas.addEventListener( 'mousemove', this.move.bind( this ) )
+    }
+
+    addEventListener( listener ) {
+        this.listeners.add( listener )
+    }
+    removeEventListener( listener ) {
+        this.listeners.delete( listener )
+    }
+    triggerEvent() {
+        for ( const listener of this.listeners ) listener( this )
+    }
+
+    grab() {
+        this.canvas.style.cursor = "grabbing"
+    }
+    ungrab() {
         this.canvas.style.cursor = "grab"
-        this.canvas.addEventListener( 'mousedown', () => this.canvas.style.cursor = "grabbing" )
-        this.canvas.addEventListener( 'mouseup', () => this.canvas.style.cursor = "grab" )
+    }
 
-        this.canvas.addEventListener( 'wheel', ( { deltaY } ) => {
-            const projectedMousePos = new vec3( ...this.mouse.relativeWebglPosition, 1 ).mmul( this.camera.getScreenspaceMatrixInverse() ).xy
-            const diff = projectedMousePos.vsub( this.camera.position )
-            this.camera.scale *= ( 1 + deltaY * this.opts.zoomSensitivity )
-            this.camera.position.sub( diff.mul( deltaY * this.opts.zoomSensitivity ) )
-        } )
+    /** @param {WheelEvent} event */
+    zoom( { deltaY } ) {
+        const zoomSensitivity = 1 + this.opts.zoomSensitivity
+        const zoomScale = zoomSensitivity ** deltaY
+        const mousePos = new vec3( ...this.mouse.relativeWebglPosition, 1 )
+        const pMousePos = mousePos.clone().mmul( this.camera.getScreenspaceMatrixInverse() ).xy
+        this.camera.scale *= zoomScale
+        const pnewMousePos = mousePos.clone().mmul( this.camera.getScreenspaceMatrixInverse() ).xy
+        this.camera.position.add( vec2.vsub( pMousePos, pnewMousePos ).mul( 0.5 ) )
+        this.triggerEvent()
+    }
 
-        const lastPos = vec2.NaN
-        this.canvas.addEventListener( 'mousemove', ( { buttons, screenX, screenY } ) => {
-            if ( vec2.isnan( lastPos ).any() ) {
-                lastPos.set( screenX, screenY )
-            }
-            const currentPos = new vec2( screenX, screenY )
-            const movement = vec2.vsub( currentPos, lastPos )
-            if ( buttons & 1 ) {
-                this.camera.position.x -= movement.x * this.camera.scale / this.canvas.clientHeight
-                this.camera.position.y += movement.y * this.camera.scale / this.canvas.clientHeight
-            }
-            lastPos.set( currentPos )
-        } )
+    /** @param {MouseEvent} event */
+    move( { buttons, screenX, screenY } ) {
+        if ( vec2.isnan( this.lastPos ).any() ) {
+            this.lastPos.set( screenX, screenY )
+        }
+        const currentPos = new vec2( screenX, screenY )
+        if ( buttons & 1 ) {
+            const movement = vec2.vsub( currentPos, this.lastPos )
+            this.camera.position.x -= movement.x * this.camera.scale / this.canvas.clientHeight
+            this.camera.position.y += movement.y * this.camera.scale / this.canvas.clientHeight
+            this.triggerEvent()
+        }
+        this.lastPos.set( currentPos )
     }
 }

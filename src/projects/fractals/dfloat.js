@@ -1,3 +1,23 @@
+function froundMargin( x, margin ) {
+    const buffer = new ArrayBuffer( 4 )
+    const float = new Float32Array( buffer )
+    const int = new Uint32Array( buffer )
+    float[0] = x
+    int[0] &= ~( ~0 >>> ( 32 - margin ) )
+    return float[0]
+}
+/** @param {number} number  */
+export function splitFloat( number, margin = 0 ) {
+    const round = margin === 0 ? Math.fround( number ) : froundMargin( number, margin )
+    const error = number - round
+    return [round, error]
+}
+/** @param {number[]} numbers  */
+export function splitFloats( numbers, margin = 0 ) {
+    const split = numbers.map( x => splitFloat( x, margin ) )
+    return [...split.map( x => x[0] ), ...split.map( x => x[1] )]
+}
+
 export const dfloat = `
 
 #pragma optimize(off)

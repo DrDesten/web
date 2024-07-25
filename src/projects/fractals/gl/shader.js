@@ -4,6 +4,7 @@ function vertex( source ) {
     return `
 #version 300 es
 precision highp float;
+precision highp int;
 ${source}`.trim()
 }
 
@@ -11,6 +12,7 @@ function fragment( source ) {
     return `
 #version 300 es
 precision highp float;
+precision highp int;
 ${source}`.trim()
 }
 

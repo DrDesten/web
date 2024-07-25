@@ -283,7 +283,6 @@ const mandelbrotShader = new Shader( `
             screen.requestResize()
             render( millis )
             renderStatus = true
-            console.log( "render" )
         }
         requestAnimationFrame( renderLoop )
     }

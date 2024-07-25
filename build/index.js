@@ -6,6 +6,7 @@ import { HTMLNode, parseHTML } from "../xml/index.js"
 import { parseScript } from "./parsers/js.js"
 import { Replacer } from "./parsers/string.js"
 import { exit } from "process"
+import { parseStyle } from "./parsers/css.js"
 
 const FILE_PATH = url.fileURLToPath( import.meta.url )
 const FILE_DIR = path.dirname( FILE_PATH )
@@ -145,6 +146,7 @@ for ( const htmlFile of htmlDocuments ) {
     const tags = {
         script: html.findChildren( node => node.name === "script" && node.attributes.src ),
         style: html.findChildren( node => node.name === "link" && node.attributes.rel === "stylesheet" ),
+        inlineStyle: html.findChildren( node => node.name === "style" ),
         image: html.findChildren( node => node.name === "link" && node.attributes.rel === "icon" || node.name === "img" ),
     }
 
@@ -183,6 +185,27 @@ for ( const htmlFile of htmlDocuments ) {
         resolvedStyles.set( filepath, targetpath )
         // Update HTML
         attributes.href = path.relative( targetDir, targetpath )
+    }
+
+    for ( const tag of tags.inlineStyle ) {
+        const urls = parseStyle( tag.children[0] ).urls.filter( url => !/^(https?:\/\/|data:)/.test( url ) )
+        for ( const replacer of urls ) {
+            // Get Absolute Path of Image
+            const filepath = path.resolve( path.join( currentDir, replacer.value ) )
+            // Get Already Resolved
+            if ( resolvedImages.has( filepath ) ) {
+                const targetpath = resolvedImages.get( filepath )
+                replacer.value = JSON.stringify( path.relative( targetDir, targetpath ) ).slice( 1, -1 )
+                continue
+            }
+            // Move Image
+            const targetpath = requestPath( DSTIMAGE_DIR, filepath )
+            conditionalCopy( filepath, targetpath )
+            resolvedImages.set( filepath, targetpath )
+            // Update HTML
+            replacer.value = JSON.stringify( path.relative( targetDir, targetpath ) ).slice( 1, -1 )
+        }
+        tag.children[0] = Replacer.apply( tag.children[0], urls )
     }
     for ( const { name, attributes } of tags.image ) {
         const attr = name === "img" ? "src" : "href"

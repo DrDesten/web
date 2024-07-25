@@ -92,14 +92,19 @@ export class CameraControls {
         this.canvas.style.cursor = "grab"
     }
 
+    /** @param {vec2} position  */
+    projectScreen( position ) {
+        return new vec3( position.x, position.y, 1 )
+            .mmul( this.camera.getScreenspaceMatrixInverse() ).xy
+    }
+
     /** @param {WheelEvent} event */
     zoom( { deltaY } ) {
         const zoomSensitivity = 1 + this.opts.zoomSensitivity
         const zoomScale = zoomSensitivity ** deltaY
-        const mousePos = new vec3( ...this.mouse.relativeWebglPosition, 1 )
-        const pMousePos = mousePos.clone().mmul( this.camera.getScreenspaceMatrixInverse() ).xy
+        const pMousePos = this.projectScreen( this.mouse.relativeWebglPosition )
         this.camera.scale *= zoomScale
-        const pnewMousePos = mousePos.clone().mmul( this.camera.getScreenspaceMatrixInverse() ).xy
+        const pnewMousePos = this.projectScreen( this.mouse.relativeWebglPosition )
         this.camera.position.add( vec2.vsub( pMousePos, pnewMousePos ).mul( 0.5 ) )
         this.triggerEvent()
     }
@@ -112,8 +117,8 @@ export class CameraControls {
         const currentPos = new vec2( screenX, screenY )
         if ( buttons & 1 ) {
             const movement = vec2.vsub( currentPos, this.lastPos )
-            this.camera.position.x -= movement.x * this.camera.scale / this.canvas.clientHeight
-            this.camera.position.y += movement.y * this.camera.scale / this.canvas.clientHeight
+            this.camera.position.x -= movement.x * this.camera.scale / this.canvas.clientHeight / 2
+            this.camera.position.y += movement.y * this.camera.scale / this.canvas.clientHeight / 2
             this.triggerEvent()
         }
         this.lastPos.set( currentPos )

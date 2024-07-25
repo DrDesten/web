@@ -22,14 +22,15 @@
     <div id="minimap-container"><canvas id="minimap"></canvas></div>
 
     <div id="overlay">
-        <div class="panel" grid>
+        <div class="translucent-panel" grid>
             <div><span class="key">Iterations: </span><span class="value" id="it"></span></div>
             <input type="range" min="2" max="10000" value="1000" id="iterations" style="width: min(50vw, 25rem)">
         </div>
-        <div id="position" class="panel" grid>
+        <div id="position" class="translucent-panel" grid>
             <div><span class="key">Real: </span><span class="value" id="re"></span></div>
             <div><span class="key">Imaginary: </span><span class="value" id="im"></span></div>
-            <div><span class="key">Zoom: </span><span class="value" id="sc"></span></div>
+            <div><span class="key">Scale: </span><span class="value" id="sc"></span></div>
+            <div><button id="reset-pos">Reset</button></div>
         </div>
     </div>
 

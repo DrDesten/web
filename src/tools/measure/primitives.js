@@ -1,4 +1,4 @@
-import { SVG, Vector2D as vec } from "../../svg/svg.js"
+import { SVG, Vector2D as vec } from "../../../svg/svg.js"
 
 export function Line( svg, start = vec.zero, end = start ) {
     const points = [start.xy, end.xy]

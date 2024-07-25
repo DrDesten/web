@@ -1,4 +1,4 @@
-import { SVG, Vector2D as vec } from "../../svg/svg.js"
+import { SVG, Vector2D as vec } from "../../../svg/svg.js"
 import { Line, SquarePlane } from "./primitives.js"
 import { LineRuler } from "./rulers.js"
 

@@ -2,6 +2,8 @@ import path from "path"
 import url from "url"
 import { QueryPathValidators, QuerySearchFunctions, copy, mkdir, query, read, remove, write } from "./file.js"
 import { HTMLNode, parseHTML } from "../xml/index.js"
+import { parseScript } from "./parsers/js.js"
+import { Replacer } from "./parsers/string.js"
 
 const FILE_PATH = url.fileURLToPath( import.meta.url )
 const FILE_DIR = path.dirname( FILE_PATH )
@@ -22,18 +24,17 @@ const DSTDEPENDENCY_DIR = path.join( DSTBIN_DIR, "dependencies" )
 const SRC_DIR = path.join( ROOT_DIR, "src" )
 
 remove( DST_DIR )
-copy( SRC_DIR, DST_DIR )
-copy( SCRIPT_DIR, DSTSCRIPT_DIR )
-copy( STYLE_DIR, DSTSTYLE_DIR )
-copy( IMAGE_DIR, DSTIMAGE_DIR )
-mkdir( DSTDEPENDENCY_DIR )
+mkdir( DST_DIR )
+mkdir( DSTSCRIPT_DIR )
+mkdir( DSTSTYLE_DIR )
+mkdir( DSTIMAGE_DIR )
 
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
 const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
 const styles = new Map( query( STYLE_DIR ).map( p => [path.basename( p ), p] ) )
 const images = new Map( query( IMAGE_DIR ).map( p => [path.basename( p ), p] ) )
 
-const htmlFilePaths = query( DST_DIR, QuerySearchFunctions.extension.html )
+const htmlFilePaths = query( SRC_DIR, QuerySearchFunctions.extension.html )
 const htmlFileContents = read( htmlFilePaths )
 const htmlDocuments = htmlFileContents.map( ( { path, content } ) => {
     let parsed = parseHTML( content ), root = parsed.find( ( { name } ) => name === "html" )
@@ -68,36 +69,116 @@ for ( const { path: filepath, root } of htmlDocuments ) {
 }
 
 // Resolve Sources
+const filenames = new Set
+const resolvedScripts = new Map
+const resolvedStyles = new Map
+const resolvedImages = new Map
+const resolvedImports = new Map
+
+function requestPath( targetDir, filepath ) {
+    let dirname = path.basename( path.dirname( filepath ) )
+    let filename = dirname + "_" + path.basename( filepath )
+    while ( filenames.has( filename ) ) filename = "_" + filename
+    filenames.add( filename )
+    return path.join( targetDir, filename )
+}
+
+function resolveImports( oldpath, newpath ) {
+    if ( resolvedImports.has( oldpath ) ) return resolvedImports.get( oldpath )
+    newpath ??= requestPath( DSTSCRIPT_DIR, oldpath )
+    resolvedImports.set( oldpath, newpath )
+
+    const dirname = path.dirname( oldpath )
+    const source = read( oldpath ).content
+    const { imports } = parseScript( source )
+    for ( const replacer of imports ) {
+        const absolute = path.resolve( path.join( dirname, replacer.value ) )
+        replacer.value = "./" + path.relative( path.dirname( newpath ), resolveImports( absolute ) )
+    }
+
+    if ( oldpath.includes( "vec.js" ) ) console.log( oldpath, newpath ), console.log( imports )
+
+    const patchedSource = Replacer.apply( source, imports )
+    write( newpath, patchedSource )
+    return newpath
+}
+
 for ( const htmlFile of htmlDocuments ) {
     const parsed = htmlFile.parsed
     const html = htmlFile.root
 
-    const dirname = path.dirname( htmlFile.path )
+    const currentDir = path.dirname( htmlFile.path )
+    const targetDir = path.join( DST_DIR, path.relative( SRC_DIR, currentDir ) )
+    const targetPath = path.join( targetDir, path.basename( htmlFile.path ) )
+
     const tags = {
         script: html.findChildren( node => node.name === "script" && node.attributes.src ),
         style: html.findChildren( node => node.name === "link" && node.attributes.rel === "stylesheet" ),
         image: html.findChildren( node => node.name === "link" && node.attributes.rel === "icon" || node.name === "img" ),
     }
 
-    const dependencies = []
-    const resolved = new Map
     for ( const { attributes } of tags.script ) {
-        if ( scripts.has( attributes.src ) ) {
-            const filepath = path.join( DSTSCRIPT_DIR, attributes.src )
-            attributes.src = path.relative( dirname, filepath )
+        // Get Absolute Path of Script
+        const filepath = scripts.has( attributes.src )
+            ? path.resolve( path.join( SCRIPT_DIR, attributes.src ) )
+            : path.join( currentDir, attributes.src )
+        // Get Already Resolved
+        if ( resolvedScripts.has( filepath ) ) {
+            const targetpath = resolvedScripts.get( filepath )
+            attributes.src = path.relative( targetDir, targetpath )
+            continue
         }
+        // Move Script
+        const targetpath = requestPath( DSTSCRIPT_DIR, filepath )
+        resolvedScripts.set( filepath, targetpath )
+        // Update HTML
+        attributes.src = path.relative( targetDir, targetpath )
     }
 
     for ( const { attributes } of tags.style ) {
-        if ( styles.has( attributes.href ) )
-            attributes.href = path.relative( dirname, path.join( DSTSTYLE_DIR, attributes.href ) )
+        // Get Absolute Path of Style
+        const filepath = styles.has( attributes.href )
+            ? path.resolve( path.join( STYLE_DIR, attributes.href ) )
+            : path.join( currentDir, attributes.href )
+        // Get Already Resolved
+        if ( resolvedStyles.has( filepath ) ) {
+            const targetpath = resolvedStyles.get( filepath )
+            attributes.href = path.relative( targetDir, targetpath )
+            continue
+        }
+        // Move Style
+        const targetpath = requestPath( DSTSTYLE_DIR, filepath )
+        copy( filepath, targetpath )
+        resolvedStyles.set( filepath, targetpath )
+        // Update HTML
+        attributes.href = path.relative( targetDir, targetpath )
     }
     for ( const { name, attributes } of tags.image ) {
         const attr = name === "img" ? "src" : "href"
-        if ( images.has( attributes[attr] ) )
-            attributes[attr] = path.relative( dirname, path.join( DSTIMAGE_DIR, attributes[attr] ) )
+        // Get Absolute Path of Image
+        const filepath = images.has( attributes[attr] )
+            ? path.resolve( path.join( IMAGE_DIR, attributes[attr] ) )
+            : path.join( currentDir, attributes[attr] )
+        // Get Already Resolved
+        if ( resolvedImages.has( filepath ) ) {
+            const targetpath = resolvedImages.get( filepath )
+            attributes[attr] = path.relative( targetDir, targetpath )
+            continue
+        }
+        // Move Image
+        const targetpath = requestPath( DSTIMAGE_DIR, filepath )
+        copy( filepath, targetpath )
+        resolvedImages.set( filepath, targetpath )
+        // Update HTML
+        attributes[attr] = path.relative( targetDir, targetpath )
     }
 
     const built = parsed.join( "\n" )
-    write( htmlFile.path, built )
+    write( targetPath, built )
 }
+
+// Resolve Imports
+for ( const [oldpath, newpath] of resolvedScripts.entries() ) {
+    resolveImports( oldpath, newpath )
+}
+//console.log( resolvedImports )

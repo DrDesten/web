@@ -35,8 +35,9 @@ export function query( dir, searchFunction = QuerySearchFunctions.all, pathValid
     return results
 }
 
-/** @param {string[]} paths */
+/** @param {string|string[]} paths */
 export function read( paths ) {
+    if ( typeof paths === "string" ) return { path: paths, content: fs.readFileSync( paths, 'utf8' ) }
     const files = []
     for ( const path of paths ) {
         files.push( {

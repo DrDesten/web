@@ -82,12 +82,13 @@ for ( const { path: filepath, root } of htmlDocuments ) {
     const candidates = root.findChildren( node => components.has( node.name ) )
     if ( !candidates.length ) continue
 
+    const dstpath = path.join( DST_DIR, path.relative( SRC_DIR, filepath ) )
     const globals = {
         meta: meta,
         ROOT: DST_DIR,
-        PATH: filepath,
-        DIRNAME: path.dirname( filepath ),
-        FILENAME: path.basename( filepath ),
+        PATH: dstpath,
+        DIRNAME: path.dirname( dstpath ),
+        FILENAME: path.basename( dstpath ),
     }
 
     for ( const node of candidates ) {

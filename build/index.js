@@ -34,15 +34,13 @@ mkdir( DSTIMAGE_DIR )
 function hash( string ) {
     return crypto.createHash( "md5" ).update( string ).digest( "base64" )
 }
+const dstFiles = query( DST_DIR )
 const oldCache = exists( CACHE_PATH )
     ? new Map(
         Object.entries( JSON.parse( read( CACHE_PATH ).content ) )
             .filter( ( [path] ) => exists( path ) )
     )
-    : new Map(
-        read( query( DST_DIR ) )
-            .map( f => [f.path, hash( f.content )] )
-    )
+    : new Map( read( dstFiles ).map( f => [f.path, hash( f.content )] ) )
 const newCache = new Map()
 
 function conditionalWrite( filepath, content ) {
@@ -53,6 +51,14 @@ function conditionalWrite( filepath, content ) {
 
     write( filepath, content )
     oldCache.set( filepath, filehash )
+}
+function conditionalCopy( source, destination ) {
+    const sourceHash = hash( read( source, { encoding: null } ).content )
+    newCache.set( destination, sourceHash )
+    if ( !exists( destination ) ) return copy( source, destination )
+    if ( oldCache.get( destination ) === sourceHash ) return
+    copy( source, destination )
+    oldCache.set( destination, sourceHash )
 }
 
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
@@ -172,8 +178,7 @@ for ( const htmlFile of htmlDocuments ) {
         }
         // Move Style
         const targetpath = requestPath( DSTSTYLE_DIR, filepath )
-        const content = read( filepath ).content
-        conditionalWrite( targetpath, content )
+        conditionalCopy( filepath, targetpath )
         resolvedStyles.set( filepath, targetpath )
         // Update HTML
         attributes.href = path.relative( targetDir, targetpath )
@@ -192,8 +197,8 @@ for ( const htmlFile of htmlDocuments ) {
         }
         // Move Image
         const targetpath = requestPath( DSTIMAGE_DIR, filepath )
-        const content = read( filepath ).content
-        conditionalWrite( targetpath, content )
+        conditionalCopy( filepath, targetpath )
+        resolvedImages.set( filepath, targetpath )
         // Update HTML
         attributes[attr] = path.relative( targetDir, targetpath )
     }
@@ -209,3 +214,5 @@ for ( const [oldpath, newpath] of resolvedScripts.entries() ) {
 
 // Save Cache
 write( CACHE_PATH, JSON.stringify( Object.fromEntries( newCache.entries() ), null, 4 ) )
+// Remove Old Files
+remove( dstFiles.filter( pth => !newCache.has( pth ) ) )

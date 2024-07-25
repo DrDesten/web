@@ -35,17 +35,13 @@ export function query( dir, searchFunction = QuerySearchFunctions.all, pathValid
     return results
 }
 
-/** @param {string|string[]} paths */
-export function read( paths ) {
-    if ( typeof paths === "string" ) return { path: paths, content: fs.readFileSync( paths, 'utf8' ) }
-    const files = []
-    for ( const path of paths ) {
-        files.push( {
-            path: path,
-            content: fs.readFileSync( path, 'utf8' )
-        } )
-    }
-    return files
+/** @param {string|string[]} paths @param {BufferEncoding|{encoding: BufferEncoding?, flag?: string}} [options] */
+export function read( paths, options = { encoding: 'utf8' } ) {
+    /** @param {string} path */
+    function read( path ) { return { path, content: fs.readFileSync( path, options ) } }
+    return typeof paths === "string"
+        ? read( paths )
+        : paths.map( read )
 }
 /** @param {string} filepath @param {string} content */
 export function write( filepath, content ) {
@@ -64,7 +60,11 @@ export function mkdir( path ) {
 export function copy( source, destination ) {
     fs.cpSync( source, destination, { recursive: true } )
 }
-/** @param {string} path */
-export function remove( path ) {
-    fs.rmSync( path, { force: true, recursive: true } )
+/** @param {string|string[]} paths */
+export function remove( paths ) {
+    /** @param {string} path */
+    function remove( path ) { fs.rmSync( path, { force: true, recursive: true } ) }
+    typeof paths === "string"
+        ? remove( paths )
+        : paths.forEach( remove )
 }

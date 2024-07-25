@@ -1,12 +1,16 @@
 import path from "path"
 import url from "url"
-import { QueryPathValidators, QuerySearchFunctions, copy, mkdir, query, read, remove, write } from "./file.js"
+import crypto from "crypto"
+import { QueryPathValidators, QuerySearchFunctions, copy, exists, mkdir, query, read, remove, write } from "./file.js"
 import { HTMLNode, parseHTML } from "../xml/index.js"
 import { parseScript } from "./parsers/js.js"
 import { Replacer } from "./parsers/string.js"
+import { exit } from "process"
 
 const FILE_PATH = url.fileURLToPath( import.meta.url )
 const FILE_DIR = path.dirname( FILE_PATH )
+const CACHE_DIR = path.join( FILE_DIR, "cache" )
+const CACHE_PATH = path.join( CACHE_DIR, "cache.json" )
 
 const ROOT_DIR = path.join( FILE_DIR, "../" )
 
@@ -20,14 +24,30 @@ const DSTBIN_DIR = path.join( DST_DIR, "bin" )
 const DSTSCRIPT_DIR = path.join( DSTBIN_DIR, "scripts" )
 const DSTSTYLE_DIR = path.join( DSTBIN_DIR, "styles" )
 const DSTIMAGE_DIR = path.join( DSTBIN_DIR, "images" )
-const DSTDEPENDENCY_DIR = path.join( DSTBIN_DIR, "dependencies" )
 const SRC_DIR = path.join( ROOT_DIR, "src" )
 
-remove( DST_DIR )
 mkdir( DST_DIR )
 mkdir( DSTSCRIPT_DIR )
 mkdir( DSTSTYLE_DIR )
 mkdir( DSTIMAGE_DIR )
+
+function hash( string ) {
+    return crypto.createHash( "md5" ).update( string ).digest( "base64" )
+}
+const oldCache = exists( CACHE_PATH )
+    ? new Map( Object.entries( JSON.parse( read( CACHE_PATH ).content ) ) )
+    : new Map( read( query( DST_DIR ) ).map( f => [f.path, hash( f.content )] ) )
+const newCache = new Map()
+
+function conditionalWrite( filepath, content ) {
+    const filehash = hash( content )
+    newCache.set( filepath, filehash )
+    if ( oldCache.get( filepath ) === filehash ) return
+    console.log( "wrote", path.relative( DST_DIR, filepath ) )
+
+    write( filepath, content )
+    oldCache.set( filepath, filehash )
+}
 
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
 const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
@@ -96,10 +116,8 @@ function resolveImports( oldpath, newpath ) {
         replacer.value = "./" + path.relative( path.dirname( newpath ), resolveImports( absolute ) )
     }
 
-    if ( oldpath.includes( "vec.js" ) ) console.log( oldpath, newpath ), console.log( imports )
-
     const patchedSource = Replacer.apply( source, imports )
-    write( newpath, patchedSource )
+    conditionalWrite( newpath, patchedSource )
     return newpath
 }
 
@@ -148,7 +166,8 @@ for ( const htmlFile of htmlDocuments ) {
         }
         // Move Style
         const targetpath = requestPath( DSTSTYLE_DIR, filepath )
-        copy( filepath, targetpath )
+        const content = read( filepath ).content
+        conditionalWrite( targetpath, content )
         resolvedStyles.set( filepath, targetpath )
         // Update HTML
         attributes.href = path.relative( targetDir, targetpath )
@@ -167,18 +186,20 @@ for ( const htmlFile of htmlDocuments ) {
         }
         // Move Image
         const targetpath = requestPath( DSTIMAGE_DIR, filepath )
-        copy( filepath, targetpath )
-        resolvedImages.set( filepath, targetpath )
+        const content = read( filepath ).content
+        conditionalWrite( targetpath, content )
         // Update HTML
         attributes[attr] = path.relative( targetDir, targetpath )
     }
 
     const built = parsed.join( "\n" )
-    write( targetPath, built )
+    conditionalWrite( targetPath, built )
 }
 
 // Resolve Imports
 for ( const [oldpath, newpath] of resolvedScripts.entries() ) {
     resolveImports( oldpath, newpath )
 }
-//console.log( resolvedImports )
+
+// Save Cache
+write( CACHE_PATH, JSON.stringify( Object.fromEntries( newCache.entries() ), null, 4 ) )

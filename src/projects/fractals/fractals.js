@@ -1,5 +1,4 @@
-import { vec2 } from "../../../svg/jvec/bin/vec2.js"
-import { vec3 } from "../../../svg/jvec/bin/vec3.js"
+import { vec2, vec3 } from "../../../svg/jvec/bin/vec.js"
 import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
 import { Attribute } from "./gl/attributes.js"
 import { Camera, CameraControls } from "./gl/camera.js"

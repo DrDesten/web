@@ -53,8 +53,12 @@ export function write( filepath, content ) {
     fs.writeFileSync( filepath, content, { encoding: "utf8" } )
 }
 /** @param {string} path */
+export function exists( path ) {
+    return fs.existsSync( path )
+}
+/** @param {string} path */
 export function mkdir( path ) {
-    fs.mkdirSync( path, { recursive: true } )
+    return exists( path ) ? false : fs.mkdirSync( path, { recursive: true } ), true
 }
 /** @param {string} source @param {string} destination */
 export function copy( source, destination ) {

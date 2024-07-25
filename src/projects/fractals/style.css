@@ -55,7 +55,16 @@ canvas {
 
 .translucent-panel[grid] {
     grid-template-columns: auto;
-    gap: 0.25em;
+    padding: 0.125em;
+    gap: 0;
+}
+
+.translucent-panel[grid]>* {
+    margin: 0.125em;
+}
+
+.translucent-panel[grid]>* * {
+    margin: 0;
 }
 
 .translucent-panel,
@@ -67,9 +76,25 @@ span.key {
     font-weight: bold;
 }
 
+button,
+input {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
 button {
     font-weight: bold;
     padding: 0.25em;
     margin: 0em;
-    background-color: rgba(255, 255, 255, 0.5);
+}
+
+input.number[name="red"] {
+    background-color: rgba(255, 100, 100, 0.5);
+}
+
+input.number[name="green"] {
+    background-color: rgba(100, 255, 100, 0.5);
+}
+
+input.number[name="blue"] {
+    background-color: rgba(100, 100, 255, 0.5);
 }

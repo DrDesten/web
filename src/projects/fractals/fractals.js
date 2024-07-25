@@ -12,6 +12,14 @@ import { Fractallib } from "./shaders/fractal.js"
 import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
 
+const defaults = {
+    camera: {
+        position: [-0.7, 0],
+        scale: 5,
+    },
+    guideColor: [.5, .4, 1],
+}
+
 const htmlOutputs = {
     re: document.getElementById( "re" ),
     im: document.getElementById( "im" ),
@@ -27,7 +35,26 @@ const htmlOutputs = {
 const htmlInputs = {
     iterations: document.getElementById( "iterations" ),
     resetPos: document.getElementById( "reset-pos" ),
+    guideColor: {
+        r: document.getElementById( "color-r" ),
+        g: document.getElementById( "color-g" ),
+        b: document.getElementById( "color-b" ),
+    },
+
+    setColor() {
+        this.guideColor.r.value = guideColor[0]
+        this.guideColor.g.value = guideColor[1]
+        this.guideColor.b.value = guideColor[2]
+    },
+    getColor() {
+        guideColor[0] = +this.guideColor.r.value || 0
+        guideColor[1] = +this.guideColor.g.value || 0
+        guideColor[2] = +this.guideColor.b.value || 0
+    },
 }
+htmlInputs.guideColor.r.addEventListener( "focusout", () => htmlInputs.setColor() )
+htmlInputs.guideColor.g.addEventListener( "focusout", () => htmlInputs.setColor() )
+htmlInputs.guideColor.b.addEventListener( "focusout", () => htmlInputs.setColor() )
 
 function saveCamera( camera ) {
     localStorage.setItem( "camera", JSON.stringify( {
@@ -36,8 +63,8 @@ function saveCamera( camera ) {
     } ) )
 }
 function loadCamera( camera ) {
-    const data = localStorage.getItem( "camera" ) ?? '{"position": [-0.7, 0], "scale": 5}'
-    const { position, scale } = JSON.parse( data )
+    const data = localStorage.getItem( "camera" )
+    const { position, scale } = data ? JSON.parse( data ) : defaults.camera
     camera.position.set( ...position )
     camera.scale = scale
 }
@@ -51,6 +78,26 @@ const camera = new Camera( screen.canvas )
 const cameraControls = new CameraControls( camera, { zoomSensitivity: 0.001 } )
 loadCamera( camera )
 htmlOutputs.updateCamera( camera )
+
+const guideColor = defaults.guideColor
+htmlInputs.setColor( guideColor )
+
+const globalUniforms = () => [
+    new Uniform( "maxIterations", "int", 1 ),
+    new Uniform( "guideColor", "float", 3 ),
+    new Uniform( "screenSize", "float", 4 ),
+    new Uniform( "screenSizeInverse", "float", 4 ),
+    new Uniform( "cameraPosition", "float", 4 ),
+    new Uniform( "cameraScale", "float", 2 ),
+    new Uniform( "viewPosition", "float", 4 ),
+    new Uniform( "viewScale", "float", 2 ),
+]
+const vertexQuadData = [
+    [-1, -1],
+    [+1, -1],
+    [-1, +1],
+    [+1, +1],
+]
 
 // Setup main canvas
 ~function MainCanvas() {
@@ -79,31 +126,15 @@ htmlOutputs.updateCamera( camera )
     } )
 
     const vertexBuffer = gl.createBuffer()
-    const uniforms = [
-        new Uniform( "maxIterations", "int", 1 ),
-        new Uniform( "screenSize", "float", 4 ),
-        new Uniform( "screenSizeInverse", "float", 4 ),
-        new Uniform( "cameraPosition", "float", 4 ),
-        new Uniform( "cameraScale", "float", 2 ),
-        new Uniform( "viewPosition", "float", 4 ),
-        new Uniform( "viewScale", "float", 2 ),
-    ]
-
     const program = new Program( mandelbrotShader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
-    ], uniforms )
+    ], globalUniforms() )
     program.activate()
     program.getLocations()
     program.enableAttributes()
 
     // Fill Buffers
-    const vertexData = [
-        [-1, -1],
-        [+1, -1],
-        [-1, +1],
-        [+1, +1],
-    ]
-    const vertexBufferData = new Float32Array( vertexData.flat() )
+    const vertexBufferData = new Float32Array( vertexQuadData.flat() )
     gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer )
     gl.bufferData( gl.ARRAY_BUFFER, vertexBufferData, gl.STATIC_DRAW )
 
@@ -117,6 +148,15 @@ htmlOutputs.updateCamera( camera )
         it.innerHTML = iterations
         invalidate()
     } )
+
+    function updateColor() {
+        invalidate()
+        htmlInputs.getColor()
+        program.uploadUniform( "guideColor", guideColor )
+    }
+    Object.values( htmlInputs.guideColor )
+        .forEach( input => input.addEventListener( "input", updateColor ) )
+    updateColor()
 
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )
@@ -170,31 +210,16 @@ htmlOutputs.updateCamera( camera )
     cameraControls.addEventListener( () => invalidate() )
 
     const vertexBuffer = gl.createBuffer()
-    const uniforms = [
-        new Uniform( "maxIterations", "int", 1 ),
-        new Uniform( "screenSize", "float", 4 ),
-        new Uniform( "screenSizeInverse", "float", 4 ),
-        new Uniform( "cameraPosition", "float", 4 ),
-        new Uniform( "cameraScale", "float", 2 ),
-        new Uniform( "viewPosition", "float", 4 ),
-        new Uniform( "viewScale", "float", 2 ),
-    ]
 
     const program = new Program( juliaShader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
-    ], uniforms )
+    ], globalUniforms() )
     program.activate()
     program.getLocations()
     program.enableAttributes()
 
     // Fill Buffers
-    const vertexData = [
-        [-1, -1],
-        [+1, -1],
-        [-1, +1],
-        [+1, +1],
-    ]
-    const vertexBufferData = new Float32Array( vertexData.flat() )
+    const vertexBufferData = new Float32Array( vertexQuadData.flat() )
     gl.bindBuffer( gl.ARRAY_BUFFER, vertexBuffer )
     gl.bufferData( gl.ARRAY_BUFFER, vertexBufferData, gl.STATIC_DRAW )
 
@@ -208,6 +233,15 @@ htmlOutputs.updateCamera( camera )
         it.innerHTML = iterations
         invalidate()
     } )
+
+    function updateColor() {
+        invalidate()
+        htmlInputs.getColor()
+        program.uploadUniform( "guideColor", guideColor )
+    }
+    Object.values( htmlInputs.guideColor )
+        .forEach( input => input.addEventListener( "input", updateColor ) )
+    updateColor()
 
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )

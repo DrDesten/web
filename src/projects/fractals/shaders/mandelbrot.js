@@ -8,6 +8,7 @@ export const mandelbrotShader = new Shader( `
     }
 `, `
     uniform int maxIterations;
+    uniform vec3 guideColor;
     uniform vec4 screenSize;
     uniform vec4 screenSizeInverse;
     uniform vec4 cameraPosition;
@@ -42,7 +43,6 @@ export const mandelbrotShader = new Shader( `
             return;
         }
 
-        const vec3  guideColor = vec3(.5, .4, 1);
         const float guideScale = 1. / 10.;
 
         float smoothIter = f.iterations + 1.0 - log(log(length(f.z))) / log(2.0);

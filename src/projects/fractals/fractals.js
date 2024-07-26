@@ -138,9 +138,10 @@ inputElements.guideColorG.addEventListener( "focusout", () => inputs.displayColo
 inputElements.guideColorB.addEventListener( "focusout", () => inputs.displayColor() )
 
 const mouse = new Mouse()
-const screen = new Canvas( document.getElementById( "main" ), 1, true )
+const screen = new Canvas( document.getElementById( "main" ), { resizeAsync: true } )
+const minimap = new Canvas( document.getElementById( "minimap" ), { resizeAsync: true } )
 screen.requestResize()
-const minimap = new Canvas( document.getElementById( "minimap" ) )
+minimap.requestResize()
 
 const camera = new Camera( screen.canvas )
 const cameraControls = new CameraControls( camera, { zoomSensitivity: 0.001 } )

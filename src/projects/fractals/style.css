@@ -17,8 +17,8 @@ div:has(canvas) {
     top: 2em;
     right: 2em;
 
-    width: 10em;
-    height: 10em;
+    width: min(min(25vw, 25vh), max(20vw, 20vh));
+    height: min(min(25vw, 25vh), max(20vw, 20vh));
 }
 
 canvas {

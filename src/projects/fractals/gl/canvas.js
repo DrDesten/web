@@ -1,15 +1,24 @@
+/**
+ * @typedef {Object} CanvasOptions
+ * @property {number} [resolutionScale]
+ * @property {boolean} [resizeAsync]
+ */
+
 export class Canvas {
-    constructor( element, resolutionScale = 1, resizeAsync = false ) {
+    /** @param {HTMLCanvasElement} element @param {CanvasOptions} [opts] */
+    constructor( element, opts = {} ) {
         if ( !( element instanceof HTMLCanvasElement ) ) {
             throw new TypeError( "Context element must be canvas" )
         }
         this.canvas = element
-        this.resolutionScale = resolutionScale
+        this.resolutionScale = opts.resolutionScale ?? 1
+        this.resizeAsync = opts.resizeAsync ?? false
+
         this.onResize = null
         this.onResizeRequest = null
         this.targetSize = null
 
-        if ( resizeAsync ) {
+        if ( this.resizeAsync ) {
             // Set initial size
             this.requestCanvasSize(
                 element.clientWidth * devicePixelRatio,

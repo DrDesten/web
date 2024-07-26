@@ -1,3 +1,4 @@
+import * as Query from "../../../scripts/query.js"
 import { vec2, vec3 } from "../../../svg/jvec/bin/vec.js"
 import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
 import { Attribute } from "./gl/attributes.js"
@@ -18,43 +19,87 @@ const defaults = {
         scale: 5,
     },
     guideColor: [.5, .4, 1],
+    iterations: 1000,
+}
+const params = structuredClone( defaults )
+params.load = function () {
+    const saved = JSON.parse( localStorage.getItem( "params" ) )
+    if ( saved ) Object.assign( params, saved )
+}
+params.save = function () {
+    localStorage.setItem( "params", JSON.stringify( params ) )
 }
 
-const htmlOutputs = {
-    re: document.getElementById( "re" ),
-    im: document.getElementById( "im" ),
-    sc: document.getElementById( "sc" ),
-    it: document.getElementById( "it" ),
+const inputElements = Query.getInputs()
+const inputs = {
+    listeners: {
+        iterations: [],
+        camera: [],
+        color: [],
+    },
+    /** @param {"color"|"camera"|"iterations"} type @param {(...any)=>void} listener */
+    addEventListener( type, listener ) {
+        this.listeners[type].push( listener )
+    },
+    dispatchEvent( type, ...args ) {
+        this.listeners[type].forEach( listener => listener( ...args ) )
+    },
+
+    // Iterations
+    displayIterations() {
+        if ( inputElements.iterationsNumber.innerHTML != params.iterations )
+            inputElements.iterationsNumber.innerHTML = params.iterations
+        if ( inputElements.iterationsSlider.value != params.iterations )
+            inputElements.iterationsSlider.value = params.iterations
+    },
+    getIterationsSlider() {
+        params.iterations = ~~inputElements.iterationsSlider.value
+        this.displayIterations()
+        this.dispatchEvent( "iterations", params.iterations )
+    },
+    getIterationsNumber() {
+        params.iterations = ~~inputElements.iterationsNumber.innerHTML
+        this.displayIterations()
+        this.dispatchEvent( "iterations", params.iterations )
+    },
+
+    // Camera
+    displayCamera( camera ) {
+        inputElements.real.innerHTML = camera.position.x
+        inputElements.imaginary.innerHTML = camera.position.y
+        inputElements.scale.innerHTML = camera.scale
+    },
 
     updateCamera( camera ) {
-        this.re.innerHTML = camera.position.x
-        this.im.innerHTML = camera.position.y
-        this.sc.innerHTML = camera.scale
-    }
-}
-const htmlInputs = {
-    iterations: document.getElementById( "iterations" ),
-    resetPos: document.getElementById( "reset-pos" ),
-    guideColor: {
-        r: document.getElementById( "color-r" ),
-        g: document.getElementById( "color-g" ),
-        b: document.getElementById( "color-b" ),
+        inputElements.real.innerHTML = camera.position.x
+        inputElements.imaginary.innerHTML = camera.position.y
+        inputElements.scale.innerHTML = camera.scale
     },
 
-    setColor() {
-        this.guideColor.r.value = guideColor[0]
-        this.guideColor.g.value = guideColor[1]
-        this.guideColor.b.value = guideColor[2]
+    // Color
+    displayColor() {
+        inputElements.guideColorR.value = params.guideColor[0]
+        inputElements.guideColorG.value = params.guideColor[1]
+        inputElements.guideColorB.value = params.guideColor[2]
     },
     getColor() {
-        guideColor[0] = +this.guideColor.r.value || 0
-        guideColor[1] = +this.guideColor.g.value || 0
-        guideColor[2] = +this.guideColor.b.value || 0
+        params.guideColor[0] = +inputElements.guideColorR.value || 0
+        params.guideColor[1] = +inputElements.guideColorG.value || 0
+        params.guideColor[2] = +inputElements.guideColorB.value || 0
+        this.dispatchEvent( "color", params.guideColor )
     },
 }
-htmlInputs.guideColor.r.addEventListener( "focusout", () => htmlInputs.setColor() )
-htmlInputs.guideColor.g.addEventListener( "focusout", () => htmlInputs.setColor() )
-htmlInputs.guideColor.b.addEventListener( "focusout", () => htmlInputs.setColor() )
+inputs.displayIterations()
+inputElements.iterationsSlider.addEventListener( "input", () => inputs.getIterationsSlider() )
+inputElements.iterationsNumber.addEventListener( "focusout", () => inputs.getIterationsNumber() )
+
+inputs.displayColor()
+inputElements.guideColorR.addEventListener( "input", () => inputs.getColor() )
+inputElements.guideColorG.addEventListener( "input", () => inputs.getColor() )
+inputElements.guideColorB.addEventListener( "input", () => inputs.getColor() )
+inputElements.guideColorR.addEventListener( "focusout", () => inputs.displayColor() )
+inputElements.guideColorG.addEventListener( "focusout", () => inputs.displayColor() )
+inputElements.guideColorB.addEventListener( "focusout", () => inputs.displayColor() )
 
 function saveCamera( camera ) {
     localStorage.setItem( "camera", JSON.stringify( {
@@ -77,10 +122,7 @@ const minimap = new Canvas( document.getElementById( "minimap" ) )
 const camera = new Camera( screen.canvas )
 const cameraControls = new CameraControls( camera, { zoomSensitivity: 0.001 } )
 loadCamera( camera )
-htmlOutputs.updateCamera( camera )
-
-const guideColor = defaults.guideColor
-htmlInputs.setColor( guideColor )
+inputs.updateCamera( camera )
 
 const globalUniforms = () => [
     new Uniform( "maxIterations", "int", 1 ),
@@ -112,17 +154,17 @@ const vertexQuadData = [
     screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
 
-    htmlInputs.resetPos.addEventListener( "click", () => {
+    inputElements.resetPosition.addEventListener( "click", () => {
         invalidate()
         camera.position.set( -0.7, 0 )
         camera.scale = 5
-        htmlOutputs.updateCamera( camera )
+        inputs.updateCamera( camera )
     } )
 
     cameraControls.addEventListener( () => {
         invalidate()
         saveCamera( camera )
-        htmlOutputs.updateCamera( camera )
+        inputs.updateCamera( camera )
     } )
 
     const vertexBuffer = gl.createBuffer()
@@ -141,22 +183,9 @@ const vertexQuadData = [
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
-    let iterations = ~~htmlInputs.iterations.value
-    it.innerHTML = iterations
-    htmlInputs.iterations.addEventListener( "input", () => {
-        iterations = ~~htmlInputs.iterations.value
-        it.innerHTML = iterations
-        invalidate()
-    } )
-
-    function updateColor() {
-        invalidate()
-        htmlInputs.getColor()
-        program.uploadUniform( "guideColor", guideColor )
-    }
-    Object.values( htmlInputs.guideColor )
-        .forEach( input => input.addEventListener( "input", updateColor ) )
-    updateColor()
+    inputs.addEventListener( "iterations", () => invalidate() )
+    inputs.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
+    program.uploadUniform( "guideColor", params.guideColor )
 
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )
@@ -170,7 +199,7 @@ const vertexQuadData = [
         const viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
 
         const margin = 0
-        program.uploadUniform( "maxIterations", iterations )
+        program.uploadUniform( "maxIterations", params.iterations )
         program.uploadUniform( "screenSize", splitFloats( screenSize.toArray(), margin ) )
         program.uploadUniform( "screenSizeInverse", splitFloats( screenSizeInverse.toArray(), margin ) )
         program.uploadUniform( "cameraPosition", splitFloats( cameraPosition.toArray(), margin ) )
@@ -206,7 +235,7 @@ const vertexQuadData = [
     minimap.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
 
-    htmlInputs.resetPos.addEventListener( "click", () => invalidate() )
+    inputElements.resetPosition.addEventListener( "click", () => invalidate() )
     cameraControls.addEventListener( () => invalidate() )
 
     const vertexBuffer = gl.createBuffer()
@@ -226,22 +255,9 @@ const vertexQuadData = [
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
-    let iterations = ~~htmlInputs.iterations.value
-    it.innerHTML = iterations
-    htmlInputs.iterations.addEventListener( "input", () => {
-        iterations = ~~htmlInputs.iterations.value
-        it.innerHTML = iterations
-        invalidate()
-    } )
-
-    function updateColor() {
-        invalidate()
-        htmlInputs.getColor()
-        program.uploadUniform( "guideColor", guideColor )
-    }
-    Object.values( htmlInputs.guideColor )
-        .forEach( input => input.addEventListener( "input", updateColor ) )
-    updateColor()
+    inputs.addEventListener( "iterations", () => invalidate() )
+    inputs.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
+    program.uploadUniform( "guideColor", params.guideColor )
 
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )
@@ -255,7 +271,7 @@ const vertexQuadData = [
         const viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
 
         const margin = 0
-        program.uploadUniform( "maxIterations", iterations )
+        program.uploadUniform( "maxIterations", params.iterations )
         program.uploadUniform( "screenSize", splitFloats( screenSize.toArray(), margin ) )
         program.uploadUniform( "screenSizeInverse", splitFloats( screenSizeInverse.toArray(), margin ) )
         program.uploadUniform( "cameraPosition", splitFloats( cameraPosition.toArray(), margin ) )

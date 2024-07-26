@@ -23,21 +23,35 @@
 
     <div id="overlay">
         <div class="translucent-panel" grid>
-            <div><span class="key">Iterations: </span><span class="value" id="it"></span></div>
-            <input type="range" min="2" max="10000" value="1000" id="iterations" style="width: min(50vw, 25rem)">
+            <div>
+                <span class="key">Iterations: </span>
+                <span class="value" id="iterations-number" contenteditable="true"></span>
+            </div>
+            <input type="range" min="2" max="10000" value="1000" id="iterations-slider" style="width: min(50vw, 25rem)">
         </div>
         <div id="position" class="translucent-panel" grid>
-            <div><span class="key">Real: </span><span class="value" id="re"></span></div>
-            <div><span class="key">Imaginary: </span><span class="value" id="im"></span></div>
-            <div><span class="key">Scale: </span><span class="value" id="sc"></span></div>
-            <div><button id="reset-pos">Reset</button></div>
+            <div>
+                <span class="key">Real: </span>
+                <span class="value" id="real" contenteditable="true"></span>
+            </div>
+            <div>
+                <span class="key">Imaginary: </span>
+                <span class="value" id="imaginary" contenteditable="true"></span>
+            </div>
+            <div>
+                <span class="key">Scale: </span>
+                <span class="value" id="scale" contenteditable="true"></span>
+            </div>
+            <div>
+                <button id="reset-position">Reset</button>
+            </div>
         </div>
         <div id="color" class="translucent-panel" grid>
             <div><span class="key">Guide Color</span></div>
             <div>
-                <input class="number" type="text" size="5" name="red" id="color-r">
-                <input class="number" type="text" size="5" name="green" id="color-g">
-                <input class="number" type="text" size="5" name="blue" id="color-b">
+                <input class="number" type="text" size="5" name="red" id="guideColor-r">
+                <input class="number" type="text" size="5" name="green" id="guideColor-g">
+                <input class="number" type="text" size="5" name="blue" id="guideColor-b">
             </div>
         </div>
     </div>

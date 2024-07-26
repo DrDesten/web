@@ -21,11 +21,14 @@ const defaults = {
 }
 const params = structuredClone( defaults )
 params.load = function () {
-    const saved = JSON.parse( localStorage.getItem( "params" ) )
+    const saved = JSON.parse( localStorage.getItem( "fractals/params" ) )
     if ( saved ) Object.assign( params, saved )
 }
 params.save = function () {
-    localStorage.setItem( "params", JSON.stringify( params ) )
+    localStorage.setItem( "fractals/params", JSON.stringify( params ) )
+}
+params.resetCamera = function () {
+    Object.assign( params.camera, defaults.camera )
 }
 
 const inputElements = Query.getInputs()
@@ -43,6 +46,10 @@ const inputs = {
         this.listeners[type].forEach( listener => listener( ...args ) )
     },
 
+    number( value ) {
+        return +/-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/.exec( value )?.[0]
+    },
+
     // Iterations
     displayIterations() {
         if ( inputElements.iterationsNumber.innerHTML != params.iterations )
@@ -52,26 +59,49 @@ const inputs = {
     },
     getIterationsSlider() {
         params.iterations = ~~inputElements.iterationsSlider.value
+        params.save()
         this.displayIterations()
         this.dispatchEvent( "iterations", params.iterations )
     },
     getIterationsNumber() {
         params.iterations = ~~inputElements.iterationsNumber.innerHTML
+        params.save()
         this.displayIterations()
         this.dispatchEvent( "iterations", params.iterations )
     },
 
     // Camera
-    displayCamera( camera ) {
-        inputElements.real.innerHTML = camera.position.x
-        inputElements.imaginary.innerHTML = camera.position.y
-        inputElements.scale.innerHTML = camera.scale
+    displayCamera() {
+        inputElements.real.innerHTML = params.camera.position[0]
+        inputElements.imaginary.innerHTML = params.camera.position[1]
+        inputElements.scale.innerHTML = params.camera.scale
     },
-
-    updateCamera( camera ) {
-        inputElements.real.innerHTML = camera.position.x
-        inputElements.imaginary.innerHTML = camera.position.y
-        inputElements.scale.innerHTML = camera.scale
+    getCamera() {
+        const real = this.number( inputElements.real.innerHTML )
+        const imaginary = this.number( inputElements.imaginary.innerHTML )
+        const scale = this.number( inputElements.scale.innerHTML )
+        if ( isFinite( real ) ) params.camera.position[0] = real
+        if ( isFinite( imaginary ) ) params.camera.position[1] = imaginary
+        if ( isFinite( scale ) && scale > 0 ) params.camera.scale = scale
+        params.save()
+        this.displayCamera()
+        this.dispatchEvent( "camera", params.camera )
+    },
+    resetCamera() {
+        params.resetCamera()
+        params.save()
+        this.displayCamera()
+        this.dispatchEvent( "camera", params.camera )
+    },
+    updateCameraParams( camera ) {
+        params.camera.position = camera.position.toArray()
+        params.camera.scale = camera.scale
+        params.save()
+        this.displayCamera()
+    },
+    applyCameraParams( camera ) {
+        camera.position.set( ...params.camera.position )
+        camera.scale = params.camera.scale
     },
 
     // Color
@@ -84,12 +114,20 @@ const inputs = {
         params.guideColor[0] = +inputElements.guideColorR.value || 0
         params.guideColor[1] = +inputElements.guideColorG.value || 0
         params.guideColor[2] = +inputElements.guideColorB.value || 0
+        params.save()
         this.dispatchEvent( "color", params.guideColor )
     },
 }
+
+params.load()
 inputs.displayIterations()
 inputElements.iterationsSlider.addEventListener( "input", () => inputs.getIterationsSlider() )
 inputElements.iterationsNumber.addEventListener( "focusout", () => inputs.getIterationsNumber() )
+
+inputElements.real.addEventListener( "focusout", () => inputs.getCamera() )
+inputElements.imaginary.addEventListener( "focusout", () => inputs.getCamera() )
+inputElements.scale.addEventListener( "focusout", () => inputs.getCamera() )
+inputElements.resetCamera.addEventListener( "click", () => inputs.resetCamera() )
 
 inputs.displayColor()
 inputElements.guideColorR.addEventListener( "input", () => inputs.getColor() )
@@ -99,19 +137,6 @@ inputElements.guideColorR.addEventListener( "focusout", () => inputs.displayColo
 inputElements.guideColorG.addEventListener( "focusout", () => inputs.displayColor() )
 inputElements.guideColorB.addEventListener( "focusout", () => inputs.displayColor() )
 
-function saveCamera( camera ) {
-    localStorage.setItem( "camera", JSON.stringify( {
-        position: camera.position.toArray(),
-        scale: camera.scale,
-    } ) )
-}
-function loadCamera( camera ) {
-    const data = localStorage.getItem( "camera" )
-    const { position, scale } = data ? JSON.parse( data ) : defaults.camera
-    camera.position.set( ...position )
-    camera.scale = scale
-}
-
 const mouse = new Mouse()
 const screen = new Canvas( document.getElementById( "main" ), 1, true )
 screen.requestResize()
@@ -119,8 +144,8 @@ const minimap = new Canvas( document.getElementById( "minimap" ) )
 
 const camera = new Camera( screen.canvas )
 const cameraControls = new CameraControls( camera, { zoomSensitivity: 0.001 } )
-loadCamera( camera )
-inputs.updateCamera( camera )
+inputs.applyCameraParams( camera )
+inputs.displayCamera()
 
 const globalUniforms = () => [
     new Uniform( "maxIterations", "int", 1 ),
@@ -152,17 +177,14 @@ const vertexQuadData = [
     screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
 
-    inputElements.resetPosition.addEventListener( "click", () => {
+    inputs.addEventListener( "camera", () => {
         invalidate()
-        camera.position.set( -0.7, 0 )
-        camera.scale = 5
-        inputs.updateCamera( camera )
+        inputs.applyCameraParams( camera )
     } )
 
     cameraControls.addEventListener( () => {
         invalidate()
-        saveCamera( camera )
-        inputs.updateCamera( camera )
+        inputs.updateCameraParams( camera )
     } )
 
     const vertexBuffer = gl.createBuffer()
@@ -233,7 +255,7 @@ const vertexQuadData = [
     minimap.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
 
-    inputElements.resetPosition.addEventListener( "click", () => invalidate() )
+    inputs.addEventListener( "camera", () => invalidate() )
     cameraControls.addEventListener( () => invalidate() )
 
     const vertexBuffer = gl.createBuffer()

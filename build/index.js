@@ -48,8 +48,7 @@ function conditionalWrite( filepath, content ) {
     const filehash = hash( content )
     newCache.set( filepath, filehash )
     if ( oldCache.get( filepath ) === filehash ) return
-    console.log( "wrote", path.relative( DST_DIR, filepath ) )
-
+    console.log( "updated", path.relative( DST_DIR, filepath ) )
     write( filepath, content )
     oldCache.set( filepath, filehash )
 }
@@ -58,6 +57,7 @@ function conditionalCopy( source, destination ) {
     newCache.set( destination, sourceHash )
     if ( !exists( destination ) ) return copy( source, destination )
     if ( oldCache.get( destination ) === sourceHash ) return
+    console.log( "updated", path.relative( DST_DIR, destination ) )
     copy( source, destination )
     oldCache.set( destination, sourceHash )
 }
@@ -239,4 +239,6 @@ for ( const [oldpath, newpath] of resolvedScripts.entries() ) {
 // Save Cache
 write( CACHE_PATH, JSON.stringify( Object.fromEntries( newCache.entries() ), null, 4 ) )
 // Remove Old Files
-remove( dstFiles.filter( pth => !newCache.has( pth ) ) )
+const stale = dstFiles.filter( pth => !newCache.has( pth ) )
+remove( stale )
+stale.forEach( pth => console.log( "removed", path.relative( DST_DIR, pth ) ) )

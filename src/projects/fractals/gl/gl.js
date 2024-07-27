@@ -12,7 +12,7 @@ export const Classes = { ...attribute, ...program, ...shader, ...uniform }
  **/
 /**
  * @template T
- * @typedef {Constructor<T>|Constructed<T>} GLInjectable
+ * @typedef {Constructor<T> | Constructed<T>} GLInjectable
  **/
 
 /** @type {WebGL2RenderingContext} */

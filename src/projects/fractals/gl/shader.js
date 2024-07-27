@@ -1,5 +1,3 @@
-import { gl } from "./gl.js"
-
 function vertex( source ) {
     return `
 #version 300 es
@@ -22,7 +20,8 @@ export class Shader {
         this.fragmentShaderSource = fragmentShaderSource
     }
 
-    static compile( vertexShaderSource, fragmentShaderSource ) {
+    /** @param {WebGL2RenderingContext} gl @param {string} vertexShaderSource @param {string} fragmentShaderSource */
+    static compile( gl, vertexShaderSource, fragmentShaderSource ) {
         const vshSource = vertex( vertexShaderSource )
         const vsh = gl.createShader( gl.VERTEX_SHADER )
         gl.shaderSource( vsh, vshSource )
@@ -41,6 +40,6 @@ export class Shader {
         return program
     }
     compile() {
-        return Shader.compile( this.vertexShaderSource, this.fragmentShaderSource )
+        return Shader.compile( this.gl, this.vertexShaderSource, this.fragmentShaderSource )
     }
 }

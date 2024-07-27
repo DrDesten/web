@@ -6,7 +6,6 @@ import { Camera, CameraControls } from "./gl/camera.js"
 import { Canvas } from "./gl/canvas.js"
 import { Classes, GL, gl, setGL } from "./gl/gl.js"
 import { Program } from "./gl/program.js"
-import { Shader } from "./gl/shader.js"
 import { Uniform } from "./gl/uniform.js"
 import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
@@ -180,8 +179,7 @@ const vertexQuadData = [
     screen.onResizeRequest = () => invalidate()
     screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
-    const glctx = new GL( gl )
-    const { Shader } = glctx.inject( Classes )
+    const glHook = new GL( gl )
 
     inputs.addEventListener( "camera", () => {
         invalidate()
@@ -194,7 +192,8 @@ const vertexQuadData = [
     } )
 
     const vertexBuffer = gl.createBuffer()
-    const program = new Program( mandelbrotShader.compile(), [
+    const shader = glHook.inject( mandelbrotShader )
+    const program = new Program( shader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
     ], globalUniforms() )
     program.activate()
@@ -260,13 +259,14 @@ const vertexQuadData = [
     minimap.onResizeRequest = () => invalidate()
     minimap.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
+    const glHook = new GL( gl )
 
     inputs.addEventListener( "camera", () => invalidate() )
     cameraControls.addEventListener( () => invalidate() )
 
     const vertexBuffer = gl.createBuffer()
-
-    const program = new Program( juliaShader.compile(), [
+    const shader = glHook.inject( juliaShader )
+    const program = new Program( shader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
     ], globalUniforms() )
     program.activate()

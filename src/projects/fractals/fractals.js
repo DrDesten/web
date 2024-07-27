@@ -4,7 +4,7 @@ import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
 import { Attribute } from "./gl/attribute.js"
 import { Camera, CameraControls } from "./gl/camera.js"
 import { Canvas } from "./gl/canvas.js"
-import { GL, gl, setGL } from "./gl/gl.js"
+import { Classes, GL, gl, setGL } from "./gl/gl.js"
 import { Program } from "./gl/program.js"
 import { Shader } from "./gl/shader.js"
 import { Uniform } from "./gl/uniform.js"
@@ -180,6 +180,8 @@ const vertexQuadData = [
     screen.onResizeRequest = () => invalidate()
     screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
     setGL( gl )
+    const glctx = new GL( gl )
+    const { Shader } = glctx.inject( Classes )
 
     inputs.addEventListener( "camera", () => {
         invalidate()

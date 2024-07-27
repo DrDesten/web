@@ -1,6 +1,19 @@
-import * as attributes from "./attribute.js"
-import * as uniforms from "./uniform.js"
+import * as attribute from "./attribute.js"
+import * as uniform from "./uniform.js"
+import * as program from "./program.js"
+import * as shader from "./shader.js"
 
+export const Classes = { ...attribute, ...program, ...shader, ...uniform }
+
+/**
+ * @template T
+ * @typedef {T} Constructed
+ * @typedef {new(...args: any[]) => T} Constructor
+ **/
+/**
+ * @template T
+ * @typedef {Constructor<T>|Constructed<T>} GLInjectable
+ **/
 
 /** @type {WebGL2RenderingContext} */
 let gl = null
@@ -17,22 +30,41 @@ export class GL {
     }
 
     /** 
-     * @template {Function|{[key:string]:Function}} T
-     * @param {T} constructor Class or Key-Value pair of classes to inject 
+     * @template {GLInjectable|{[key:string]:GLInjectable}} T
+     * @param {T} object Class, Object or Object of Classes and Objects to inject 
      * @returns {T} 
      **/
-    inject( constructor ) {
-        if ( typeof constructor === "function" ) return this._inject( constructor )
-        return Object.fromEntries( Object.entries( constructor ).map( ( [key, value] ) => [key, this._inject( value )] ) )
+    inject( object ) {
+        if ( Object.getPrototypeOf( object ) === Object.prototype || Object.getPrototypeOf( object ) === null ) {
+            // Object is not a custom object
+            return Object.fromEntries( Object.entries( object ).map( ( [key, value] ) => [key, this.injectSingle( value )] ) )
+        } else {
+            // Object is a custom object or a constructor
+            return this.injectSingle( object )
+        }
     }
 
     /** 
      * @private
-     * @template {Function} T
+     * @template {GLInjectable} T
+     * @param {T} object Class or Object to inject 
+     * @returns {T} 
+     **/
+    injectSingle( object ) {
+        if ( typeof object === "function" ) {
+            return this.injectConstructor( object )
+        } else {
+            return this.injectObject( object )
+        }
+    }
+
+    /** 
+     * @private
+     * @template {Constructor} T
      * @param {T} constructor Class to inject 
      * @returns {T} 
      **/
-    _inject( constructor ) {
+    injectConstructor( constructor ) {
         return new Proxy( constructor, {
             gl: this.gl,
             construct( target, args, newTarget ) {
@@ -42,9 +74,24 @@ export class GL {
             }
         } )
     }
+    /** 
+     * @private
+     * @template {Constructed} T
+     * @param {T} object Object to inject 
+     * @returns {T} 
+     **/
+    injectObject( object ) {
+        const copy = Object.setPrototypeOf( structuredClone( object ), Object.getPrototypeOf( object ) )
+        copy.gl = this.gl
+        return copy
+    }
 }
 
 /*
+
+console.log( Classes.constructor, attribute.constructor, attribute )
+console.log( Object.getPrototypeOf( Classes ), Object.getPrototypeOf( attribute ) )
+console.log( Object.getPrototypeOf( Classes ) === Object.prototype, Object.getPrototypeOf( attribute ) )
 
 P = Object.getPrototypeOf
 class a { constructor() { this.a = "a" } }

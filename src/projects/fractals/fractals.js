@@ -1,10 +1,11 @@
 import * as Query from "../../../scripts/query.js"
 import { vec2, vec3 } from "../../../svg/jvec/bin/vec.js"
 import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
+import { EventHandler } from "./event.js"
 import { Attribute } from "./gl/attribute.js"
 import { Camera, CameraControls } from "./gl/camera.js"
 import { Canvas } from "./gl/canvas.js"
-import { Classes, GL } from "./gl/gl.js"
+import { GL } from "./gl/gl.js"
 import { Uniform } from "./gl/uniform.js"
 import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
@@ -35,18 +36,7 @@ Object.values( inputElements ).forEach( ele =>
 )
 
 const inputs = {
-    listeners: {
-        iterations: [],
-        camera: [],
-        color: [],
-    },
-    /** @param {"color"|"camera"|"iterations"} type @param {(...any)=>void} listener */
-    addEventListener( type, listener ) {
-        this.listeners[type].push( listener )
-    },
-    dispatchEvent( type, ...args ) {
-        this.listeners[type].forEach( listener => listener( ...args ) )
-    },
+    events: new EventHandler( "color", "camera", "iterations" ),
 
     number( value ) {
         return +/-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?/.exec( value )?.[0]
@@ -63,13 +53,13 @@ const inputs = {
         params.iterations = ~~inputElements.iterationsSlider.value
         params.save()
         this.displayIterations()
-        this.dispatchEvent( "iterations", params.iterations )
+        this.events.dispatchEvent( "iterations", params.iterations )
     },
     getIterationsNumber() {
         params.iterations = ~~inputElements.iterationsNumber.innerHTML
         params.save()
         this.displayIterations()
-        this.dispatchEvent( "iterations", params.iterations )
+        this.events.dispatchEvent( "iterations", params.iterations )
     },
 
     // Camera
@@ -87,13 +77,13 @@ const inputs = {
         if ( isFinite( scale ) && scale > 0 ) params.camera.scale = scale
         params.save()
         this.displayCamera()
-        this.dispatchEvent( "camera", params.camera )
+        this.events.dispatchEvent( "camera", params.camera )
     },
     resetCamera() {
         params.resetCamera()
         params.save()
         this.displayCamera()
-        this.dispatchEvent( "camera", params.camera )
+        this.events.dispatchEvent( "camera", params.camera )
     },
     updateCameraParams( camera ) {
         params.camera.position = camera.position.toArray()
@@ -117,7 +107,7 @@ const inputs = {
         params.guideColor[1] = +inputElements.guideColorG.value || 0
         params.guideColor[2] = +inputElements.guideColorB.value || 0
         params.save()
-        this.dispatchEvent( "color", params.guideColor )
+        this.events.dispatchEvent( "color", params.guideColor )
     },
 }
 
@@ -139,8 +129,8 @@ inputElements.guideColorR.addEventListener( "focusout", () => inputs.displayColo
 inputElements.guideColorG.addEventListener( "focusout", () => inputs.displayColor() )
 inputElements.guideColorB.addEventListener( "focusout", () => inputs.displayColor() )
 
-const screen = new Canvas( document.getElementById( "main" ), { resizeAsync: true } )
-const minimap = new Canvas( document.getElementById( "minimap" ), { resizeAsync: true } )
+const screen = new Canvas( document.getElementById( "main" ), { defer: true } )
+const minimap = new Canvas( document.getElementById( "minimap" ), { defer: true } )
 screen.requestResize()
 minimap.requestResize()
 
@@ -149,7 +139,7 @@ const cameraControls = new CameraControls( camera, { zoomSensitivity: 0.001 } )
 inputs.applyCameraParams( camera )
 inputs.displayCamera()
 
-const globalUniforms = () => [
+const globalUniforms = [
     new Uniform( "maxIterations", "int", 1 ),
     new Uniform( "guideColor", "float", 3 ),
     new Uniform( "screenSize", "float", 4 ),
@@ -159,7 +149,6 @@ const globalUniforms = () => [
     new Uniform( "viewPosition", "float", 4 ),
     new Uniform( "viewScale", "float", 2 ),
 ]
-
 const vertexQuadData = [
     [-1, -1],
     [+1, -1],
@@ -176,12 +165,12 @@ const vertexQuadData = [
         premultipliedAlpha: false,
         alpha: false,
     } )
-    screen.onResizeRequest = () => invalidate()
-    screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
+    screen.events.addEventListener( "resizeRequest", invalidate )
+    screen.events.addEventListener( "resize", ( w, h ) => gl.viewport( 0, 0, w, h ) )
     const glHook = new GL( gl )
-    const { Program } = glHook.inject( Classes )
+    const { Program } = glHook.classes
 
-    inputs.addEventListener( "camera", () => {
+    inputs.events.addEventListener( "camera", () => {
         invalidate()
         inputs.applyCameraParams( camera )
     } )
@@ -195,7 +184,7 @@ const vertexQuadData = [
     const shader = glHook.inject( mandelbrotShader )
     const program = new Program( shader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
-    ], globalUniforms() )
+    ], globalUniforms )
     program.activate()
     program.getLocations()
     program.enableAttributes()
@@ -208,8 +197,8 @@ const vertexQuadData = [
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
-    inputs.addEventListener( "iterations", () => invalidate() )
-    inputs.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
+    inputs.events.addEventListener( "iterations", () => invalidate() )
+    inputs.events.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
     program.uploadUniform( "guideColor", params.guideColor )
 
     function render() {
@@ -256,19 +245,19 @@ const vertexQuadData = [
         premultipliedAlpha: false,
         alpha: false,
     } )
-    minimap.onResizeRequest = () => invalidate()
-    minimap.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
+    minimap.events.addEventListener( "resizeRequest", invalidate )
+    minimap.events.addEventListener( "resize", ( w, h ) => gl.viewport( 0, 0, w, h ) )
     const glHook = new GL( gl )
-    const { Program } = glHook.inject( Classes )
+    const { Program } = glHook.classes
 
-    inputs.addEventListener( "camera", () => invalidate() )
+    inputs.events.addEventListener( "camera", () => invalidate() )
     cameraControls.addEventListener( () => invalidate() )
 
     const vertexBuffer = gl.createBuffer()
     const shader = glHook.inject( juliaShader )
     const program = new Program( shader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
-    ], globalUniforms() )
+    ], globalUniforms )
     program.activate()
     program.getLocations()
     program.enableAttributes()
@@ -281,8 +270,8 @@ const vertexQuadData = [
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
-    inputs.addEventListener( "iterations", () => invalidate() )
-    inputs.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
+    inputs.events.addEventListener( "iterations", () => invalidate() )
+    inputs.events.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
     program.uploadUniform( "guideColor", params.guideColor )
 
     function render() {

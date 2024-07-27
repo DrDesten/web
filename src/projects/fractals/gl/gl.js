@@ -3,7 +3,7 @@ import * as uniform from "./uniform.js"
 import * as program from "./program.js"
 import * as shader from "./shader.js"
 
-export const Classes = { ...attribute, ...program, ...shader, ...uniform }
+const GLClasses = { ...attribute, ...program, ...shader, ...uniform }
 
 /**
  * @template T
@@ -19,6 +19,7 @@ export class GL {
     /** @param {WebGL2RenderingContext} gl WebGL2 Context */
     constructor( gl ) {
         this.gl = gl
+        this.classes = this.inject( GLClasses )
     }
 
     /** 

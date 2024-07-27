@@ -1,8 +1,10 @@
 /**
  * @typedef {Object} CanvasOptions
  * @property {number} [resolutionScale]
- * @property {boolean} [resizeAsync]
+ * @property {boolean} [defer]
  */
+
+import { EventHandler } from "../event"
 
 export class Canvas {
     /** @param {HTMLCanvasElement} element @param {CanvasOptions} [opts] */
@@ -12,13 +14,12 @@ export class Canvas {
         }
         this.canvas = element
         this.resolutionScale = opts.resolutionScale ?? 1
-        this.resizeAsync = opts.resizeAsync ?? false
+        this.defer = opts.defer ?? false
 
-        this.onResize = null
-        this.onResizeRequest = null
+        this.events = new EventHandler( "resize", "resizeRequest" )
         this.targetSize = null
 
-        if ( this.resizeAsync ) {
+        if ( this.defer ) {
             // Set initial size
             this.requestCanvasSize(
                 element.clientWidth * devicePixelRatio,
@@ -54,7 +55,7 @@ export class Canvas {
 
     requestResize() {
         if ( this.targetSize ) {
-            this.setCanvasSize( ...this.targetSize )
+            this.setCanvasSize( this.targetSize[0], this.targetSize[1] )
             this.targetSize = null
         }
     }
@@ -62,7 +63,8 @@ export class Canvas {
     /** @param {number} width @param {number} height */
     requestCanvasSize( width, height ) {
         this.targetSize = [width, height]
-        this.onResizeRequest?.(
+        this.events.dispatchEvent(
+            "resizeRequest",
             width * this.resolutionScale,
             height * this.resolutionScale,
             this.canvas
@@ -75,7 +77,7 @@ export class Canvas {
         const scaledHeight = height * this.resolutionScale
         this.canvas.width = scaledWidth
         this.canvas.height = scaledHeight
-        this.onResize?.( scaledWidth, scaledHeight, this.canvas )
+        this.events.dispatchEvent( "resize", scaledWidth, scaledHeight, this.canvas )
     }
 
     /** @param {number} scale */

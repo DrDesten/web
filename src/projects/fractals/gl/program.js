@@ -1,5 +1,5 @@
 import { Attribute } from "./attribute.js"
-import { gl, warn } from "./gl.js"
+import { GL, warn } from "./gl.js"
 import { BoundUniform, Uniform } from "./uniform.js"
 
 export class Program {
@@ -8,7 +8,7 @@ export class Program {
         /** @type {WebGLProgram} */
         this.program = program
         /** @type {WebGLVertexArrayObject} */
-        this.vao = gl.createVertexArray()
+        this.vao = this.gl.createVertexArray()
         /** @type {Attribute[]} */
         this.attributes = attributes
         /** @type {{[name: string]: number}} */
@@ -22,16 +22,12 @@ export class Program {
     // General
 
     activate() {
-        gl.bindVertexArray( this.vao )
-        gl.useProgram( this.program )
-    }
-    static deactivate() {
-        gl.bindVertexArray( null )
-        gl.useProgram( null )
+        this.gl.bindVertexArray( this.vao )
+        this.gl.useProgram( this.program )
     }
     deactivate() {
-        gl.bindVertexArray( null )
-        gl.useProgram( null )
+        this.gl.bindVertexArray( null )
+        this.gl.useProgram( null )
     }
 
     // Setup
@@ -47,12 +43,12 @@ export class Program {
 
     getAttributeLocations() {
         this.attributes.forEach( a => {
-            this.attributeLocations[a.name] = gl.getAttribLocation( this.program, a.name )
+            this.attributeLocations[a.name] = this.gl.getAttribLocation( this.program, a.name )
         } )
     }
     getUniformLocations() {
         this.uniforms.forEach( u => {
-            this.boundUniforms[u.name] = new BoundUniform( u, gl.getUniformLocation( this.program, u.name ) )
+            this.boundUniforms[u.name] = new ( GL.inject( this.gl, BoundUniform ) )( u, this.gl.getUniformLocation( this.program, u.name ) )
         } )
     }
     getLocations() {
@@ -65,21 +61,21 @@ export class Program {
             const location = this.attributeLocations[name]
             if ( location === -1 ) return
 
-            gl.bindBuffer( gl.ARRAY_BUFFER, buffer )
+            this.gl.bindBuffer( this.gl.ARRAY_BUFFER, buffer )
 
             if ( size instanceof Array ) { // Matrix Attribute
                 const [col, row] = size
                 for ( let i = 0; i < col; i++ ) {
                     const loc = location + i
                     const offs = offset + i * row * 4
-                    gl.enableVertexAttribArray( loc )
-                    gl.vertexAttribPointer( loc, row, type, normalized, stride, offs )
-                    if ( divisor ) gl.vertexAttribDivisor( loc, divisor )
+                    this.gl.enableVertexAttribArray( loc )
+                    this.gl.vertexAttribPointer( loc, row, type, normalized, stride, offs )
+                    if ( divisor ) this.gl.vertexAttribDivisor( loc, divisor )
                 }
             } else { // Vector / Scalar Attribute
-                gl.enableVertexAttribArray( location )
-                gl.vertexAttribPointer( location, size, type, normalized, stride, offset )
-                if ( divisor ) gl.vertexAttribDivisor( location, divisor )
+                this.gl.enableVertexAttribArray( location )
+                this.gl.vertexAttribPointer( location, size, type, normalized, stride, offset )
+                if ( divisor ) this.gl.vertexAttribDivisor( location, divisor )
             }
 
         } )

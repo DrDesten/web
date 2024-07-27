@@ -4,8 +4,7 @@ import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
 import { Attribute } from "./gl/attribute.js"
 import { Camera, CameraControls } from "./gl/camera.js"
 import { Canvas } from "./gl/canvas.js"
-import { Classes, GL, gl, setGL } from "./gl/gl.js"
-import { Program } from "./gl/program.js"
+import { Classes, GL } from "./gl/gl.js"
 import { Uniform } from "./gl/uniform.js"
 import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
@@ -160,6 +159,7 @@ const globalUniforms = () => [
     new Uniform( "viewPosition", "float", 4 ),
     new Uniform( "viewScale", "float", 2 ),
 ]
+
 const vertexQuadData = [
     [-1, -1],
     [+1, -1],
@@ -178,8 +178,8 @@ const vertexQuadData = [
     } )
     screen.onResizeRequest = () => invalidate()
     screen.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
-    setGL( gl )
     const glHook = new GL( gl )
+    const { Program } = glHook.inject( Classes )
 
     inputs.addEventListener( "camera", () => {
         invalidate()
@@ -258,8 +258,8 @@ const vertexQuadData = [
     } )
     minimap.onResizeRequest = () => invalidate()
     minimap.onResize = ( w, h ) => gl.viewport( 0, 0, w, h )
-    setGL( gl )
     const glHook = new GL( gl )
+    const { Program } = glHook.inject( Classes )
 
     inputs.addEventListener( "camera", () => invalidate() )
     cameraControls.addEventListener( () => invalidate() )

@@ -1,5 +1,3 @@
-import { gl } from "./gl.js"
-
 export class Uniform {
     /** @param {string} name @param {"int"|"uint"|"float"|"mat"} type @param {number} [d1] @param {number} [d2] */
     constructor( name, type, d1 = 1, d2 = undefined ) {
@@ -13,7 +11,7 @@ export class Uniform {
             : `uniform${d1}${{ int: "i", uint: "ui", float: "f" }[type]}`
         if ( d1 > 1 ) functionName += 'v'
 
-        this.function = gl[functionName].bind( gl )
+        this.function = WebGL2RenderingContext.prototype[functionName]
     }
 }
 
@@ -21,6 +19,7 @@ export class BoundUniform {
     /** @param {Uniform} uniform @param {WebGLUniformLocation?} uniformLocation */
     constructor( uniform, uniformLocation ) {
         this.uniform = uniform
+        this.function = uniform.function.bind( this.gl )
         this.location = uniformLocation
         this.active = uniformLocation !== null
     }
@@ -30,7 +29,7 @@ export class BoundUniform {
         if ( !this.active ) return
         value = typeof value === "function" ? value() : value
         this.uniform.type === "mat"
-            ? this.uniform.function( this.location, transpose, value )
-            : this.uniform.function( this.location, value )
+            ? this.function( this.location, transpose, value )
+            : this.function( this.location, value )
     }
 }

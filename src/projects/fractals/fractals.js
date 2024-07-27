@@ -7,7 +7,6 @@ import { Canvas } from "./gl/canvas.js"
 import { setGL } from "./gl/gl.js"
 import { Program } from "./gl/program.js"
 import { Uniform } from "./gl/uniforms.js"
-import { Mouse } from "./mouse.js"
 import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
 
@@ -32,6 +31,10 @@ params.resetCamera = function () {
 }
 
 const inputElements = Query.getInputs()
+Object.values( inputElements ).forEach( ele =>
+    ele.addEventListener( "keydown", e => e.key === "Enter" && ele.blur() )
+)
+
 const inputs = {
     listeners: {
         iterations: [],
@@ -137,7 +140,6 @@ inputElements.guideColorR.addEventListener( "focusout", () => inputs.displayColo
 inputElements.guideColorG.addEventListener( "focusout", () => inputs.displayColor() )
 inputElements.guideColorB.addEventListener( "focusout", () => inputs.displayColor() )
 
-const mouse = new Mouse()
 const screen = new Canvas( document.getElementById( "main" ), { resizeAsync: true } )
 const minimap = new Canvas( document.getElementById( "minimap" ), { resizeAsync: true } )
 screen.requestResize()

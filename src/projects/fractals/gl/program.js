@@ -1,6 +1,6 @@
-import { Attribute } from "./attributes.js"
+import { Attribute } from "./attribute.js"
 import { gl, warn } from "./gl.js"
-import { BoundUniform, Uniform } from "./uniforms.js"
+import { BoundUniform, Uniform } from "./uniform.js"
 
 export class Program {
     /** @param {WebGLProgram} program @param {Attribute[]} [attributes] @param {Uniform[]} [uniforms] */

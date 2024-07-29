@@ -1,7 +1,15 @@
-div:has(canvas) {
+.display {
+    margin: 1em;
+}
+
+div>canvas {
     background: linear-gradient(60deg, #bbb, #ddd);
-    border-radius: var(--border-rad);
-    overflow: hidden;
+}
+
+.canvas-container {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 1em;
 }
 
 #main-container {
@@ -12,35 +20,25 @@ div:has(canvas) {
     right: 1em;
 }
 
+#minimap-overlay {
+    position: absolute;
+    top: 2em;
+    right: 2em;
+    background: none;
+}
+
 #minimap-container {
     position: absolute;
     top: 2em;
     right: 2em;
-
     width: min(min(25vw, 25vh), max(20vw, 20vh));
     height: min(min(25vw, 25vh), max(20vw, 20vh));
 }
 
-canvas {
-    width: 100%;
-    height: 100%;
-}
-
 /* */
 
-#overlay {
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
-    padding: 2em;
-}
-
-#overlay * {
-    pointer-events: all;
+.ui {
+    margin: 2em;
 }
 
 .translucent-panel {
@@ -67,9 +65,9 @@ canvas {
     margin: 0;
 }
 
-.translucent-panel,
-.translucent-panel * {
-    border-radius: var(--border-rad);
+#position {
+    grid-template-columns: auto auto auto;
+    grid-template-rows: auto;
 }
 
 span.key {

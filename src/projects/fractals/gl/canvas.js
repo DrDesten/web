@@ -4,7 +4,7 @@
  * @property {boolean} [defer]
  */
 
-import { EventHandler } from "../event"
+import { EventHandler } from "../event.js"
 
 export class Canvas {
     /** @param {HTMLCanvasElement} element @param {CanvasOptions} [opts] */

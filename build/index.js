@@ -65,7 +65,7 @@ function conditionalCopy( source, destination ) {
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
 const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
 const styles = new Map( query( STYLE_DIR ).map( p => [path.basename( p ), p] ) )
-const images = new Map( query( IMAGE_DIR ).map( p => [path.basename( p ), p] ) )
+const images = new Map( query( IMAGE_DIR ).map( p => [path.relative( IMAGE_DIR, p ), p] ) )
 
 const htmlFilePaths = query( SRC_DIR, QuerySearchFunctions.extension.html )
 const htmlFileContents = read( htmlFilePaths )
@@ -210,7 +210,7 @@ for ( const htmlFile of htmlDocuments ) {
     for ( const { name, attributes } of tags.image ) {
         const attr = name === "img" ? "src" : "href"
         // Get Absolute Path of Image
-        const filepath = images.has( attributes[attr] )
+        const filepath = images.has( attributes[attr].replace( /\//g, "\\" ) )
             ? path.resolve( path.join( IMAGE_DIR, attributes[attr] ) )
             : path.join( currentDir, attributes[attr] )
         // Get Already Resolved

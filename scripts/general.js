@@ -47,3 +47,17 @@ setTimeout( ( e ) => {
         main_content.scrollIntoView( { behavior: "smooth" } )
     }
 }, 17000 ) // 15s delay
+
+// Utility Functions ////////////////////////////////////////////////////////////////////////
+
+function toClipboard( text ) {
+    navigator.clipboard.writeText( text )
+}
+function elementToClipboard( element ) {
+    const text = element instanceof HTMLInputElement ? element.value : element.innerText
+    toClipboard( text )
+}
+function idToClipboard( id ) {
+    const element = document.getElementById( id )
+    elementToClipboard( element )
+}

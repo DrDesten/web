@@ -1,0 +1,86 @@
+/* Custom Attributes */
+
+*[flex] {
+    display: flex;
+}
+
+*[grid] {
+    display: grid;
+}
+
+
+/* Utility Classes */
+
+.flex {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+div.container {
+    width: 100%;
+    height: 100%;
+}
+
+img.inline-icon {
+    display: inline-block;
+    height: 1em;
+}
+
+button.inline-wrapper {
+    display: inline-block;
+    padding: 0;
+    height: 1em;
+}
+
+/* Universal Properties */
+
+:not(canvas) {
+    border-radius: var(--border-rad);
+}
+
+
+/* Fullscreen Overlay */
+
+.fullscreen-overlay {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: none;
+}
+
+.fullscreen-overlay>*:not(.clickthrough, .clickthrough-start) {
+    pointer-events: all;
+}
+
+.clickthrough {
+    pointer-events: none;
+}
+
+.clickthrough>* {
+    pointer-events: all;
+}
+
+.clickthrough-start {
+    pointer-events: none;
+}
+
+.clickthrough-end {
+    pointer-events: all;
+}
+
+/* Canvas */
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+*>canvas {
+    overflow: hidden;
+}

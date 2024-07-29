@@ -48,7 +48,7 @@ export const mandelbrotShader = new Shader( `
             return;
         }
 
-        vec3 fractalColor = FractalColorLog(f, guideColor, guideScale);
+        vec3 fractalColor = FractalColor(f, guideColor, guideScale);
 
         fragColor = vec4(fractalColor, 1.0);
     }

@@ -25,9 +25,15 @@ float FractalSmoothIter(Fractal f) {
     return f.iterations + 1.0 - log(log(cmagSq(f.z)) * 0.5) / log(2.0);
 }
 
-vec3 FractalColor(Fractal f, vec3 guideColor, float guideScale) {
+vec3 FractalColorLinear(Fractal f, vec3 guideColor, float guideScale) {
     float smoothIter = FractalSmoothIter(f);
     float guideIter  = smoothIter * ${Math.PI * 2} * guideScale;
+    return cos(guideColor + guideIter) * .5 + .5;
+}
+vec3 FractalColorSqrt(Fractal f, vec3 guideColor, float guideScale) {
+    float smoothIter = FractalSmoothIter(f);
+    smoothIter       = smoothIter / (1. + exp(-smoothIter)) + 1.;
+    float guideIter  = sqrt(smoothIter) * ${Math.PI * 2} * guideScale;
     return cos(guideColor + guideIter) * .5 + .5;
 }
 vec3 FractalColorLog(Fractal f, vec3 guideColor, float guideScale) {
@@ -35,6 +41,9 @@ vec3 FractalColorLog(Fractal f, vec3 guideColor, float guideScale) {
     smoothIter       = smoothIter / (1. + exp(-smoothIter)) + 1.;
     float guideIter  = log(smoothIter) * ${Math.PI * 2} * guideScale;
     return cos(guideColor + guideIter) * .5 + .5;
+}
+vec3 FractalColor(Fractal f, vec3 guideColor, float guideScale) {
+    return FractalColorSqrt(f, guideColor, guideScale);
 }
 
 Fractal Z2(vec2 z, vec2 c, float exitDistance) {

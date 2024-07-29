@@ -18,7 +18,7 @@ const defaults = {
         scale: 5,
     },
     guideColor: [0, .4, 1],
-    guideScale: 0.25,
+    guideScale: 0.15,
 }
 const params = structuredClone( defaults )
 params.load = function () {

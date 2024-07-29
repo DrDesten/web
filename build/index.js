@@ -65,7 +65,7 @@ function conditionalCopy( source, destination ) {
 const components = new Map( query( COMPONENT_DIR ).map( p => [path.basename( p, ".js" ), p] ) )
 const scripts = new Map( query( SCRIPT_DIR ).map( p => [path.basename( p ), p] ) )
 const styles = new Map( query( STYLE_DIR ).map( p => [path.basename( p ), p] ) )
-const images = new Map( query( IMAGE_DIR ).map( p => [path.relative( IMAGE_DIR, p ), p] ) )
+const images = new Map( query( IMAGE_DIR ).map( p => [path.basename( p ), p] ) )
 
 const htmlFilePaths = query( SRC_DIR, QuerySearchFunctions.extension.html )
 const htmlFileContents = read( htmlFilePaths )
@@ -153,7 +153,7 @@ for ( const htmlFile of htmlDocuments ) {
     for ( const { attributes } of tags.script ) {
         // Get Absolute Path of Script
         const filepath = scripts.has( attributes.src )
-            ? path.resolve( path.join( SCRIPT_DIR, attributes.src ) )
+            ? path.resolve( scripts.get( attributes.src ) )
             : path.join( currentDir, attributes.src )
         // Get Already Resolved
         if ( resolvedScripts.has( filepath ) ) {
@@ -171,7 +171,7 @@ for ( const htmlFile of htmlDocuments ) {
     for ( const { attributes } of tags.style ) {
         // Get Absolute Path of Style
         const filepath = styles.has( attributes.href )
-            ? path.resolve( path.join( STYLE_DIR, attributes.href ) )
+            ? path.resolve( styles.get( attributes.href ) )
             : path.join( currentDir, attributes.href )
         // Get Already Resolved
         if ( resolvedStyles.has( filepath ) ) {
@@ -210,8 +210,8 @@ for ( const htmlFile of htmlDocuments ) {
     for ( const { name, attributes } of tags.image ) {
         const attr = name === "img" ? "src" : "href"
         // Get Absolute Path of Image
-        const filepath = images.has( attributes[attr].replace( /\//g, "\\" ) )
-            ? path.resolve( path.join( IMAGE_DIR, attributes[attr] ) )
+        const filepath = images.has( attributes[attr] )
+            ? path.resolve( images.get( attributes[attr] ) )
             : path.join( currentDir, attributes[attr] )
         // Get Already Resolved
         if ( resolvedImages.has( filepath ) ) {

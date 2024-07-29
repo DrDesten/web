@@ -1,6 +1,5 @@
 import * as Query from "../../../scripts/query.js"
 import { vec2, vec3 } from "../../../svg/jvec/bin/vec.js"
-import { dfloat, splitFloat, splitFloats } from "./dfloat.js"
 import { EventHandler } from "./event.js"
 import { Attribute } from "./gl/attribute.js"
 import { Camera, CameraControls } from "./gl/camera.js"

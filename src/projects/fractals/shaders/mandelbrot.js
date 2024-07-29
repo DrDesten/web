@@ -9,12 +9,13 @@ export const mandelbrotShader = new Shader( `
 `, `
     uniform int maxIterations;
     uniform vec3 guideColor;
-    uniform vec4 screenSize;
-    uniform vec4 screenSizeInverse;
-    uniform vec4 cameraPosition;
-    uniform vec2 cameraScale;
-    uniform vec4 viewPosition;
-    uniform vec2 viewScale;
+    uniform vec2 screenSize;
+    uniform vec2 screenSizeInverse;
+    uniform vec2 cameraPosition;
+    uniform float cameraScale;
+    uniform vec2 mousePosition;
+    uniform vec2 viewPosition;
+    uniform float viewScale;
 
     ${Fractallib}
 
@@ -26,10 +27,10 @@ export const mandelbrotShader = new Shader( `
     void main() {
         const float exitDistance = 5.;
 
-        vec2 fragCoord      = (gl_FragCoord.xy - screenSize.xy * .5)
+        vec2 fragCoord      = (gl_FragCoord.xy - screenSize * .5)
                             * screenSizeInverse.y * .5;
-        vec2 position       = cameraPosition.xy;
-        vec2 position_delta = fragCoord * cameraScale.x + cameraPosition.zw;
+        vec2 position       = cameraPosition;
+        vec2 position_delta = fragCoord * cameraScale;
 
         Fractal f = mandelbrot(position + position_delta);
 

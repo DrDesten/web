@@ -1,3 +1,7 @@
+:root {
+    --bg-trans: rgba(255, 255, 255, 0.5);
+}
+
 /* Custom Attributes */
 
 *[flex] {
@@ -25,14 +29,14 @@ div.container {
 }
 
 img.inline-icon {
-    display: inline-block;
     height: 1em;
 }
 
 button.inline-wrapper {
-    display: inline-block;
-    padding: 0;
+    box-sizing: content-box;
     height: 1em;
+    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 0;
 }
 
 /* Universal Properties */

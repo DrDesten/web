@@ -7,7 +7,9 @@ export function getInputs() {
     }
     const inputs = Object.fromEntries(
         [...document.querySelectorAll( "input, button, *[contenteditable=\"true\"]" )]
-            .filter( input => input.id || console.warn( "Input element", input, "does not have an id" ) )
+            .filter( input => input.id
+                || console.warn( "Input element", input, "does not have an id. Ignoring..." )
+            )
             .map( input => [makeCamelCase( input.id ), input] )
     )
     return inputs

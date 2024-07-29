@@ -7,6 +7,7 @@ import { Camera, CameraControls } from "./gl/camera.js"
 import { Canvas } from "./gl/canvas.js"
 import { GL } from "./gl/gl.js"
 import { Uniform } from "./gl/uniform.js"
+import { Mouse } from "./mouse.js"
 import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
 
@@ -34,6 +35,10 @@ const inputElements = Query.getInputs()
 Object.values( inputElements ).forEach( ele =>
     ele.addEventListener( "keydown", e => e.key === "Enter" && ele.blur() )
 )
+const outputElements = {
+    minimapReal: document.getElementById( "minimap-real" ),
+    minimapImaginary: document.getElementById( "minimap-imaginary" ),
+}
 
 const inputs = {
     events: new EventHandler( "color", "camera", "iterations" ),
@@ -64,9 +69,9 @@ const inputs = {
 
     // Camera
     displayCamera() {
-        inputElements.real.innerHTML = params.camera.position[0]
-        inputElements.imaginary.innerHTML = params.camera.position[1]
-        inputElements.scale.innerHTML = params.camera.scale
+        inputElements.real.innerHTML = params.camera.position[0].toPrecision( 8 )
+        inputElements.imaginary.innerHTML = params.camera.position[1].toPrecision( 8 )
+        inputElements.scale.innerHTML = params.camera.scale.toPrecision( 8 )
     },
     getCamera() {
         const real = this.number( inputElements.real.innerHTML )
@@ -142,12 +147,13 @@ inputs.displayCamera()
 const globalUniforms = [
     new Uniform( "maxIterations", "int", 1 ),
     new Uniform( "guideColor", "float", 3 ),
-    new Uniform( "screenSize", "float", 4 ),
-    new Uniform( "screenSizeInverse", "float", 4 ),
-    new Uniform( "cameraPosition", "float", 4 ),
-    new Uniform( "cameraScale", "float", 2 ),
-    new Uniform( "viewPosition", "float", 4 ),
-    new Uniform( "viewScale", "float", 2 ),
+    new Uniform( "screenSize", "float", 2 ),
+    new Uniform( "screenSizeInverse", "float", 2 ),
+    new Uniform( "cameraPosition", "float", 2 ),
+    new Uniform( "cameraScale", "float", 1 ),
+    new Uniform( "mousePosition", "float", 2 ),
+    new Uniform( "viewPosition", "float", 2 ),
+    new Uniform( "viewScale", "float", 1 ),
 ]
 const vertexQuadData = [
     [-1, -1],
@@ -169,6 +175,7 @@ const vertexQuadData = [
     screen.events.addEventListener( "resize", ( w, h ) => gl.viewport( 0, 0, w, h ) )
     const glHook = new GL( gl )
     const { Program } = glHook.classes
+    const mouse = new Mouse( screen.canvas )
 
     inputs.events.addEventListener( "camera", () => {
         invalidate()
@@ -201,25 +208,27 @@ const vertexQuadData = [
     inputs.events.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
     program.uploadUniform( "guideColor", params.guideColor )
 
+    let screenSize = new vec2()
+    let screenSizeInverse = new vec2()
+    let viewScale = camera.scale * screenSizeInverse.y
+    let viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
+
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )
 
-        const screenSize = new vec2( screen.canvas.width, screen.canvas.height )
-        const screenSizeInverse = new vec2( 1 ).div( screenSize )
-        const cameraPosition = camera.position
-        const cameraScale = camera.scale
+        screenSize.set( screen.width, screen.height )
+        screenSizeInverse = new vec2( 1 ).div( screenSize )
+        viewScale = camera.scale * screenSizeInverse.y
+        viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
 
-        const viewScale = camera.scale * screenSizeInverse.y
-        const viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
-
-        const margin = 0
         program.uploadUniform( "maxIterations", params.iterations )
-        program.uploadUniform( "screenSize", splitFloats( screenSize.toArray(), margin ) )
-        program.uploadUniform( "screenSizeInverse", splitFloats( screenSizeInverse.toArray(), margin ) )
-        program.uploadUniform( "cameraPosition", splitFloats( cameraPosition.toArray(), margin ) )
-        program.uploadUniform( "cameraScale", splitFloat( cameraScale, margin ) )
-        program.uploadUniform( "viewPosition", splitFloats( viewPosition.toArray(), margin ) )
-        program.uploadUniform( "viewScale", splitFloat( viewScale, margin ) )
+        program.uploadUniform( "screenSize", screenSize )
+        program.uploadUniform( "screenSizeInverse", screenSizeInverse )
+        program.uploadUniform( "cameraPosition", camera.position )
+        program.uploadUniform( "cameraScale", camera.scale )
+        program.uploadUniform( "mousePosition", mouse.relativeWebglPosition )
+        program.uploadUniform( "viewPosition", viewPosition )
+        program.uploadUniform( "viewScale", viewScale )
 
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4, 4 )
     }
@@ -250,6 +259,10 @@ const vertexQuadData = [
     const glHook = new GL( gl )
     const { Program } = glHook.classes
 
+    const mouse = new Mouse( screen.canvas )
+    screen.canvas.addEventListener( "mousemove", invalidate )
+    screen.canvas.addEventListener( "mouseenter", invalidate )
+
     inputs.events.addEventListener( "camera", () => invalidate() )
     cameraControls.addEventListener( () => invalidate() )
 
@@ -257,7 +270,11 @@ const vertexQuadData = [
     const shader = glHook.inject( juliaShader )
     const program = new Program( shader.compile(), [
         new Attribute( vertexBuffer, "vertexPosition", 2, gl.FLOAT ),
-    ], globalUniforms )
+    ], [
+        ...globalUniforms,
+        new Uniform( "mainScreenSize", "float", 2 ),
+        new Uniform( "mainScreenSizeInverse", "float", 2 ),
+    ] )
     program.activate()
     program.getLocations()
     program.enableAttributes()
@@ -274,25 +291,44 @@ const vertexQuadData = [
     inputs.events.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
     program.uploadUniform( "guideColor", params.guideColor )
 
+    function update() {
+        const juliaPosition = vec2.add( camera.position,
+            mouse.relativeWebglPosition.clone()
+                .sub( .5 )
+                .mul( new vec2( screen.width / screen.height, 1 ).mul( .5 ) )
+                .mul( camera.scale )
+        )
+        outputElements.minimapReal.innerHTML = juliaPosition.x.toPrecision( 8 )
+        outputElements.minimapImaginary.innerHTML = juliaPosition.y.toPrecision( 8 )
+    }
+
+    let screenSize = new vec2()
+    let screenSizeInverse = new vec2()
+    let mainScreenSize = new vec2()
+    let mainScreenSizeInverse = new vec2()
+    let viewScale = camera.scale * screenSizeInverse.y
+    let viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
+
     function render() {
         gl.clear( gl.COLOR_BUFFER_BIT )
 
-        const screenSize = new vec2( minimap.canvas.width, minimap.canvas.height )
-        const screenSizeInverse = new vec2( 1 ).div( screenSize )
-        const cameraPosition = camera.position
-        const cameraScale = camera.scale
+        screenSize.set( minimap.width, minimap.height )
+        screenSizeInverse = new vec2( 1 ).div( screenSize )
+        mainScreenSize.set( screen.width, screen.height )
+        mainScreenSizeInverse = new vec2( 1 ).div( mainScreenSize )
+        viewScale = camera.scale * screenSizeInverse.y
+        viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
 
-        const viewScale = camera.scale * screenSizeInverse.y
-        const viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
-
-        const margin = 0
         program.uploadUniform( "maxIterations", params.iterations )
-        program.uploadUniform( "screenSize", splitFloats( screenSize.toArray(), margin ) )
-        program.uploadUniform( "screenSizeInverse", splitFloats( screenSizeInverse.toArray(), margin ) )
-        program.uploadUniform( "cameraPosition", splitFloats( cameraPosition.toArray(), margin ) )
-        program.uploadUniform( "cameraScale", splitFloat( cameraScale, margin ) )
-        program.uploadUniform( "viewPosition", splitFloats( viewPosition.toArray(), margin ) )
-        program.uploadUniform( "viewScale", splitFloat( viewScale, margin ) )
+        program.uploadUniform( "screenSize", screenSize )
+        program.uploadUniform( "screenSizeInverse", screenSizeInverse )
+        program.uploadUniform( "mainScreenSize", mainScreenSize )
+        program.uploadUniform( "mainScreenSizeInverse", mainScreenSizeInverse )
+        program.uploadUniform( "cameraPosition", camera.position )
+        program.uploadUniform( "cameraScale", camera.scale )
+        program.uploadUniform( "mousePosition", mouse.relativeWebglPosition )
+        program.uploadUniform( "viewPosition", viewPosition )
+        program.uploadUniform( "viewScale", viewScale )
 
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 4, 4 )
     }
@@ -301,6 +337,7 @@ const vertexQuadData = [
     function renderLoop( millis ) {
         if ( !renderStatus ) {
             minimap.requestResize()
+            update( millis )
             render( millis )
             renderStatus = true
         }

@@ -1,5 +1,8 @@
+/**
+ * @template {"int"|"uint"|"float"|"mat"} T
+ */
 export class Uniform {
-    /** @param {string} name @param {"int"|"uint"|"float"|"mat"} type @param {number} [d1] @param {number} [d2] */
+    /** @param {string} name @param {T} type @param {number} [d1] @param {number} [d2] */
     constructor( name, type, d1 = 1, d2 = undefined ) {
         this.name = name
         this.type = type

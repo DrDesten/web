@@ -33,7 +33,20 @@
     </div> -->
 
     <div id="main-container"><canvas id="main"></canvas></div>
-    <div id="minimap-container"><canvas id="minimap"></canvas></div>
+
+    <div id="minimap-overlay">
+        <div id="minimap-container"><canvas id="minimap"></canvas></div>
+        <div id="minimap-position" class="translucent-panel" flex>
+            <div>
+                <span class="key">R</span>
+                <span class="value" id="minimap-real"></span>
+            </div>
+            <div>
+                <span class="key">I</span>
+                <span class="value" id="minimap-imaginary"></span>
+            </div>
+        </div>
+    </div>
 
     <div class="ui fullscreen-overlay">
         <div class="translucent-panel" grid>

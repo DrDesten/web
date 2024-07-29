@@ -25,15 +25,25 @@ div>canvas {
     top: 2em;
     right: 2em;
     background: none;
+    width: min(min(40vw, 40vh), max(30vw, 30vh));
 }
 
 #minimap-container {
-    position: absolute;
-    top: 2em;
-    right: 2em;
-    width: min(min(25vw, 25vh), max(20vw, 20vh));
-    height: min(min(25vw, 25vh), max(20vw, 20vh));
+    width: min(min(40vw, 40vh), max(30vw, 30vh));
+    height: min(min(40vw, 40vh), max(30vw, 30vh));
 }
+
+#minimap-position {
+    flex-wrap: wrap;
+    width: auto;
+    overflow: hidden;
+}
+
+#minimap-position>* {
+    flex: 1 1 50%;
+    min-width: max-content;
+}
+
 
 /* */
 
@@ -47,7 +57,7 @@ div>canvas {
     margin: 0.25em;
     border-radius: var(--border-rad);
 
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--bg-trans);
     backdrop-filter: blur(1em);
 }
 
@@ -61,13 +71,8 @@ div>canvas {
     margin: 0.125em;
 }
 
-.translucent-panel[grid]>* * {
-    margin: 0;
-}
-
 #position {
     grid-template-columns: auto auto auto;
-    grid-template-rows: auto;
 }
 
 span.key {
@@ -76,7 +81,8 @@ span.key {
 
 button,
 input {
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: var(--bg-trans);
+    margin: 0;
 }
 
 button {

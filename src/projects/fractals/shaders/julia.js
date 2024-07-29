@@ -9,12 +9,15 @@ export const juliaShader = new Shader( `
 `, `
     uniform int maxIterations;
     uniform vec3 guideColor;
-    uniform vec4 screenSize;
-    uniform vec4 screenSizeInverse;
-    uniform vec4 cameraPosition;
-    uniform vec2 cameraScale;
-    uniform vec4 viewPosition;
-    uniform vec2 viewScale;
+    uniform vec2 screenSize;
+    uniform vec2 screenSizeInverse;
+    uniform vec2 mainScreenSize;
+    uniform vec2 mainScreenSizeInverse;
+    uniform vec2 cameraPosition;
+    uniform float cameraScale;
+    uniform vec2 mousePosition;
+    uniform vec2 viewPosition;
+    uniform float viewScale;
 
     ${Fractallib}
 
@@ -26,10 +29,14 @@ export const juliaShader = new Shader( `
     void main() {
         const float exitDistance = 5.;
 
-        vec2 fragCoord = (gl_FragCoord.xy - screenSize.xy * .5) * screenSizeInverse.y * .5;
-        vec2 position  = fragCoord * 8.;
+        vec2 fragCoord  = (gl_FragCoord.xy - screenSize * .5) 
+                        * screenSizeInverse.y * .5;
+        vec2 mouseCoord = (mousePosition - .5)
+                        * (mainScreenSize * mainScreenSizeInverse.y * .5)
+                        * cameraScale;
+        vec2 position   = fragCoord * 6.;
 
-        Fractal f = Z2(position, cameraPosition.xy);
+        Fractal f = Z2(position, cameraPosition + mouseCoord);
 
         if (f.iterations == -1.) {
             fragColor = vec4(0,0,0,1);

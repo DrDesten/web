@@ -15,26 +15,42 @@ float cmagSq(vec2 a) {
 
 struct Fractal {
     vec2  z;
+    vec2  c;
     float iterations;
 };
+Fractal FractalInside() {
+    return Fractal(vec2(0), vec2(0), -1.);
+}
+float FractalSmoothIter(Fractal f) {
+    return f.iterations + 1.0 - log(log(cmagSq(f.z)) * 0.5) / log(2.0);
+}
 
-Fractal Z2(vec2 z, vec2 c) {
-    const float exitDistance = 5.;
-    const float exitDistanceSq = exitDistance * exitDistance;
+vec3 FractalColor(Fractal f, vec3 guideColor, float guideScale) {
+    float smoothIter = FractalSmoothIter(f);
+    float guideIter  = smoothIter * ${Math.PI * 2} * guideScale;
+    return cos(guideColor + guideIter) * .5 + .5;
+}
+vec3 FractalColorLog(Fractal f, vec3 guideColor, float guideScale) {
+    float smoothIter = FractalSmoothIter(f);
+    smoothIter       = smoothIter / (1. + exp(-smoothIter)) + 1.;
+    float guideIter  = log(smoothIter) * ${Math.PI * 2} * guideScale;
+    return cos(guideColor + guideIter) * .5 + .5;
+}
 
+Fractal Z2(vec2 z, vec2 c, float exitDistance) {
+    float exit       = exitDistance * exitDistance;
     float iterations = -1.;
     for (int i = 0; i < maxIterations; i++) {
         z = cmul(z, z) + c;
-        if (cmagSq(z) > exitDistanceSq) {
+        if (cmagSq(z) > exit) {
             iterations = float(i);
             break;
         }
     }
-
-    return Fractal(z, iterations);
+    return Fractal(z, c, iterations);
 }
 
-Fractal mandelbrot(vec2 position) {
+Fractal mandelbrot(vec2 position, float exitDistance) {
     // Check for first and second lobes
     float epsilon = 1e-6;
     float pSq  = cmagSq(position);
@@ -42,14 +58,13 @@ Fractal mandelbrot(vec2 position) {
     if (
         256.*pSq*pSq - 96.*pSq + 32.*position.x + epsilon < 3. ||
         pSq2 < .25 * .25
-    ) return Fractal(vec2(0, 0), -1.);
+    ) return FractalInside();
     // Compute Fractal
-    return Z2(vec2(0, 0), position);
+    return Z2(vec2(0), position, exitDistance);
 }
 
-Fractal mandelbrotPertubation(vec2 position, vec2 positionDelta) {
-    const float exitDistance = 5.;
-    const float exitDistanceSq = exitDistance * exitDistance;
+Fractal mandelbrotPertubation(vec2 position, vec2 positionDelta, float exitDistance) {
+    float exit = exitDistance * exitDistance;
 
     vec2  z  = vec2(0, 0);
     vec2  dz = vec2(0, 0);
@@ -61,12 +76,12 @@ Fractal mandelbrotPertubation(vec2 position, vec2 positionDelta) {
         dz = cmul(2. * z + dz, dz) + dc;
         z  = cmul(z, z) + c;
 
-        if (cmagSq(dz) > exitDistanceSq) {
+        if (cmagSq(dz) > exit) {
             iterations = float(i);
             break;
         }
     }
 
-    return Fractal(z + dz, iterations);
+    return Fractal(z + dz, c + dc, iterations);
 }
 `

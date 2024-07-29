@@ -12,12 +12,13 @@ import { juliaShader } from "./shaders/julia.js"
 import { mandelbrotShader } from "./shaders/mandelbrot.js"
 
 const defaults = {
+    iterations: 1000,
     camera: {
         position: [-0.7, 0],
         scale: 5,
     },
-    guideColor: [.5, .4, 1],
-    iterations: 1000,
+    guideColor: [0, .4, 1],
+    guideScale: 0.25,
 }
 const params = structuredClone( defaults )
 params.load = function () {
@@ -106,11 +107,13 @@ const inputs = {
         inputElements.guideColorR.value = params.guideColor[0]
         inputElements.guideColorG.value = params.guideColor[1]
         inputElements.guideColorB.value = params.guideColor[2]
+        inputElements.guideScale.value = params.guideScale
     },
     getColor() {
         params.guideColor[0] = +inputElements.guideColorR.value || 0
         params.guideColor[1] = +inputElements.guideColorG.value || 0
         params.guideColor[2] = +inputElements.guideColorB.value || 0
+        params.guideScale = +inputElements.guideScale.value || params.guideScale
         params.save()
         this.events.dispatchEvent( "color", params.guideColor )
     },
@@ -130,9 +133,11 @@ inputs.displayColor()
 inputElements.guideColorR.addEventListener( "input", () => inputs.getColor() )
 inputElements.guideColorG.addEventListener( "input", () => inputs.getColor() )
 inputElements.guideColorB.addEventListener( "input", () => inputs.getColor() )
+inputElements.guideScale.addEventListener( "input", () => inputs.getColor() )
 inputElements.guideColorR.addEventListener( "focusout", () => inputs.displayColor() )
 inputElements.guideColorG.addEventListener( "focusout", () => inputs.displayColor() )
 inputElements.guideColorB.addEventListener( "focusout", () => inputs.displayColor() )
+inputElements.guideScale.addEventListener( "focusout", () => inputs.displayColor() )
 
 const screen = new Canvas( document.getElementById( "main" ), { defer: true } )
 const minimap = new Canvas( document.getElementById( "minimap" ), { defer: true } )
@@ -147,6 +152,7 @@ inputs.displayCamera()
 const globalUniforms = [
     new Uniform( "maxIterations", "int", 1 ),
     new Uniform( "guideColor", "float", 3 ),
+    new Uniform( "guideScale", "float", 1 ),
     new Uniform( "screenSize", "float", 2 ),
     new Uniform( "screenSizeInverse", "float", 2 ),
     new Uniform( "cameraPosition", "float", 2 ),
@@ -204,16 +210,21 @@ const vertexQuadData = [
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
-    inputs.events.addEventListener( "iterations", () => invalidate() )
-    inputs.events.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
+    inputs.events.addEventListener( "iterations", invalidate )
+    inputs.events.addEventListener( "color", col => {
+        invalidate()
+        program.uploadUniform( "guideColor", col )
+        program.uploadUniform( "guideScale", params.guideScale )
+    } )
     program.uploadUniform( "guideColor", params.guideColor )
+    program.uploadUniform( "guideScale", params.guideScale )
 
     let screenSize = new vec2()
     let screenSizeInverse = new vec2()
     let viewScale = camera.scale * screenSizeInverse.y
     let viewPosition = vec2.sub( camera.position, vec2.mul( screenSize, viewScale * .5 ) )
 
-    function render() {
+    function render( millis ) {
         gl.clear( gl.COLOR_BUFFER_BIT )
 
         screenSize.set( screen.width, screen.height )
@@ -263,8 +274,8 @@ const vertexQuadData = [
     screen.canvas.addEventListener( "mousemove", invalidate )
     screen.canvas.addEventListener( "mouseenter", invalidate )
 
-    inputs.events.addEventListener( "camera", () => invalidate() )
-    cameraControls.addEventListener( () => invalidate() )
+    inputs.events.addEventListener( "camera", invalidate )
+    cameraControls.addEventListener( invalidate )
 
     const vertexBuffer = gl.createBuffer()
     const shader = glHook.inject( juliaShader )
@@ -287,9 +298,13 @@ const vertexQuadData = [
     // Render Setup
     gl.clearColor( 0, 0, 0, 1 )
 
-    inputs.events.addEventListener( "iterations", () => invalidate() )
-    inputs.events.addEventListener( "color", col => ( invalidate(), program.uploadUniform( "guideColor", col ) ) )
+    inputs.events.addEventListener( "color", col => {
+        invalidate()
+        program.uploadUniform( "guideColor", col )
+        program.uploadUniform( "guideScale", params.guideScale )
+    } )
     program.uploadUniform( "guideColor", params.guideColor )
+    program.uploadUniform( "guideScale", params.guideScale )
 
     function update() {
         const juliaPosition = vec2.add( camera.position,

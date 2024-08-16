@@ -9,25 +9,27 @@ class MouseHook {
         this.webglPosition = vec2.NaN
         this.relativeWebglPosition = vec2.NaN
 
+        this.active = false
         this.buttons = {
             primary: false,
             secondary: false,
             middle: false,
         }
 
-        /** @type {Map<number,{touch:Touch,history:Touch[]}>} */
+        /** @type {Map<number,{first:Touch,touch:Touch}>} */
         this.touches = new Map()
 
         const eventTarget = this.element instanceof Window ? document : this.element
-        eventTarget.addEventListener( "mouseenter", e => this.mouseMovement( e ) )
+        eventTarget.addEventListener( "mouseenter", e => ( this.mouseMovement( e ), this.active = true ) )
+        eventTarget.addEventListener( "mouseleave", e => ( this.active = false ) )
         eventTarget.addEventListener( "mousemove", e => this.mouseMovement( e ) )
         eventTarget.addEventListener( "mousedown", e => this.mouseButton( e ) )
         eventTarget.addEventListener( "mouseup", e => this.mouseButton( e ) )
 
-        eventTarget.addEventListener("touchstart", e => this.touchStart(e))
-        eventTarget.addEventListener("touchmove", e => this.touchChange(e))
-        eventTarget.addEventListener("touchend", e => this.touchEnd(e))
-        eventTarget.addEventListener("touchcancel", e => this.touchEnd(e))
+        eventTarget.addEventListener( "touchstart", e => this.touchStart( e ) )
+        eventTarget.addEventListener( "touchmove", e => this.touchChange( e ) )
+        eventTarget.addEventListener( "touchend", e => this.touchEnd( e ) )
+        eventTarget.addEventListener( "touchcancel", e => this.touchEnd( e ) )
     }
 
     stats() {
@@ -39,7 +41,7 @@ class MouseHook {
 
     /** @param {MouseEvent} event */
     mouseButton( event ) {
-        console.log("mouse click")
+        //console.log("mouse click")
         this.buttons.primary = !!( event.buttons & 1 )
         this.buttons.secondary = !!( event.buttons & 2 )
         this.buttons.middle = !!( event.buttons & 4 )
@@ -47,7 +49,7 @@ class MouseHook {
 
     /** @param {MouseEvent} event */
     mouseMovement( event ) {
-        console.log("mouse movement")
+        //console.log("mouse movement")
         const { x, y, width, height } = this.stats()
         const { clientX: mouseX, clientY: mouseY } = event
         this.position.set( mouseX - x, mouseY - y )
@@ -59,16 +61,15 @@ class MouseHook {
     /** @param {TouchEvent} event */
     touchStart( event ) {
         for ( const touch of event.changedTouches ) {
-            this.touches.set( touch.identifier, { touch, history: [touch] } )
+            this.touches.set( touch.identifier, { touch, first: touch } )
         }
     }
 
     /** @param {TouchEvent} event */
     touchChange( event ) {
         for ( const touch of event.touches ) {
-            const object = this.touches.get(touch.identifier)
-            object.touch = touch 
-            object.history.push( touch )
+            const object = this.touches.get( touch.identifier )
+            object.touch = touch
         }
     }
 

@@ -26,14 +26,6 @@
     --border-rad: 0.15rem;
 }
 
-*[flex] {
-    display: flex;
-}
-
-*[grid] {
-    display: grid;
-}
-
 body {
     font-family: "Rubik", sans-serif;
     color: var(--text-dark);

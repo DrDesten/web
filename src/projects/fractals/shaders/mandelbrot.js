@@ -9,12 +9,15 @@ export const mandelbrotShader = new Shader( `
 `, `
     uniform int maxIterations;
     uniform vec3 guideColor;
-    uniform vec4 screenSize;
-    uniform vec4 screenSizeInverse;
-    uniform vec4 cameraPosition;
-    uniform vec2 cameraScale;
-    uniform vec4 viewPosition;
-    uniform vec2 viewScale;
+    uniform float guideScale;
+
+    uniform vec2 screenSize;
+    uniform vec2 screenSizeInverse;
+    uniform vec2 cameraPosition;
+    uniform float cameraScale;
+    uniform vec2 mousePosition;
+    uniform vec2 viewPosition;
+    uniform float viewScale;
 
     ${Fractallib}
 
@@ -22,16 +25,18 @@ export const mandelbrotShader = new Shader( `
         return dot(z, z);
     }
 
+    float sigmoid(float x) {
+        return 1. / (1. + exp(-x));
+    }
+
     out vec4 fragColor;
     void main() {
-        const float exitDistance = 5.;
-
-        vec2 fragCoord      = (gl_FragCoord.xy - screenSize.xy * .5)
+        vec2 fragCoord      = (gl_FragCoord.xy - screenSize * .5)
                             * screenSizeInverse.y * .5;
-        vec2 position       = cameraPosition.xy;
-        vec2 position_delta = fragCoord * cameraScale.x + cameraPosition.zw;
+        vec2 position       = cameraPosition;
+        vec2 position_delta = fragCoord * cameraScale;
 
-        Fractal f = mandelbrot(position + position_delta);
+        Fractal f = mandelbrot(position + position_delta, 16.);
 
         /* if (length(position_delta) < 0.003 * cameraScale.x) {
             fragColor = vec4(1,0,0,1);
@@ -43,11 +48,8 @@ export const mandelbrotShader = new Shader( `
             return;
         }
 
-        const float guideScale = 1. / 10.;
+        vec3 fractalColor = FractalColor(f, guideColor, guideScale);
 
-        float smoothIter = f.iterations + 1.0 - log(log(length(f.z))) / log(2.0);
-        float guideIter  = smoothIter * TAU * guideScale;
-
-        fragColor = vec4(cos(guideColor + smoothIter * 0.2) * .5 + .5, 1.0);
+        fragColor = vec4(fractalColor, 1.0);
     }
 `)

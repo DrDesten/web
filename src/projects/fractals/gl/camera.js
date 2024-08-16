@@ -1,5 +1,6 @@
 import { mat3, mat4 } from "../../../../svg/jvec/bin/mat.js"
 import { vec2, vec3, vec4 } from "../../../../svg/jvec/bin/vec.js"
+import { EventHandler } from "../event.js"
 import { Mouse } from "../mouse.js"
 
 /**
@@ -65,7 +66,7 @@ export class CameraControls {
         this.mouse = new Mouse( this.canvas )
         this.opts = { zoomSensitivity: 0.001, ...opts }
 
-        this.listeners = new Set
+        this.events = new EventHandler( "change" )
         this.lastPos = vec2.NaN
 
         this.ungrab()
@@ -76,13 +77,13 @@ export class CameraControls {
     }
 
     addEventListener( listener ) {
-        this.listeners.add( listener )
+        this.events.addEventListener( "change", listener )
     }
     removeEventListener( listener ) {
-        this.listeners.delete( listener )
+        this.events.removeEventListener( "change", listener )
     }
-    triggerEvent() {
-        for ( const listener of this.listeners ) listener( this )
+    dispatchEvent() {
+        this.events.dispatchEvent( "change", this )
     }
 
     grab() {
@@ -106,7 +107,7 @@ export class CameraControls {
         this.camera.scale *= zoomScale
         const pnewMousePos = this.projectScreen( this.mouse.relativeWebglPosition )
         this.camera.position.add( vec2.vsub( pMousePos, pnewMousePos ).mul( 0.5 ) )
-        this.triggerEvent()
+        this.dispatchEvent()
     }
 
     /** @param {MouseEvent} event */
@@ -119,7 +120,7 @@ export class CameraControls {
             const movement = vec2.vsub( currentPos, this.lastPos )
             this.camera.position.x -= movement.x * this.camera.scale / this.canvas.clientHeight / 2
             this.camera.position.y += movement.y * this.camera.scale / this.canvas.clientHeight / 2
-            this.triggerEvent()
+            this.dispatchEvent()
         }
         this.lastPos.set( currentPos )
     }

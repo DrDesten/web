@@ -86,7 +86,12 @@ section {
 }
 
 button,
-input,
+input[type="button"],
+input[type="number"],
+input[type="email"],
+input[type="range"],
+input[type="text"],
+input[type="url"],
 textarea {
     font-size: inherit;
     font-family: inherit;
@@ -168,12 +173,14 @@ table {
     padding: 0;
     width: 100%;
 }
+
 table tr {
     margin: 0;
     padding: 0;
     width: 100%;
 }
-table tr > td {
+
+table tr>td {
     margin: 0;
     padding: 0;
     vertical-align: middle;
